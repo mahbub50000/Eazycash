@@ -397,33 +397,7 @@
     <div id="toast-notification"></div>
 
 
-    <script>
-        // Mock Telegram WebApp object if not running in Telegram environment
-        if (typeof Telegram === 'undefined') {
-            window.Telegram = {
-                WebApp: {
-                    ready: () => console.log("Telegram.WebApp.ready() called (mocked)"),
-                    initDataUnsafe: {
-                        user: {
-                            id: 123456789,
-                            first_name: "Demo",
-                            last_name: "User",
-                            username: "demouser",
-                            language_code: "en"
-                        }
-                    },
-                    HapticFeedback: {
-                        impactOccurred: (style) => console.log(`Haptic feedback: ${style} (mocked)`),
-                        notificationOccurred: (type) => console.log(`Haptic notification: ${type} (mocked)`),
-                        selectionChanged: () => console.log(`Haptic selection changed (mocked)`)
-                    },
-                    expand: () => console.log("WebApp expanded (mocked)"),
-                    // You can add more mock methods if needed
-                }
-            };
-            console.log("Telegram WebApp mocked for browser use.");
-        }
-
+    
 
         // --- Constants ---
         const LOCAL_STORAGE_KEY = 'tapSwapUserData_v3';
