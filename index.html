@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Eazycash Mini App</title>
+    <title>TapSwap Mini App</title>
     <style>
         :root {
             --primary-color: #007bff;
@@ -314,7 +314,7 @@
 
         <!-- Tap Page -->
         <div id="tap-page" class="page">
-            <div class="page-header">Eazycash Tap Earn</div>
+            <div class="page-header">TapSwap</div>
             <div class="page-content" id="tap-page-content">
                 <div id="points-display">0</div>
                 <div id="dog-tap-area">🐕</div>
@@ -397,7 +397,33 @@
     <div id="toast-notification"></div>
 
 
-    
+    <script>
+        // Mock Telegram WebApp object if not running in Telegram environment
+        if (typeof Telegram === 'undefined') {
+            window.Telegram = {
+                WebApp: {
+                    ready: () => console.log("Telegram.WebApp.ready() called (mocked)"),
+                    initDataUnsafe: {
+                        user: {
+                            id: 123456789,
+                            first_name: "Demo",
+                            last_name: "User",
+                            username: "demouser",
+                            language_code: "en"
+                        }
+                    },
+                    HapticFeedback: {
+                        impactOccurred: (style) => console.log(`Haptic feedback: ${style} (mocked)`),
+                        notificationOccurred: (type) => console.log(`Haptic notification: ${type} (mocked)`),
+                        selectionChanged: () => console.log(`Haptic selection changed (mocked)`)
+                    },
+                    expand: () => console.log("WebApp expanded (mocked)"),
+                    // You can add more mock methods if needed
+                }
+            };
+            console.log("Telegram WebApp mocked for browser use.");
+        }
+
 
         // --- Constants ---
         const LOCAL_STORAGE_KEY = 'tapSwapUserData_v3';
