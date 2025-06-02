@@ -825,5 +825,31 @@
 
 
     </script>
+
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyAKdJNv0J_ZMlPUuWafXDqS6b281aZmEk4",
+    authDomain: "eazycash-tap-earning.firebaseapp.com",
+    databaseURL: "https://eazycash-tap-earning-default-rtdb.firebaseio.com",
+    projectId: "eazycash-tap-earning",
+    storageBucket: "eazycash-tap-earning.firebasestorage.app",
+    messagingSenderId: "842900439557",
+    appId: "1:842900439557:web:af9886cda0fb3b5358d26c",
+    measurementId: "G-6GLDMD7PDX"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
+    
 </body>
 </html>
