@@ -39,6 +39,18 @@
     margin: 0 auto;
     width: 100%;
   }
+  #page-home {
+    background: #d0f0ff; /* soft light blue */
+    border-radius: 15px;
+    padding: 1rem;
+  }
+  #page-home .card {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: 0 3px 12px rgb(0 136 204 / 0.15);
+    margin-bottom: 1rem;
+    padding: 1rem;
+  }
   .profile {
     display: flex;
     align-items: center;
@@ -135,6 +147,8 @@
   }
   input[type=number],
   input[type=text],
+  input[type=email],
+  input[type=tel],
   select {
     width: 100%;
     padding: 0.5rem;
@@ -228,7 +242,7 @@
 <main>
   <section class="page active" id="page-home" role="main" tabindex="0" aria-label="Home page">
     <div class="profile" aria-live="polite">
-      <img src="" alt="User profile picture" id="user-photo" />
+      <img src="" alt="User  profile picture" id="user-photo" />
       <div class="profile-info">
         <h2 id="user-name">Loading...</h2>
         <p>Your Telegram account</p>
@@ -260,6 +274,7 @@
       <h3>Pay Per Click Rewards</h3>
       <p>Click the button below to earn points:</p>
       <button class="cta" id="click-reward-btn">Click to Earn 2 Points</button>
+      <div id="click-timer" style="margin-top: 0.5rem; font-weight: 600; color: var(--primary-color);"></div>
     </div>
   </section>
   <section class="page" id="page-investment" role="main" tabindex="0" aria-label="Investment page">
@@ -376,381 +391,4 @@
     const nameEl = document.getElementById('user-name');
     const photoEl = document.getElementById('user-photo');
 
-    let displayName = userData.first_name;
-    if(userData.last_name) displayName += ' ' + userData.last_name;
-
-    nameEl.textContent = displayName;
-    if(userData.photo_url){
-      photoEl.src = userData.photo_url;
-      photoEl.alt = displayName + ' profile picture';
-    } else {
-      photoEl.src = 'https://telegram.org/file/811140521/1/q080hBCAcBg/fec23c6bb6f9e7fea8'; // fallback
-    }
-  }
-
-  // Storage keys
-  const STORAGE_KEYS = {
-    rewards: 'tg_app_rewards',
-    bonus: 'tg_app_bonus',
-    referral: 'tg_app_referral',
-    investments: 'tg_app_investments',
-    transactions: 'tg_app_transactions'
-  };
-
-  // Get from localStorage helpers with fallback default
-  function getStorage(key, def = null) {
-    try {
-      const val = localStorage.getItem(key);
-      return val ? JSON.parse(val) : def;
-    } catch(e) {
-      return def;
-    }
-  }
-  function setStorage(key, val){
-    localStorage.setItem(key, JSON.stringify(val));
-  }
-
-  // Rewards & bonus management
-  let rewards = getStorage(STORAGE_KEYS.rewards, 0);
-  let referralBonus = getStorage(STORAGE_KEYS.bonus, 0);
-  // Referral link
-  let referralCode = '';
-
-  // Generate referral code, simple example: 'tg' + user id
-  function genReferralCode() {
-    if(userData.id){
-      return 'tg' + userData.id;
-    } else {
-      // fallback
-      return 'tgguest';
-    }
-  }
-
-  // Referral system
-  function setupReferral(){
-    referralCode = genReferralCode();
-    let referralLinkEl = document.getElementById('referral-link');
-    // Presume base URL is https://youranmarcketsite.com with referral param
-    const baseUrl = window.location.origin + window.location.pathname;
-    const link = baseUrl + '?ref=' + referralCode;
-    referralLinkEl.textContent = link;
-
-    // Save referral to storage for bonuses (simulate)
-    const storedRef = getStorage(STORAGE_KEYS.referral, null);
-    if(!storedRef){
-      setStorage(STORAGE_KEYS.referral, referralCode);
-    }
-  }
-
-  // Investments management
-  let investments = getStorage(STORAGE_KEYS.investments, []);
-
-  // Format date
-  function formatDate(d) {
-    const date = new Date(d);
-    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
-  }
-
-  // Save investments
-  function saveInvestments(){
-    setStorage(STORAGE_KEYS.investments, investments);
-  }
-
-  // Render investments list
-  function renderInvestments(){
-    const list = document.getElementById('investments-list');
-    list.innerHTML = '';
-    if(investments.length === 0){
-      list.textContent = 'No active investments yet.';
-      return;
-    }
-    investments.forEach(inv => {
-      let div = document.createElement('div');
-      div.className = 'investment-item';
-      let investedDate = formatDate(inv.start);
-      let endingDate = formatDate(inv.end);
-      div.innerHTML = `
-        <strong>Amount:</strong> $${inv.amount.toFixed(2)}<br/>
-        <strong>Start:</strong> ${investedDate}<br/>
-        <strong>Ends:</strong> ${endingDate}<br/>
-        <strong>Status:</strong> ${inv.active ? 'Active' : 'Completed'}<br/>
-        <strong>Bonus Earned:</strong> $${(inv.amount*0.05).toFixed(2)}
-      `;
-      list.appendChild(div);
-    });
-  }
-
-  // Update investment status (check if ended)
-  function updateInvestmentStatus(){
-    const now = new Date();
-    let updated = false;
-    investments.forEach((inv, i) => {
-      if(inv.active && new Date(inv.end) <= now){
-        inv.active = false;
-        updated = true;
-      }
-    });
-    if(updated) saveInvestments();
-    renderInvestments();
-  }
-
-  // Calculate total investment bonus for display
-  function calcInvestmentBonus(){
-    return investments.reduce((acc, inv) => acc + (inv.amount * 0.05), 0);
-  }
-
-  // Update UI rewards & bonus info and total balance
-  function updateRewardsUI(){
-    const totalBalanceEl = document.getElementById('total-balance');
-    const totalRewardsEl = document.getElementById('total-rewards');
-    const bonusInfoEl = document.getElementById('bonus-info');
-    const claimBonusBtn = document.getElementById('claim-bonus-btn');
-    let investmentBonus = calcInvestmentBonus();
-    // Total balance is rewards + investment bonus
-    let totalBalance = rewards + investmentBonus;
-    totalBalanceEl.textContent = 'Total Balance: $' + totalBalance.toFixed(2);
-    totalRewardsEl.textContent = 'Total Rewards (Points): ' + rewards;
-    bonusInfoEl.textContent = 'Referral Bonus: ' + referralBonus;
-    claimBonusBtn.disabled = referralBonus <= 0;
-  }
-
-  // Claim bonus button click handler
-  document.getElementById('claim-bonus-btn').addEventListener('click', function(){
-    if(referralBonus > 0){
-      rewards += referralBonus;
-      referralBonus = 0;
-      setStorage(STORAGE_KEYS.rewards, rewards);
-      setStorage(STORAGE_KEYS.bonus, referralBonus);
-      updateRewardsUI();
-      alert('Referral bonus claimed! Your total rewards increased.');
-    }
-  });
-
-  // Copy referral link button
-  document.getElementById('copy-referral-btn').addEventListener('click', function(){
-    const referralLink = document.getElementById('referral-link').textContent;
-    navigator.clipboard.writeText(referralLink).then(function(){
-      alert('Referral link copied to clipboard!');
-    }, function(){
-      alert('Failed to copy referral link.');
-    });
-  });
-
-  // Video ad reward system
-  const videoBtn = document.getElementById('watch-video-btn');
-  videoBtn.addEventListener('click', function(){
-    // Reward 10 points for watching video (simulation)
-    rewards += 10;
-    setStorage(STORAGE_KEYS.rewards, rewards);
-    updateRewardsUI();
-    alert('You earned 10 points for watching the video!');
-  });
-
-  // Pay per click reward system
-  const clickBtn = document.getElementById('click-reward-btn');
-  clickBtn.addEventListener('click', function(){
-    rewards += 2;
-    setStorage(STORAGE_KEYS.rewards, rewards);
-    updateRewardsUI();
-    alert('You earned 2 points for clicking!');
-  });
-
-  const investBtn = document.getElementById('invest-btn');
-  const investmentAmountInput = document.getElementById('investment-amount');
-  investBtn.addEventListener('click', function(){
-    let val = parseFloat(investmentAmountInput.value);
-    if(isNaN(val) || val < 10){
-      alert('Please enter a valid investment amount of at least $10.');
-      return;
-    }
-    const now = new Date();
-    const end = new Date(now.getTime() + 7*24*60*60*1000); // 7 days later
-    const invObj = {
-      amount: val,
-      start: now.toISOString(),
-      end: end.toISOString(),
-      active: true
-    };
-    investments.push(invObj);
-    saveInvestments();
-    renderInvestments();
-    investmentAmountInput.value = '';
-    alert('Investment recorded for 7 days with 5% weekly bonus.');
-    updateRewardsUI();
-  });
-
-  // Transactions storage and UI for deposit/withdraw
-  let transactions = getStorage(STORAGE_KEYS.transactions, []);
-
-  // Render transactions
-  function renderTransactions(){
-    const list = document.getElementById('transaction-status-list');
-    list.innerHTML = '';
-    if(transactions.length === 0){
-      list.textContent = 'No transactions yet.';
-      return;
-    }
-    transactions.forEach((t, idx) => {
-      const li = document.createElement('li');
-      li.textContent = `[${formatDate(t.date)}] ${t.type.toUpperCase()} $${t.amount.toFixed(2)} via ${t.method} - Status: ${t.status}`;
-      list.appendChild(li);
-    });
-  }
-
-  // Add transaction
-  function addTransaction(type, method, amount, extraInfo = '') {
-    const now = new Date();
-    const newTransaction = {
-      type,
-      method,
-      amount,
-      status: 'Pending',
-      date: now.toISOString(),
-      extraInfo
-    };
-    transactions.push(newTransaction);
-    setStorage(STORAGE_KEYS.transactions, transactions);
-    renderTransactions();
-  }
-
-  // Deposit offline button logic
-  const depositBtn = document.getElementById('deposit-btn');
-  depositBtn.addEventListener('click', function(){
-    const amount = parseFloat(document.getElementById('deposit-amount').value);
-    const method = document.getElementById('deposit-method').value;
-    if(isNaN(amount) || amount <= 0){
-      alert('Enter a valid deposit amount.');
-      return;
-    }
-    let extraInfo = '';
-    if(method === 'paypal'){
-      let email = document.getElementById('deposit-paypal-email').value.trim();
-      if(!email || !validateEmail(email)){
-        alert('Please enter a valid PayPal email for deposit.');
-        return;
-      }
-      extraInfo = 'PayPal Email: ' + email;
-    } else if(method === 'bkash'){
-      let number = document.getElementById('deposit-bkash-number').value.trim();
-      if(!number || !validatePhone(number)){
-        alert('Please enter a valid bKash phone number for deposit.');
-        return;
-      }
-      extraInfo = 'bKash Number: ' + number;
-    }
-    addTransaction('deposit', method, amount, extraInfo);
-    alert('Deposit request submitted. It will be reviewed and approved by backend.');
-    document.getElementById('deposit-amount').value = '';
-    if(method === 'paypal'){
-      document.getElementById('deposit-paypal-email').value = '';
-    } else {
-      document.getElementById('deposit-bkash-number').value = '';
-    }
-  });
-
-  // Withdraw offline button logic
-  const withdrawBtn = document.getElementById('withdraw-btn');
-  withdrawBtn.addEventListener('click', function(){
-    const amount = parseFloat(document.getElementById('withdraw-amount').value);
-    const method = document.getElementById('withdraw-method').value;
-    if(isNaN(amount) || amount <= 0){
-      alert('Enter a valid withdraw amount.');
-      return;
-    }
-    let extraInfo = '';
-    if(method === 'paypal'){
-      let email = document.getElementById('withdraw-paypal-email').value.trim();
-      if(!email || !validateEmail(email)){
-        alert('Please enter a valid PayPal email for withdraw.');
-        return;
-      }
-      extraInfo = 'PayPal Email: ' + email;
-    } else if(method === 'bkash'){
-      let number = document.getElementById('withdraw-bkash-number').value.trim();
-      if(!number || !validatePhone(number)){
-        alert('Please enter a valid bKash phone number for withdraw.');
-        return;
-      }
-      extraInfo = 'bKash Number: ' + number;
-    }
-    addTransaction('withdraw', method, amount, extraInfo);
-    alert('Withdraw request submitted. It will be reviewed and approved by backend.');
-    document.getElementById('withdraw-amount').value = '';
-    if(method === 'paypal'){
-      document.getElementById('withdraw-paypal-email').value = '';
-    } else {
-      document.getElementById('withdraw-bkash-number').value = '';
-    }
-  });
-
-  // Show/hide email and phone inputs depending on selected method
-  function updateDepositFields(){
-    const method = document.getElementById('deposit-method').value;
-    document.getElementById('deposit-paypal-fields').style.display = method === 'paypal' ? 'block' : 'none';
-    document.getElementById('deposit-bkash-fields').style.display = method === 'bkash' ? 'block' : 'none';
-  }
-  function updateWithdrawFields(){
-    const method = document.getElementById('withdraw-method').value;
-    document.getElementById('withdraw-paypal-fields').style.display = method === 'paypal' ? 'block' : 'none';
-    document.getElementById('withdraw-bkash-fields').style.display = method === 'bkash' ? 'block' : 'none';
-  }
-
-  document.getElementById('deposit-method').addEventListener('change', updateDepositFields);
-  document.getElementById('withdraw-method').addEventListener('change', updateWithdrawFields);
-
-  // Basic email validation
-  function validateEmail(email) {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
-  }
-
-  // Basic phone validation (simple digit + plus, length 10-15)
-  function validatePhone(phone) {
-    const re = /^\+?[0-9]{10,15}$/;
-    return re.test(phone);
-  }
-
-  // Navigation logic
-  const pages = document.querySelectorAll('section.page');
-  const navButtons = document.querySelectorAll('nav.footer-nav button');
-
-  function setActivePage(pageId){
-    pages.forEach(pg => {
-      pg.classList.toggle('active', pg.id === pageId);
-    });
-    navButtons.forEach(btn => {
-      btn.classList.toggle('active', btn.id === 'nav-' + pageId.split('-')[1]);
-    });
-  }
-  navButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const pageId = 'page-' + btn.id.split('-')[1];
-      setActivePage(pageId);
-      // Accessibility focus
-      document.getElementById(pageId).focus();
-    });
-  });
-
-  // Initial setup on page load
-  updateProfile();
-  setupReferral();
-  updateRewardsUI();
-  renderInvestments();
-  renderTransactions();
-  updateInvestmentStatus();
-  updateDepositFields();
-  updateWithdrawFields();
-
-  // Simulate referral bonus increase (for demo)
-  // Only if bonus == 0, increment it for demo after 5 seconds:
-  if(referralBonus <= 0){
-    setTimeout(() => {
-      referralBonus = 20;
-      setStorage(STORAGE_KEYS.bonus, referralBonus);
-      updateRewardsUI();
-    }, 5000);
-  }
-</script>
-</body>
-</html>
-
+    let displayName = user
