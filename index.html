@@ -126,7 +126,8 @@
     color: #eee;
     transition: background-color 0.3s;
   }
-  /* Change background color for withdraw method select */
+  /* Change background color for deposit/withdraw method select */
+  #deposit-method,
   #withdraw-method {
     background-color: #4a3b8f !important;
   }
@@ -315,23 +316,109 @@
   </section>
   <section id="video-ads-section" class="hidden">
     <h3 class="section-title">Video Ads Reward (Claim every hour)</h3>
-    <div class="video-wrapper">
-      <iframe
-        id="video-iframe"
-        src="https://www.youtube.com/embed/dQw4w9WgXcQ?enablejsapi=1&controls=1"
-        frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen
-        title="Reward Video"
-      ></iframe>
+    <div class="card">
+      <h4>Video Ad #1</h4>
+      <div class="video-wrapper">
+        <iframe
+          id="video-iframe-1"
+          src="https://www.youtube.com/embed/dQw4w9WgXcQ?enablejsapi=1&controls=1"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+          title="Reward Video 1"
+        ></iframe>
+      </div>
+      <button id="claim-video-reward-1" class="btn-primary">Claim Video Ad Reward #1</button>
+      <div id="video-reward-timer-1" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;"></div>
     </div>
-    <button id="claim-video-reward" class="btn-primary">Claim Video Ad Reward</button>
-    <div id="video-reward-timer" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;"></div>
+    <div class="card">
+      <h4>Video Ad #2</h4>
+      <div class="video-wrapper">
+        <iframe
+          id="video-iframe-2"
+          src="https://www.youtube.com/embed/dQw4w9WgXcQ?enablejsapi=1&controls=1"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+          title="Reward Video 2"
+        ></iframe>
+      </div>
+      <button id="claim-video-reward-2" class="btn-primary">Claim Video Ad Reward #2</button>
+      <div id="video-reward-timer-2" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;"></div>
+    </div>
+    <div class="card">
+      <h4>Video Ad #3</h4>
+      <div class="video-wrapper">
+        <iframe
+          id="video-iframe-3"
+          src="https://www.youtube.com/embed/dQw4w9WgXcQ?enablejsapi=1&controls=1"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+          title="Reward Video 3"
+        ></iframe>
+      </div>
+      <button id="claim-video-reward-3" class="btn-primary">Claim Video Ad Reward #3</button>
+      <div id="video-reward-timer-3" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;"></div>
+    </div>
+    <div class="card">
+      <h4>Video Ad #4</h4>
+      <div class="video-wrapper">
+        <iframe
+          id="video-iframe-4"
+          src="https://www.youtube.com/embed/dQw4w9WgXcQ?enablejsapi=1&controls=1"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+          title="Reward Video 4"
+        ></iframe>
+      </div>
+      <button id="claim-video-reward-4" class="btn-primary">Claim Video Ad Reward #4</button>
+      <div id="video-reward-timer-4" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;"></div>
+    </div>
+    <div class="card">
+      <h4>Video Ad #5</h4>
+      <div class="video-wrapper">
+        <iframe
+          id="video-iframe-5"
+          src="https://www.youtube.com/embed/dQw4w9WgXcQ?enablejsapi=1&controls=1"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+          title="Reward Video 5"
+        ></iframe>
+      </div>
+      <button id="claim-video-reward-5" class="btn-primary">Claim Video Ad Reward #5</button>
+      <div id="video-reward-timer-5" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;"></div>
+    </div>
   </section>
   <section id="ppc-section" class="hidden">
     <h3 class="section-title">Pay Per Click Rewards (Claim every hour)</h3>
-    <button id="claim-ppc-reward" class="btn-primary">Claim PPC Reward</button>
-    <div id="ppc-reward-timer" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;"></div>
+    <div class="card">
+      <h4>PPC Reward #1</h4>
+      <button id="claim-ppc-reward-1" class="btn-primary">Claim PPC Reward #1</button>
+      <div id="ppc-reward-timer-1" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;"></div>
+    </div>
+    <div class="card">
+      <h4>PPC Reward #2</h4>
+      <button id="claim-ppc-reward-2" class="btn-primary">Claim PPC Reward #2</button>
+      <div id="ppc-reward-timer-2" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;"></div>
+    </div>
+    <div class="card">
+      <h4>PPC Reward #3</h4>
+      <button id="claim-ppc-reward-3" class="btn-primary">Claim PPC Reward #3</button>
+      <div id="ppc-reward-timer-3" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;"></div>
+    </div>
+    <div class="card">
+      <h4>PPC Reward #4</h4>
+      <button id="claim-ppc-reward-4" class="btn-primary">Claim PPC Reward #4</button>
+      <div id="ppc-reward-timer-4" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;"></div>
+    </div>
+    <div class="card">
+      <h4>PPC Reward #5</h4>
+      <button id="claim-ppc-reward-5" class="btn-primary">Claim PPC Reward #5</button>
+      <div id="ppc-reward-timer-5" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;"></div>
+    </div>
   </section>
   <section id="investment-section" class="hidden">
     <h3 class="section-title">Weekly Investment System</h3>
@@ -347,6 +434,12 @@
       <button id="invest-btn" class="btn-primary">Invest Now</button>
       <div style="margin-top: 12px;">
         <strong>Your Current Investment:</strong> <span id="current-investment">0</span> BDT
+      </div>
+      <div style="margin-top: 16px; padding: 12px; background: rgba(94,82,243,0.1); border-radius: 8px; font-size: 0.9rem;">
+        <strong>Investment Note:</strong><br>
+        • Weekly Return: 22% of invested amount<br>
+        • Investment Period: 7 weeks<br>
+        • Example: Invest 100 BDT → Get 22 BDT weekly for 7 weeks (Total return: 154 BDT)
       </div>
     </div>
   </section>
@@ -498,11 +591,35 @@
 
     const copyReferralBtn = document.getElementById('copy-referral');
 
-    const claimVideoRewardBtn = document.getElementById('claim-video-reward');
-    const videoRewardTimer = document.getElementById('video-reward-timer');
+    const claimVideoRewardBtns = [
+      document.getElementById('claim-video-reward-1'),
+      document.getElementById('claim-video-reward-2'),
+      document.getElementById('claim-video-reward-3'),
+      document.getElementById('claim-video-reward-4'),
+      document.getElementById('claim-video-reward-5')
+    ];
+    const videoRewardTimers = [
+      document.getElementById('video-reward-timer-1'),
+      document.getElementById('video-reward-timer-2'),
+      document.getElementById('video-reward-timer-3'),
+      document.getElementById('video-reward-timer-4'),
+      document.getElementById('video-reward-timer-5')
+    ];
 
-    const claimPpcRewardBtn = document.getElementById('claim-ppc-reward');
-    const ppcRewardTimer = document.getElementById('ppc-reward-timer');
+    const claimPpcRewardBtns = [
+      document.getElementById('claim-ppc-reward-1'),
+      document.getElementById('claim-ppc-reward-2'),
+      document.getElementById('claim-ppc-reward-3'),
+      document.getElementById('claim-ppc-reward-4'),
+      document.getElementById('claim-ppc-reward-5')
+    ];
+    const ppcRewardTimers = [
+      document.getElementById('ppc-reward-timer-1'),
+      document.getElementById('ppc-reward-timer-2'),
+      document.getElementById('ppc-reward-timer-3'),
+      document.getElementById('ppc-reward-timer-4'),
+      document.getElementById('ppc-reward-timer-5')
+    ];
 
     const investmentAmountSel = document.getElementById('investment-amount');
     const investBtn = document.getElementById('invest-btn');
@@ -541,17 +658,48 @@
 
     // Save user data and state to localStorage
     function saveUserData() {
-      localStorage.setItem(userDataKey, JSON.stringify({
-        user,
-        referrals,
-        bonus,
-        currentInvestment,
-        lastVideoClaim: parseInt(localStorage.getItem('lastVideoClaim')) || 0,
-        lastPpcClaim: parseInt(localStorage.getItem('lastPpcClaim')) || 0,
-        depositEnabled,
-        withdrawEnabled,
-        lastDailyBonusClaim: parseInt(localStorage.getItem('lastDailyBonusClaim')) || 0
-      }));
+      if (user) {
+        const userData = {
+          user,
+          referrals,
+          bonus,
+          currentInvestment,
+          lastVideoClaim: parseInt(localStorage.getItem('lastVideoClaim')) || 0,
+          lastPpcClaim: parseInt(localStorage.getItem('lastPpcClaim')) || 0,
+          depositEnabled,
+          withdrawEnabled,
+          lastDailyBonusClaim: parseInt(localStorage.getItem('lastDailyBonusClaim')) || 0,
+          lastActive: Date.now()
+        };
+        
+        localStorage.setItem(userDataKey, JSON.stringify(userData));
+        
+        // Update registered users list for admin panel
+        const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+        const existingUserIndex = registeredUsers.findIndex(u => u.id === user.id);
+        
+        if (existingUserIndex !== -1) {
+          // Update existing user
+          registeredUsers[existingUserIndex] = {
+            ...registeredUsers[existingUserIndex],
+            lastActive: Date.now(),
+            lastLogin: Date.now()
+          };
+        } else {
+          // Add new user
+          registeredUsers.push({
+            id: user.id,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            username: user.username,
+            registeredAt: Date.now(),
+            lastActive: Date.now(),
+            lastLogin: Date.now()
+          });
+        }
+        
+        localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+      }
     }
 
     // Load user data from localStorage
@@ -747,83 +895,95 @@
       return diff > 0 ? diff : 0;
     }
 
-    // Claim video ad reward handler
-    claimVideoRewardBtn.addEventListener('click', () => {
-      if (!user) {
-        showToast('Please login first');
-        return;
-      }
-      if (!rewardsEnabled) {
-        showToast('Rewards are currently disabled by admin.');
-        return;
-      }
-      if (!canClaim('lastVideoClaim', rewardCooldown)) {
-        showToast('Video reward already claimed. Please wait.');
-        return;
-      }
-      // Simulate watching ad completion
-      claimVideoRewardBtn.disabled = true;
-      showToast('Watching Video Ad...');
-      setTimeout(() => {
-        bonus += videoRewardAmount;
-        localStorage.setItem('lastVideoClaim', Date.now().toString());
-        saveUserData();
-        updateRewardButtons();
-        showToast(`You earned +${videoRewardAmount} BDT from video ad!`);
-        claimVideoRewardBtn.disabled = false;
-        bonusEarnedEl.textContent = bonus.toFixed(2);
-        updateTotalBalance();
-      }, 4000);
+    // Claim video ad reward handlers for all 5 buttons
+    claimVideoRewardBtns.forEach((btn, index) => {
+      btn.addEventListener('click', () => {
+        if (!user) {
+          showToast('Please login first');
+          return;
+        }
+        if (!rewardsEnabled) {
+          showToast('Rewards are currently disabled by admin.');
+          return;
+        }
+        const videoClaimKey = `lastVideoClaim${index + 1}`;
+        if (!canClaim(videoClaimKey, rewardCooldown)) {
+          showToast(`Video reward #${index + 1} already claimed. Please wait.`);
+          return;
+        }
+        // Simulate watching ad completion
+        btn.disabled = true;
+        showToast(`Watching Video Ad #${index + 1}...`);
+        setTimeout(() => {
+          bonus += videoRewardAmount;
+          localStorage.setItem(videoClaimKey, Date.now().toString());
+          saveUserData();
+          updateRewardButtons();
+          showToast(`You earned +${videoRewardAmount} BDT from video ad #${index + 1}!`);
+          btn.disabled = false;
+          bonusEarnedEl.textContent = bonus.toFixed(2);
+          updateTotalBalance();
+        }, 4000);
+      });
     });
 
-    // Claim PPC reward handler
-    claimPpcRewardBtn.addEventListener('click', () => {
-      if (!user) {
-        showToast('Please login first');
-        return;
-      }
-      if (!rewardsEnabled) {
-        showToast('Rewards are currently disabled by admin.');
-        return;
-      }
-      if (!canClaim('lastPpcClaim', rewardCooldown)) {
-        showToast('PPC reward already claimed. Please wait.');
-        return;
-      }
-      claimPpcRewardBtn.disabled = true;
-      showToast('Processing PPC claim...');
-      setTimeout(() => {
-        bonus += ppcRewardAmount;
-        localStorage.setItem('lastPpcClaim', Date.now().toString());
-        saveUserData();
-        updateRewardButtons();
-        showToast(`You earned +${ppcRewardAmount} BDT from PPC!`);
-        claimPpcRewardBtn.disabled = false;
-        bonusEarnedEl.textContent = bonus.toFixed(2);
-        updateTotalBalance();
-      }, 3000);
+    // Claim PPC reward handlers for all 5 buttons
+    claimPpcRewardBtns.forEach((btn, index) => {
+      btn.addEventListener('click', () => {
+        if (!user) {
+          showToast('Please login first');
+          return;
+        }
+        if (!rewardsEnabled) {
+          showToast('Rewards are currently disabled by admin.');
+          return;
+        }
+        const ppcClaimKey = `lastPpcClaim${index + 1}`;
+        if (!canClaim(ppcClaimKey, rewardCooldown)) {
+          showToast(`PPC reward #${index + 1} already claimed. Please wait.`);
+          return;
+        }
+        btn.disabled = true;
+        showToast(`Processing PPC claim #${index + 1}...`);
+        setTimeout(() => {
+          bonus += ppcRewardAmount;
+          localStorage.setItem(ppcClaimKey, Date.now().toString());
+          saveUserData();
+          updateRewardButtons();
+          showToast(`You earned +${ppcRewardAmount} BDT from PPC #${index + 1}!`);
+          btn.disabled = false;
+          bonusEarnedEl.textContent = bonus.toFixed(2);
+          updateTotalBalance();
+        }, 3000);
+      });
     });
 
     // Update cooldown timers for reward buttons
     function updateRewardButtons() {
-      // Video ad reward
-      if (canClaim('lastVideoClaim', rewardCooldown)) {
-        videoRewardTimer.textContent = 'Ready to claim';
-        claimVideoRewardBtn.disabled = false;
-      } else {
-        const timeLeft = timeToNextClaim('lastVideoClaim', rewardCooldown);
-        videoRewardTimer.textContent = 'Next claim in: ' + formatTimeLeft(timeLeft);
-        claimVideoRewardBtn.disabled = true;
-      }
-      // PPC reward
-      if (canClaim('lastPpcClaim', rewardCooldown)) {
-        ppcRewardTimer.textContent = 'Ready to claim';
-        claimPpcRewardBtn.disabled = false;
-      } else {
-        const timeLeft = timeToNextClaim('lastPpcClaim', rewardCooldown);
-        ppcRewardTimer.textContent = 'Next claim in: ' + formatTimeLeft(timeLeft);
-        claimPpcRewardBtn.disabled = true;
-      }
+      // Video ad rewards - handle all 5 buttons
+      claimVideoRewardBtns.forEach((btn, index) => {
+        const videoClaimKey = `lastVideoClaim${index + 1}`;
+        if (canClaim(videoClaimKey, rewardCooldown)) {
+          videoRewardTimers[index].textContent = 'Ready to claim';
+          btn.disabled = false;
+        } else {
+          const timeLeft = timeToNextClaim(videoClaimKey, rewardCooldown);
+          videoRewardTimers[index].textContent = 'Next claim in: ' + formatTimeLeft(timeLeft);
+          btn.disabled = true;
+        }
+      });
+      // PPC rewards - handle all 5 buttons
+      claimPpcRewardBtns.forEach((btn, index) => {
+        const ppcClaimKey = `lastPpcClaim${index + 1}`;
+        if (canClaim(ppcClaimKey, rewardCooldown)) {
+          ppcRewardTimers[index].textContent = 'Ready to claim';
+          btn.disabled = false;
+        } else {
+          const timeLeft = timeToNextClaim(ppcClaimKey, rewardCooldown);
+          ppcRewardTimers[index].textContent = 'Next claim in: ' + formatTimeLeft(timeLeft);
+          btn.disabled = true;
+        }
+      });
     }
 
     // Update total balance display
@@ -891,11 +1051,30 @@
         showToast('Select a valid amount');
         return;
       }
+      
+      // Create investment record for admin tracking
+      const investment = {
+        id: Date.now(),
+        userId: user.id,
+        userName: user.first_name + (user.last_name ? ' ' + user.last_name : ''),
+        amount: amount,
+        startDate: new Date(),
+        weeklyReturn: amount * 0.22, // 22% weekly return
+        totalReturns: 0,
+        status: 'active',
+        weeksRemaining: 7 // 7 weeks investment period
+      };
+      
+      // Save investment to localStorage for admin panel
+      const existingInvestments = JSON.parse(localStorage.getItem('userInvestments') || '[]');
+      existingInvestments.push(investment);
+      localStorage.setItem('userInvestments', JSON.stringify(existingInvestments));
+      
       currentInvestment += amount;
       saveUserData();
       currentInvestmentEl.textContent = currentInvestment.toFixed(2);
       updateTotalBalance();
-      showToast(`Invested ${amount.toFixed(2)} BDT successfully!`);
+      showToast(`Invested ${amount.toFixed(2)} BDT successfully! Weekly return: ${investment.weeklyReturn.toFixed(2)} BDT`);
     });
 
     // Deposit form handling
@@ -905,6 +1084,10 @@
         showToast('Deposits are currently disabled.');
         return;
       }
+      if (!user) {
+        showToast('Please login first');
+        return;
+      }
       const method = depositMethodSelect.value;
       const amount = parseFloat(depositAmountInput.value);
       const reference = depositReferenceInput.value.trim();
@@ -912,7 +1095,23 @@
         showToast('Please fill all deposit fields correctly.');
         return;
       }
-      // Simulate deposit submission
+      
+      // Save deposit request for admin panel
+      const deposits = JSON.parse(localStorage.getItem('deposits') || '[]');
+      const newDeposit = {
+        id: Date.now(),
+        userId: user.id,
+        userName: user.first_name + (user.last_name ? ' ' + user.last_name : ''),
+        amount: amount,
+        method: method,
+        reference: reference,
+        status: 'pending',
+        timestamp: Date.now()
+      };
+      
+      deposits.push(newDeposit);
+      localStorage.setItem('deposits', JSON.stringify(deposits));
+      
       showToast(`Deposit request sent (${method.toUpperCase()}, ${amount}). Admin will verify soon.`);
       depositForm.reset();
     });
@@ -921,6 +1120,10 @@
       e.preventDefault();
       if (!withdrawEnabled) {
         showToast('Withdrawals are currently disabled.');
+        return;
+      }
+      if (!user) {
+        showToast('Please login first');
         return;
       }
       const method = withdrawMethodSelect.value;
@@ -935,6 +1138,23 @@
         showToast('Insufficient balance to withdraw that amount.');
         return;
       }
+
+      // Save withdrawal request for admin panel
+      const withdrawals = JSON.parse(localStorage.getItem('withdrawals') || '[]');
+      const newWithdrawal = {
+        id: Date.now(),
+        userId: user.id,
+        userName: user.first_name + (user.last_name ? ' ' + user.last_name : ''),
+        amount: amount,
+        method: method,
+        address: address,
+        status: 'pending',
+        timestamp: Date.now()
+      };
+      
+      withdrawals.push(newWithdrawal);
+      localStorage.setItem('withdrawals', JSON.stringify(withdrawals));
+      
       bonus -= amount;
       saveUserData();
       bonusEarnedEl.textContent = bonus.toFixed(2);
@@ -960,10 +1180,25 @@
     // Load admin settings on initialization
     loadAdminSettings();
 
+    // Load video URLs from admin settings
+    function loadVideoUrls() {
+      const videoUrls = JSON.parse(localStorage.getItem('videoAdUrls') || '{}');
+      
+      // Update video iframes with admin-set URLs
+      Object.entries(videoUrls).forEach(([key, url]) => {
+        const number = key.replace('video', '');
+        const iframe = document.getElementById(`video-iframe-${number}`);
+        if (iframe && url) {
+          iframe.src = url;
+        }
+      });
+    }
+
     // Initialization
     if (!loadUserData()) {
       console.log('No saved user data found.');
     }
+    loadVideoUrls(); // Load admin-set video URLs
     renderUI();
 
   })();
