@@ -134,7 +134,8 @@
     padding: 1rem;
   }
   input[type=number],
-  input[type=text] {
+  input[type=text],
+  select {
     width: 100%;
     padding: 0.5rem;
     margin-top: 0.5rem;
@@ -164,6 +165,13 @@
     font-weight: 600;
     margin-bottom: 1rem;
     color: var(--primary-color);
+    text-align: center;
+  }
+  .total-balance {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #007acc;
     text-align: center;
   }
   .video-container {
@@ -227,6 +235,7 @@
       </div>
     </div>
     <div class="card">
+      <div class="total-balance" id="total-balance">Total Balance: $0.00</div>
       <div class="bonus" id="bonus-info">Referral Bonus: 0</div>
       <div class="reward-counter" id="total-rewards">Total Rewards: 0</div>
       <button class="cta" id="claim-bonus-btn">Claim Bonus</button>
@@ -270,22 +279,39 @@
   </section>
   <section class="page" id="page-wallet" role="main" tabindex="0" aria-label="Deposit and Withdraw page">
     <div class="card">
-      <h3>Offline Deposit & Withdraw</h3>
+      <h3>Offline Deposit</h3>
       <label for="deposit-method">Select Deposit Method:</label>
       <select id="deposit-method" aria-label="Select deposit method">
         <option value="paypal">PayPal</option>
         <option value="bkash">bKash</option>
       </select>
+      <div id="deposit-paypal-fields" class="payment-fields">
+        <label for="deposit-paypal-email">PayPal Email:</label>
+        <input type="email" id="deposit-paypal-email" placeholder="your-paypal-email@example.com" />
+      </div>
+      <div id="deposit-bkash-fields" class="payment-fields" style="display:none;">
+        <label for="deposit-bkash-number">bKash Phone Number:</label>
+        <input type="tel" id="deposit-bkash-number" placeholder="+8801XXXXXXXXX" />
+      </div>
       <label for="deposit-amount">Amount to Deposit:</label>
       <input type="number" id="deposit-amount" min="1" step="any" />
       <button class="cta" id="deposit-btn">Deposit (Offline)</button>
     </div>
     <div class="card">
+      <h3>Offline Withdraw</h3>
       <label for="withdraw-method">Select Withdraw Method:</label>
       <select id="withdraw-method" aria-label="Select withdraw method">
         <option value="paypal">PayPal</option>
         <option value="bkash">bKash</option>
       </select>
+      <div id="withdraw-paypal-fields" class="payment-fields">
+        <label for="withdraw-paypal-email">PayPal Email:</label>
+        <input type="email" id="withdraw-paypal-email" placeholder="your-paypal-email@example.com" />
+      </div>
+      <div id="withdraw-bkash-fields" class="payment-fields" style="display:none;">
+        <label for="withdraw-bkash-number">bKash Phone Number:</label>
+        <input type="tel" id="withdraw-bkash-number" placeholder="+8801XXXXXXXXX" />
+      </div>
       <label for="withdraw-amount">Amount to Withdraw:</label>
       <input type="number" id="withdraw-amount" min="1" step="any" />
       <button class="cta" id="withdraw-btn">Withdraw (Offline)</button>
@@ -416,11 +442,76 @@
     }
   }
 
-  // Update UI rewards & bonus info
+  // Investments management
+  let investments = getStorage(STORAGE_KEYS.investments, []);
+
+  // Format date
+  function formatDate(d) {
+    const date = new Date(d);
+    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+  }
+
+  // Save investments
+  function saveInvestments(){
+    setStorage(STORAGE_KEYS.investments, investments);
+  }
+
+  // Render investments list
+  function renderInvestments(){
+    const list = document.getElementById('investments-list');
+    list.innerHTML = '';
+    if(investments.length === 0){
+      list.textContent = 'No active investments yet.';
+      return;
+    }
+    investments.forEach(inv => {
+      let div = document.createElement('div');
+      div.className = 'investment-item';
+      let investedDate = formatDate(inv.start);
+      let endingDate = formatDate(inv.end);
+      div.innerHTML = `
+        <strong>Amount:</strong> $${inv.amount.toFixed(2)}<br/>
+        <strong>Start:</strong> ${investedDate}<br/>
+        <strong>Ends:</strong> ${endingDate}<br/>
+        <strong>Status:</strong> ${inv.active ? 'Active' : 'Completed'}<br/>
+        <strong>Bonus Earned:</strong> $${(inv.amount*0.05).toFixed(2)}
+      `;
+      list.appendChild(div);
+    });
+  }
+
+  // Update investment status (check if ended)
+  function updateInvestmentStatus(){
+    const now = new Date();
+    let updated = false;
+    investments.forEach((inv, i) => {
+      if(inv.active && new Date(inv.end) <= now){
+        inv.active = false;
+        updated = true;
+      }
+    });
+    if(updated) saveInvestments();
+    renderInvestments();
+  }
+
+  // Calculate total investment bonus for display
+  function calcInvestmentBonus(){
+    return investments.reduce((acc, inv) => acc + (inv.amount * 0.05), 0);
+  }
+
+  // Update UI rewards & bonus info and total balance
   function updateRewardsUI(){
-    document.getElementById('total-rewards').textContent = 'Total Rewards: ' + rewards;
-    document.getElementById('bonus-info').textContent = 'Referral Bonus: ' + referralBonus;
-    document.getElementById('claim-bonus-btn').disabled = referralBonus <= 0;
+    const totalBalanceEl = document.getElementById('total-balance');
+    const totalRewardsEl = document.getElementById('total-rewards');
+    const bonusInfoEl = document.getElementById('bonus-info');
+    const claimBonusBtn = document.getElementById('claim-bonus-btn');
+    let investmentBonus = calcInvestmentBonus();
+    // Total balance is rewards + investment bonus
+    let totalBalance = rewards + investmentBonus;
+    totalBalanceEl.textContent = 'Total Balance: $' + totalBalance.toFixed(2);
+    totalRewardsEl.textContent = 'Total Rewards (Points): ' + rewards;
+    bonusInfoEl.textContent = 'Referral Bonus: ' + referralBonus;
+    claimBonusBtn.disabled = referralBonus <= 0;
   }
 
   // Claim bonus button click handler
@@ -464,43 +555,8 @@
     alert('You earned 2 points for clicking!');
   });
 
-  // Investments management
-  let investments = getStorage(STORAGE_KEYS.investments, []);
   const investBtn = document.getElementById('invest-btn');
   const investmentAmountInput = document.getElementById('investment-amount');
-
-  // Format date
-  function formatDate(d) {
-    const date = new Date(d);
-    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
-  }
-  // Save investments
-  function saveInvestments(){
-    setStorage(STORAGE_KEYS.investments, investments);
-  }
-  // Render investments list
-  function renderInvestments(){
-    const list = document.getElementById('investments-list');
-    list.innerHTML = '';
-    if(investments.length === 0){
-      list.textContent = 'No active investments yet.';
-      return;
-    }
-    investments.forEach(inv => {
-      let div = document.createElement('div');
-      div.className = 'investment-item';
-      let investedDate = formatDate(inv.start);
-      let endingDate = formatDate(inv.end);
-      div.innerHTML = `
-        <strong>Amount:</strong> $${inv.amount.toFixed(2)}<br/>
-        <strong>Start:</strong> ${investedDate}<br/>
-        <strong>Ends:</strong> ${endingDate}<br/>
-        <strong>Status:</strong> ${inv.active ? 'Active' : 'Completed'}<br/>
-        <strong>Bonus Earned:</strong> $${(inv.amount*0.05).toFixed(2)}
-      `;
-      list.appendChild(div);
-    });
-  }
   investBtn.addEventListener('click', function(){
     let val = parseFloat(investmentAmountInput.value);
     if(isNaN(val) || val < 10){
@@ -520,19 +576,8 @@
     renderInvestments();
     investmentAmountInput.value = '';
     alert('Investment recorded for 7 days with 5% weekly bonus.');
+    updateRewardsUI();
   });
-
-  // Update investment status (check if ended)
-  function updateInvestmentStatus(){
-    const now = new Date();
-    investments.forEach((inv, i) => {
-      if(inv.active && new Date(inv.end) <= now){
-        inv.active = false;
-      }
-    });
-    saveInvestments();
-    renderInvestments();
-  }
 
   // Transactions storage and UI for deposit/withdraw
   let transactions = getStorage(STORAGE_KEYS.transactions, []);
@@ -553,21 +598,22 @@
   }
 
   // Add transaction
-  function addTransaction(type, method, amount){
+  function addTransaction(type, method, amount, extraInfo = '') {
     const now = new Date();
     const newTransaction = {
       type,
       method,
       amount,
       status: 'Pending',
-      date: now.toISOString()
+      date: now.toISOString(),
+      extraInfo
     };
     transactions.push(newTransaction);
     setStorage(STORAGE_KEYS.transactions, transactions);
     renderTransactions();
   }
 
-  // Deposit offline button
+  // Deposit offline button logic
   const depositBtn = document.getElementById('deposit-btn');
   depositBtn.addEventListener('click', function(){
     const amount = parseFloat(document.getElementById('deposit-amount').value);
@@ -576,12 +622,33 @@
       alert('Enter a valid deposit amount.');
       return;
     }
-    addTransaction('deposit', method, amount);
+    let extraInfo = '';
+    if(method === 'paypal'){
+      let email = document.getElementById('deposit-paypal-email').value.trim();
+      if(!email || !validateEmail(email)){
+        alert('Please enter a valid PayPal email for deposit.');
+        return;
+      }
+      extraInfo = 'PayPal Email: ' + email;
+    } else if(method === 'bkash'){
+      let number = document.getElementById('deposit-bkash-number').value.trim();
+      if(!number || !validatePhone(number)){
+        alert('Please enter a valid bKash phone number for deposit.');
+        return;
+      }
+      extraInfo = 'bKash Number: ' + number;
+    }
+    addTransaction('deposit', method, amount, extraInfo);
     alert('Deposit request submitted. It will be reviewed and approved by backend.');
     document.getElementById('deposit-amount').value = '';
+    if(method === 'paypal'){
+      document.getElementById('deposit-paypal-email').value = '';
+    } else {
+      document.getElementById('deposit-bkash-number').value = '';
+    }
   });
 
-  // Withdraw offline button
+  // Withdraw offline button logic
   const withdrawBtn = document.getElementById('withdraw-btn');
   withdrawBtn.addEventListener('click', function(){
     const amount = parseFloat(document.getElementById('withdraw-amount').value);
@@ -590,10 +657,58 @@
       alert('Enter a valid withdraw amount.');
       return;
     }
-    addTransaction('withdraw', method, amount);
+    let extraInfo = '';
+    if(method === 'paypal'){
+      let email = document.getElementById('withdraw-paypal-email').value.trim();
+      if(!email || !validateEmail(email)){
+        alert('Please enter a valid PayPal email for withdraw.');
+        return;
+      }
+      extraInfo = 'PayPal Email: ' + email;
+    } else if(method === 'bkash'){
+      let number = document.getElementById('withdraw-bkash-number').value.trim();
+      if(!number || !validatePhone(number)){
+        alert('Please enter a valid bKash phone number for withdraw.');
+        return;
+      }
+      extraInfo = 'bKash Number: ' + number;
+    }
+    addTransaction('withdraw', method, amount, extraInfo);
     alert('Withdraw request submitted. It will be reviewed and approved by backend.');
     document.getElementById('withdraw-amount').value = '';
+    if(method === 'paypal'){
+      document.getElementById('withdraw-paypal-email').value = '';
+    } else {
+      document.getElementById('withdraw-bkash-number').value = '';
+    }
   });
+
+  // Show/hide email and phone inputs depending on selected method
+  function updateDepositFields(){
+    const method = document.getElementById('deposit-method').value;
+    document.getElementById('deposit-paypal-fields').style.display = method === 'paypal' ? 'block' : 'none';
+    document.getElementById('deposit-bkash-fields').style.display = method === 'bkash' ? 'block' : 'none';
+  }
+  function updateWithdrawFields(){
+    const method = document.getElementById('withdraw-method').value;
+    document.getElementById('withdraw-paypal-fields').style.display = method === 'paypal' ? 'block' : 'none';
+    document.getElementById('withdraw-bkash-fields').style.display = method === 'bkash' ? 'block' : 'none';
+  }
+
+  document.getElementById('deposit-method').addEventListener('change', updateDepositFields);
+  document.getElementById('withdraw-method').addEventListener('change', updateWithdrawFields);
+
+  // Basic email validation
+  function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  }
+
+  // Basic phone validation (simple digit + plus, length 10-15)
+  function validatePhone(phone) {
+    const re = /^\+?[0-9]{10,15}$/;
+    return re.test(phone);
+  }
 
   // Navigation logic
   const pages = document.querySelectorAll('section.page');
@@ -623,6 +738,8 @@
   renderInvestments();
   renderTransactions();
   updateInvestmentStatus();
+  updateDepositFields();
+  updateWithdrawFields();
 
   // Simulate referral bonus increase (for demo)
   // Only if bonus == 0, increment it for demo after 5 seconds:
@@ -633,9 +750,6 @@
       updateRewardsUI();
     }, 5000);
   }
-
-  // Accessibility hint: focus management on navigation change is handled above
-
 </script>
 </body>
 </html>
