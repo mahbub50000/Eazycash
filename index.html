@@ -267,30 +267,235 @@
       <div id="investment-list"></div>
     </section>
 
-    <!-- Deposit & Withdraw tab -->
-    <section class="section" id="finance-section">
-      <h2>Deposit & Withdrawal</h2>
-      <div style="margin-bottom: 20px;">
-        <h3>Request Deposit</h3>
-        <label for="deposit-amount">Deposit Amount ($):</label>
-        <input type="number" id="deposit-amount" min="1" step="1" placeholder="Enter deposit amount" />
-        <button class="btn" id="request-deposit">Request Deposit</button>
-        <div id="deposit-msg"></div>
-      </div>
-      <div>
-        <h3>Request Withdrawal</h3>
-        <label for="withdraw-amount">Withdrawal Amount ($):</label>
-        <input type="number" id="withdraw-amount" min="1" step="1" placeholder="Enter withdrawal amount" />
-        <button class="btn" id="make-withdrawal">Request Withdrawal</button>
-        <div id="withdraw-msg"></div>
-      </div>
+   <!-- Deposit & Withdraw tab -->
+<section class="section" id="finance-section">
+  <h2>Deposit & Withdrawal</h2>
+  <div style="margin-bottom: 20px;">
+    <h3>Request Deposit</h3>
+    <label for="deposit-amount">Deposit Amount ($):</label>
+    <input type="number" id="deposit-amount" min="1" step="1" placeholder="Enter deposit amount" />
+    <button class="btn" id="request-deposit">Request Deposit</button>
+    <div id="deposit-msg"></div>
+  </div>
+  <div>
+    <h3>Request Withdrawal</h3>
+    <label for="withdraw-amount">Withdrawal Amount ($):</label>
+    <input type="number" id="withdraw-amount" min="1" step="1" placeholder="Enter withdrawal amount" />
+    <button class="btn" id="make-withdrawal">Request Withdrawal</button>
+    <div id="withdraw-msg"></div>
+  </div>
 
-      <h3 style="margin-top: 30px;">Deposit Requests</h3>
-      <ul id="deposit-requests-list" style="list-style:none; padding-left:0; margin-bottom: 20px;"></ul>
+  <h3 style="margin-top: 30px;">Deposit Requests</h3>
+  <ul id="deposit-requests-list" style="list-style:none; padding-left:0; margin-bottom: 20px;"></ul>
 
-      <h3 style="margin-top: 10px;">Withdrawal Requests</h3>
-      <ul id="withdrawal-requests-list" style="list-style:none; padding-left:0;"></ul>
-    </section>
+  <h3 style="margin-top: 10px;">Withdrawal Requests</h3>
+  <ul id="withdrawal-requests-list" style="list-style:none; padding-left:0;"></ul>
+</section>
+
+<script>
+  // Deposit and Withdrawal functions
+
+  function updateDepositsWithdrawalsUI() {
+    const user = getCurrentUser ();
+    if (!user) return;
+
+    // Deposit requests list for user
+    const depositList = document.getElementById('deposit-requests-list');
+    depositList.innerHTML = '';
+
+    if (!user.deposits.length) {
+      depositList.innerHTML = '<li>No deposit requests.</li>';
+    } else {
+      user.deposits.forEach(dep => {
+        const li = document.createElement('li');
+        li.className = 'transaction-item';
+        let statusClass = '';
+        if(dep.status === 'pending') statusClass = 'status-pending';
+        else if(dep.status === 'approved') statusClass = 'status-approved';
+        else if(dep.status === 'rejected') statusClass = 'status-rejected';
+
+        li.innerHTML = `
+          Amount: $${formatMoney(dep.amount)} 
+          <span class="status-badge ${statusClass}">${dep.status.charAt(0).toUpperCase() + dep.status.slice(1)}</span><br />
+          Requested on: ${new Date(dep.timestamp).toLocaleString()}
+        `;
+        depositList.appendChild(li);
+      });
+    }
+
+    // Withdrawal requests list for user
+    const withdrawList = document.getElementById('withdrawal-requests-list');
+    withdrawList.innerHTML = '';
+    const pendingWithdrawals = user.withdrawals.filter(w => w.status === 'pending');
+    if (!pendingWithdrawals.length) {
+      withdrawList.innerHTML = '<li>No pending withdrawal requests.</li>';
+    } else {
+      pendingWithdrawals.forEach(w => {
+        const li = document.createElement('li');
+        li.className = 'transaction-item';
+        li.textContent = `Amount: $${formatMoney(w.amount)} | Requested on: ${new Date(w.timestamp).toLocaleString()}`;
+        withdrawList.appendChild(li);
+      });
+    }
+  }
+
+  function setupDepositWithdrawHandlers() {
+    const depositBtn = document.getElementById('request-deposit');
+    const depositMsg = document.getElementById('deposit-msg');
+    depositBtn.onclick = () => {
+      depositMsg.textContent = '';
+      const amount = parseFloat(document.getElementById('deposit-amount').value);
+      const user = getCurrentUser ();
+      if (!user) {
+        depositMsg.textContent = 'User  not found.';
+        depositMsg.className = 'error-msg';
+        return;
+      }
+      if (isNaN(amount) || amount <= 0) {
+        depositMsg.textContent = 'Enter a valid deposit amount.';
+        depositMsg.className = 'error-msg';
+        return;
+      }
+      // Add deposit request with status pending, no balance increase yet
+      user.deposits.push({
+        amount,
+        timestamp: Date.now(),
+        status: 'pending',
+      });
+      saveAppData();
+      updateDepositsWithdrawalsUI();
+      depositMsg.textContent = `Deposit request for $${formatMoney(amount)} submitted for approval.`;
+      depositMsg.className = 'success-msg';
+      document.getElementById('deposit-amount').value = '';
+    };
+
+    const withdrawBtn = document.getElementById('make-withdrawal');
+    const withdrawMsg = document.getElementById('withdraw-msg');
+    withdrawBtn.onclick = () => {
+      withdrawMsg.textContent = '';
+      const amount = parseFloat(document.getElementById('withdraw-amount').value);
+      const user = getCurrentUser ();
+      if (!user) {
+        withdrawMsg.textContent = 'User  not found.';
+        withdrawMsg.className = 'error-msg';
+        return;
+      }
+      if (isNaN(amount) || amount <= 0) {
+        withdrawMsg.textContent = 'Enter a valid withdrawal amount.';
+        withdrawMsg.className = 'error-msg';
+        return;
+      }
+      if (amount > user.balance + user.bonusBalance) {
+        withdrawMsg.textContent = 'Insufficient total balance (balance + bonus) to withdraw this amount.';
+        withdrawMsg.className = 'error-msg';
+        return;
+      }
+
+      // Withdrawal requests deduct from regular balance first, then bonus balance if needed
+      let remaining = amount;
+      if (user.balance >= remaining) {
+        user.balance -= remaining;
+        remaining = 0;
+      } else {
+        remaining -= user.balance;
+        user.balance = 0;
+      }
+      if (remaining > 0) {
+        if (user.bonusBalance >= remaining) {
+          user.bonusBalance -= remaining;
+          remaining = 0;
+        } else {
+          withdrawMsg.textContent = 'Unexpected error due to insufficient funds.';
+          withdrawMsg.className = 'error-msg';
+          return;
+        }
+      }
+
+      const withdrawalRequest = {
+        amount,
+        timestamp: Date.now(),
+        status: 'pending',
+        userId: user.id,
+      };
+      user.withdrawals.push(withdrawalRequest);
+      appData.users[user.id] = user;
+      saveAppData();
+      updateProfileUI(user);
+      updateDepositsWithdrawalsUI();
+      withdrawMsg.textContent = `Withdrawal request for $${formatMoney(amount)} submitted for approval.`;
+      withdrawMsg.className = 'success-msg';
+      document.getElementById('withdraw-amount').value = '';
+    };
+  }
+
+  // Admin panel functionality
+
+  function updateAdminDepositsList() {
+    const ul = document.getElementById('admin-deposits-list');
+    ul.innerHTML = '';
+    let found = false;
+    Object.values(appData.users).forEach(user => {
+      user.deposits.forEach(d => {
+        if (d.status === 'pending') {
+          found = true;
+          const li = document.createElement('li');
+          li.className = 'transaction-item';
+          li.style.display = 'flex';
+          li.style.justifyContent = 'space-between';
+          li.style.alignItems = 'center';
+          li.style.marginBottom = '12px';
+
+          li.innerHTML = `
+            <div>
+              <strong>User ID: ${user.id}</strong><br />
+              Amount: $${formatMoney(d.amount)}<br />
+              Requested on: ${new Date(d.timestamp).toLocaleString()}
+            </div>
+          `;
+          const actionsDiv = document.createElement('div');
+
+          const approveBtn = document.createElement('button');
+          approveBtn.className = 'small-button';
+          approveBtn.textContent = 'Approve';
+          approveBtn.style.background = '#2ABA6D';
+          approveBtn.style.marginRight = '8px';
+          approveBtn.onclick = () => {
+            // Approve deposit: mark status approved, add amount to balance
+            d.status = 'approved';
+            user.balance += d.amount;
+            saveAppData();
+            alert(`Deposit of $${formatMoney(d.amount)} approved for User ID ${user.id}.`);
+            updateAdminDepositsList();
+            updateDepositsWithdrawalsUI();
+            updateProfileUI(getCurrentUser ());
+          };
+
+          const rejectBtn = document.createElement('button');
+          rejectBtn.className = 'small-button';
+          rejectBtn.textContent = 'Reject';
+          rejectBtn.style.background = '#d9534f';
+          rejectBtn.onclick = () => {
+            // Reject deposit: mark rejected without balance addition
+            if (d.status !== 'pending') return;
+            d.status = 'rejected';
+            saveAppData();
+            alert(`Deposit of $${formatMoney(d.amount)} rejected for User ID ${user.id}.`);
+            updateAdminDepositsList();
+            updateDepositsWithdrawalsUI();
+          };
+
+          actionsDiv.appendChild(approveBtn);
+          actionsDiv.appendChild(rejectBtn);
+          li.appendChild(actionsDiv);
+          ul.appendChild(li);
+        }
+      });
+    });
+    if (!found) {
+      ul.innerHTML = '<li>No pending deposit requests.</li>';
+    }
+  }
+
 
     <!-- Admin Panel tab -->
     <section class="section" id="admin-section">
