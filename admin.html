@@ -404,6 +404,65 @@
             <!-- Pending withdrawals will be populated here -->
           </div>
         </div>
+        
+        <!-- Investment Tracking -->
+        <div class="dashboard-card">
+          <h3>Investment Tracking</h3>
+          <div class="user-list" id="investment-tracking">
+            <!-- Investment data will be populated here -->
+          </div>
+        </div>
+        
+        <!-- Investment Statistics -->
+        <div class="dashboard-card">
+          <h3>Investment Statistics</h3>
+          <div class="stat-item">
+            <span>Total Investments:</span>
+            <span class="stat-value" id="total-investments">0 BDT</span>
+          </div>
+          <div class="stat-item">
+            <span>Active Investors:</span>
+            <span class="stat-value" id="active-investors">0</span>
+          </div>
+          <div class="stat-item">
+            <span>Weekly Returns Paid:</span>
+            <span class="stat-value" id="weekly-returns">0 BDT</span>
+          </div>
+          <div class="stat-item">
+            <span>Average Investment:</span>
+            <span class="stat-value" id="avg-investment">0 BDT</span>
+          </div>
+        </div>
+        
+        <!-- Video Ad Management -->
+        <div class="dashboard-card">
+          <h3>Video Ad Management</h3>
+          <div class="form-group">
+            <label for="video-1-url">Video Ad #1 URL:</label>
+            <input type="text" id="video-1-url" placeholder="YouTube embed URL">
+            <button class="btn-small btn-approve" onclick="updateVideoUrl(1)">Update</button>
+          </div>
+          <div class="form-group">
+            <label for="video-2-url">Video Ad #2 URL:</label>
+            <input type="text" id="video-2-url" placeholder="YouTube embed URL">
+            <button class="btn-small btn-approve" onclick="updateVideoUrl(2)">Update</button>
+          </div>
+          <div class="form-group">
+            <label for="video-3-url">Video Ad #3 URL:</label>
+            <input type="text" id="video-3-url" placeholder="YouTube embed URL">
+            <button class="btn-small btn-approve" onclick="updateVideoUrl(3)">Update</button>
+          </div>
+          <div class="form-group">
+            <label for="video-4-url">Video Ad #4 URL:</label>
+            <input type="text" id="video-4-url" placeholder="YouTube embed URL">
+            <button class="btn-small btn-approve" onclick="updateVideoUrl(4)">Update</button>
+          </div>
+          <div class="form-group">
+            <label for="video-5-url">Video Ad #5 URL:</label>
+            <input type="text" id="video-5-url" placeholder="YouTube embed URL">
+            <button class="btn-small btn-approve" onclick="updateVideoUrl(5)">Update</button>
+          </div>
+        </div>
       </div>
       
       <a href="code.html" class="back-to-app">← Back to Main App</a>
@@ -450,22 +509,93 @@
   const recentUsersEl = document.getElementById('recent-users');
   const pendingDepositsEl = document.getElementById('pending-deposits');
   const pendingWithdrawalsEl = document.getElementById('pending-withdrawals');
+  const investmentTrackingEl = document.getElementById('investment-tracking');
   
-  // Mock data for demonstration
-  let mockUsers = [
-    { id: 12345, name: 'John Doe', balance: 150.50, lastActive: new Date(), status: 'active' },
-    { id: 67890, name: 'Jane Smith', balance: 89.25, lastActive: new Date(Date.now() - 3600000), status: 'active' },
-    { id: 11111, name: 'Bob Johnson', balance: 200.00, lastActive: new Date(Date.now() - 7200000), status: 'inactive' }
-  ];
+  // Investment statistics elements
+  const totalInvestmentsEl = document.getElementById('total-investments');
+  const activeInvestorsEl = document.getElementById('active-investors');
+  const weeklyReturnsEl = document.getElementById('weekly-returns');
+  const avgInvestmentEl = document.getElementById('avg-investment');
   
-  let mockDeposits = [
-    { id: 1, userId: 12345, userName: 'John Doe', amount: 50, method: 'bKash', reference: 'TXN123456', status: 'pending' },
-    { id: 2, userId: 67890, userName: 'Jane Smith', amount: 25, method: 'PayPal', reference: 'PP789012', status: 'pending' }
-  ];
+  // Load real data from localStorage
+  function loadUsers() {
+    const users = localStorage.getItem('registeredUsers') || '[]';
+    try {
+      return JSON.parse(users);
+    } catch {
+      return [];
+    }
+  }
+
+  function loadTransactions() {
+    const deposits = localStorage.getItem('deposits') || '[]';
+    const withdrawals = localStorage.getItem('withdrawals') || '[]';
+    try {
+      return {
+        deposits: JSON.parse(deposits),
+        withdrawals: JSON.parse(withdrawals)
+      };
+    } catch {
+      return { deposits: [], withdrawals: [] };
+    }
+  }
+
+  function getActiveUsers() {
+    const users = loadUsers();
+    const now = Date.now();
+    const oneDayAgo = now - (24 * 60 * 60 * 1000);
+    return users.filter(user => {
+      const lastActive = user.lastActive ? new Date(user.lastActive).getTime() : 0;
+      return lastActive > oneDayAgo;
+    });
+  }
+
+  function getTotalDeposits() {
+    const { deposits } = loadTransactions();
+    return deposits.reduce((sum, d) => sum + (parseFloat(d.amount) || 0), 0);
+  }
+
+  function getTotalWithdrawals() {
+    const { withdrawals } = loadTransactions();
+    return withdrawals.reduce((sum, w) => sum + (parseFloat(w.amount) || 0), 0);
+  }
+
+  function getPendingTransactions() {
+    const { deposits, withdrawals } = loadTransactions();
+    return {
+      deposits: deposits.filter(d => d.status === 'pending'),
+      withdrawals: withdrawals.filter(w => w.status === 'pending')
+    };
+  }
+
+  // Initialize data
+  let users = loadUsers();
+  const transactions = loadTransactions();
+  let pendingDeposits = transactions.deposits.filter(d => d.status === 'pending');
+  let pendingWithdrawals = transactions.withdrawals.filter(w => w.status === 'pending');
   
-  let mockWithdrawals = [
-    { id: 1, userId: 11111, userName: 'Bob Johnson', amount: 30, method: 'bKash', address: '+8801234567890', status: 'pending' }
-  ];
+  // Load real investment data from localStorage
+  function loadInvestments() {
+    const investments = localStorage.getItem('userInvestments');
+    if (investments) {
+      try {
+        return JSON.parse(investments).map(inv => ({
+          ...inv,
+          startDate: new Date(inv.startDate) // Convert string back to Date
+        }));
+      } catch {
+        return [];
+      }
+    }
+    return [];
+  }
+  
+  // Save investments back to localStorage
+  function saveInvestments(investments) {
+    localStorage.setItem('userInvestments', JSON.stringify(investments));
+  }
+  
+  let mockInvestments = loadInvestments();
   
   // Utility functions
   function showToast(message, duration = 3000) {
@@ -554,19 +684,30 @@
   
   function renderDashboard() {
     // Update statistics
-    totalUsersEl.textContent = mockUsers.length;
-    activeUsersEl.textContent = mockUsers.filter(u => u.status === 'active').length;
-    totalDepositsEl.textContent = mockDeposits.reduce((sum, d) => sum + d.amount, 0).toFixed(2) + ' BDT';
-    totalWithdrawalsEl.textContent = mockWithdrawals.reduce((sum, w) => sum + w.amount, 0).toFixed(2) + ' BDT';
-    pendingRequestsEl.textContent = mockDeposits.length + mockWithdrawals.length;
+    totalUsersEl.textContent = users.length;
+    activeUsersEl.textContent = getActiveUsers().length;
+    totalDepositsEl.textContent = getTotalDeposits().toFixed(2) + ' BDT';
+    totalWithdrawalsEl.textContent = getTotalWithdrawals().toFixed(2) + ' BDT';
+    pendingRequestsEl.textContent = pendingDeposits.length + pendingWithdrawals.length;
+    
+    // Update investment statistics
+    const totalInvestmentAmount = mockInvestments.reduce((sum, inv) => sum + inv.amount, 0);
+    const activeInvestments = mockInvestments.filter(inv => inv.status === 'active');
+    const totalWeeklyReturns = mockInvestments.reduce((sum, inv) => sum + inv.totalReturns, 0);
+    const avgInvestment = mockInvestments.length > 0 ? totalInvestmentAmount / mockInvestments.length : 0;
+    
+    totalInvestmentsEl.textContent = totalInvestmentAmount.toFixed(2) + ' BDT';
+    activeInvestorsEl.textContent = activeInvestments.length;
+    weeklyReturnsEl.textContent = totalWeeklyReturns.toFixed(2) + ' BDT';
+    avgInvestmentEl.textContent = avgInvestment.toFixed(2) + ' BDT';
     
     // Render recent users
-    recentUsersEl.innerHTML = mockUsers.map(user => `
+    recentUsersEl.innerHTML = users.slice(0, 5).map(user => `
       <div class="user-item">
         <div class="user-info">
-          <div class="user-name">${user.name}</div>
-          <div class="user-details">ID: ${user.id} | Balance: ${user.balance.toFixed(2)} BDT</div>
-          <div class="user-details">Last Active: ${formatDate(user.lastActive)}</div>
+          <div class="user-name">${user.first_name} ${user.last_name || ''}</div>
+          <div class="user-details">ID: ${user.id}</div>
+          <div class="user-details">Last Active: ${formatDate(new Date(user.lastActive || Date.now()))}</div>
         </div>
         <div class="user-actions">
           <button class="btn-small btn-view" onclick="viewUser(${user.id})">View</button>
@@ -575,7 +716,7 @@
     `).join('');
     
     // Render pending deposits
-    pendingDepositsEl.innerHTML = mockDeposits.map(deposit => `
+    pendingDepositsEl.innerHTML = pendingDeposits.map(deposit => `
       <div class="user-item">
         <div class="user-info">
           <div class="user-name">${deposit.userName}</div>
@@ -590,7 +731,7 @@
     `).join('');
     
     // Render pending withdrawals
-    pendingWithdrawalsEl.innerHTML = mockWithdrawals.map(withdrawal => `
+    pendingWithdrawalsEl.innerHTML = pendingWithdrawals.map(withdrawal => `
       <div class="user-item">
         <div class="user-info">
           <div class="user-name">${withdrawal.userName}</div>
@@ -600,6 +741,23 @@
         <div class="user-actions">
           <button class="btn-small btn-approve" onclick="approveWithdrawal(${withdrawal.id})">Approve</button>
           <button class="btn-small btn-reject" onclick="rejectWithdrawal(${withdrawal.id})">Reject</button>
+        </div>
+      </div>
+    `).join('');
+    
+    // Render investment tracking
+    investmentTrackingEl.innerHTML = mockInvestments.map(investment => `
+      <div class="user-item">
+        <div class="user-info">
+          <div class="user-name">${investment.userName}</div>
+          <div class="user-details">Investment: ${investment.amount} BDT | Weekly Return: ${investment.weeklyReturn} BDT</div>
+          <div class="user-details">Started: ${formatDate(investment.startDate)} | Status: ${investment.status}</div>
+          <div class="user-details">Total Returns: ${investment.totalReturns} BDT | Weeks Remaining: ${investment.weeksRemaining}</div>
+        </div>
+        <div class="user-actions">
+          <button class="btn-small btn-view" onclick="viewInvestment(${investment.id})">View</button>
+          ${investment.status === 'active' ? `<button class="btn-small btn-approve" onclick="payWeeklyReturn(${investment.id})">Pay Return</button>` : ''}
+          ${investment.status === 'active' ? `<button class="btn-small btn-reject" onclick="closeInvestment(${investment.id})">Close</button>` : ''}
         </div>
       </div>
     `).join('');
@@ -628,48 +786,112 @@
   
   // Global functions for button actions
   window.viewUser = function(userId) {
-    const user = mockUsers.find(u => u.id === userId);
+    const user = users.find(u => u.id === userId);
     if (user) {
-      showToast(`Viewing user: ${user.name} (ID: ${user.id})`);
+      showToast(`Viewing user: ${user.first_name} ${user.last_name || ''} (ID: ${user.id})`);
     }
   };
   
   window.approveDeposit = function(depositId) {
-    const depositIndex = mockDeposits.findIndex(d => d.id === depositId);
-    if (depositIndex !== -1) {
-      const deposit = mockDeposits[depositIndex];
-      mockDeposits.splice(depositIndex, 1);
-      showToast(`Deposit approved: ${deposit.amount} BDT for ${deposit.userName}`);
-      renderDashboard();
-    }
+    const { deposits } = loadTransactions();
+    const updatedDeposits = deposits.map(d => {
+      if (d.id === depositId) {
+        return { ...d, status: 'approved' };
+      }
+      return d;
+    });
+    
+    localStorage.setItem('deposits', JSON.stringify(updatedDeposits));
+    pendingDeposits = updatedDeposits.filter(d => d.status === 'pending');
+    
+    showToast(`Deposit approved`);
+    renderDashboard();
   };
   
   window.rejectDeposit = function(depositId) {
-    const depositIndex = mockDeposits.findIndex(d => d.id === depositId);
-    if (depositIndex !== -1) {
-      const deposit = mockDeposits[depositIndex];
-      mockDeposits.splice(depositIndex, 1);
-      showToast(`Deposit rejected: ${deposit.amount} BDT for ${deposit.userName}`);
-      renderDashboard();
-    }
+    const { deposits } = loadTransactions();
+    const updatedDeposits = deposits.map(d => {
+      if (d.id === depositId) {
+        return { ...d, status: 'rejected' };
+      }
+      return d;
+    });
+    
+    localStorage.setItem('deposits', JSON.stringify(updatedDeposits));
+    pendingDeposits = updatedDeposits.filter(d => d.status === 'pending');
+    
+    showToast(`Deposit rejected`);
+    renderDashboard();
   };
   
   window.approveWithdrawal = function(withdrawalId) {
-    const withdrawalIndex = mockWithdrawals.findIndex(w => w.id === withdrawalId);
-    if (withdrawalIndex !== -1) {
-      const withdrawal = mockWithdrawals[withdrawalIndex];
-      mockWithdrawals.splice(withdrawalIndex, 1);
-      showToast(`Withdrawal approved: ${withdrawal.amount} BDT for ${withdrawal.userName}`);
+    const { withdrawals } = loadTransactions();
+    const updatedWithdrawals = withdrawals.map(w => {
+      if (w.id === withdrawalId) {
+        return { ...w, status: 'approved' };
+      }
+      return w;
+    });
+    
+    localStorage.setItem('withdrawals', JSON.stringify(updatedWithdrawals));
+    pendingWithdrawals = updatedWithdrawals.filter(w => w.status === 'pending');
+    
+    showToast(`Withdrawal approved`);
+    renderDashboard();
+  };
+  
+  window.rejectWithdrawal = function(withdrawalId) {
+    const { withdrawals } = loadTransactions();
+    const updatedWithdrawals = withdrawals.map(w => {
+      if (w.id === withdrawalId) {
+        return { ...w, status: 'rejected' };
+      }
+      return w;
+    });
+    
+    localStorage.setItem('withdrawals', JSON.stringify(updatedWithdrawals));
+    pendingWithdrawals = updatedWithdrawals.filter(w => w.status === 'pending');
+    
+    showToast(`Withdrawal rejected`);
+    renderDashboard();
+  };
+  
+  // Investment management functions
+  window.viewInvestment = function(investmentId) {
+    const investment = mockInvestments.find(inv => inv.id === investmentId);
+    if (investment) {
+      showToast(`Viewing investment: ${investment.userName} - ${investment.amount} BDT`);
+    }
+  };
+  
+  window.payWeeklyReturn = function(investmentId) {
+    const investment = mockInvestments.find(inv => inv.id === investmentId);
+    if (investment && investment.status === 'active') {
+      investment.totalReturns += investment.weeklyReturn;
+      investment.weeksRemaining = Math.max(0, investment.weeksRemaining - 1);
+      
+      if (investment.weeksRemaining === 0) {
+        investment.status = 'completed';
+      }
+      
+      // Save updated investments
+      saveInvestments(mockInvestments);
+      
+      showToast(`Weekly return paid: ${investment.weeklyReturn} BDT to ${investment.userName}`);
       renderDashboard();
     }
   };
   
-  window.rejectWithdrawal = function(withdrawalId) {
-    const withdrawalIndex = mockWithdrawals.findIndex(w => w.id === withdrawalId);
-    if (withdrawalIndex !== -1) {
-      const withdrawal = mockWithdrawals[withdrawalIndex];
-      mockWithdrawals.splice(withdrawalIndex, 1);
-      showToast(`Withdrawal rejected: ${withdrawal.amount} BDT for ${withdrawal.userName}`);
+  window.closeInvestment = function(investmentId) {
+    const investment = mockInvestments.find(inv => inv.id === investmentId);
+    if (investment && investment.status === 'active') {
+      investment.status = 'closed';
+      investment.weeksRemaining = 0;
+      
+      // Save updated investments
+      saveInvestments(mockInvestments);
+      
+      showToast(`Investment closed for ${investment.userName}`);
       renderDashboard();
     }
   };
@@ -711,8 +933,44 @@
     });
   });
   
+  // Video URL management
+  window.updateVideoUrl = function(videoNumber) {
+    const urlInput = document.getElementById(`video-${videoNumber}-url`);
+    const url = urlInput.value.trim();
+    
+    if (!url) {
+      showToast('Please enter a valid YouTube URL');
+      return;
+    }
+    
+    // Save to localStorage
+    const videoUrls = JSON.parse(localStorage.getItem('videoAdUrls') || '{}');
+    videoUrls[`video${videoNumber}`] = url;
+    localStorage.setItem('videoAdUrls', JSON.stringify(videoUrls));
+    
+    showToast(`Video Ad #${videoNumber} URL updated successfully!`);
+    urlInput.value = '';
+  };
+
   // Initialize
   if (isAdminLoggedIn()) {
+    // Reload all data when dashboard is shown
+    users = loadUsers();
+    const transactions = loadTransactions();
+    pendingDeposits = transactions.deposits.filter(d => d.status === 'pending');
+    pendingWithdrawals = transactions.withdrawals.filter(w => w.status === 'pending');
+    mockInvestments = loadInvestments();
+    
+    // Load saved video URLs
+    const videoUrls = JSON.parse(localStorage.getItem('videoAdUrls') || '{}');
+    Object.entries(videoUrls).forEach(([key, url]) => {
+      const number = key.replace('video', '');
+      const input = document.getElementById(`video-${number}-url`);
+      if (input) {
+        input.value = url;
+      }
+    });
+    
     showDashboard();
   } else {
     showLogin();
