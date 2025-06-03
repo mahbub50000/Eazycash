@@ -6,389 +6,910 @@
 <title>Telegram Mini App - Rewards & Investment</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-  :root {
-    --primary-color: #0088cc; /* Telegram Blue */
-    --secondary-color: #f3f6fb;
-    --accent-color: #00c4ff;
-    --text-color: #222;
-    --muted-color: #666;
-    --bg-color: #fff;
-    --border-radius: 10px;
-    --footer-height: 60px;
-  }
+  /* Reset & base */
   * {
     box-sizing: border-box;
   }
   body {
-    margin: 0; padding: 0; font-family: 'Poppins', sans-serif; background: var(--secondary-color); color: var(--text-color);
-    min-height: 100vh; display: flex; flex-direction: column;
+    margin:0; font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #667eea,#764ba2);
+    color: #f0f0f0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  #app {
+    flex-grow:1;
+    display: flex;
+    flex-direction: column;
+    max-width: 420px;
+    margin: 0 auto;
+    background: #1f1f3a;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+    overflow: hidden;
   }
   header {
-    background: var(--primary-color);
-    color: white;
-    padding: 1rem;
+    padding: 20px;
+    background: #2c2c55;
     text-align: center;
-    font-size: 1.25rem;
     font-weight: 600;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    font-size: 1.5rem;
+    letter-spacing: 1.2px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.8);
   }
   main {
     flex-grow: 1;
-    padding: 1rem;
-    max-width: 480px;
-    margin: 0 auto;
-    width: 100%;
+    padding: 20px;
+    overflow-y: auto;
   }
-  #page-home {
-    background: #d0f0ff; /* soft light blue */
-    border-radius: 15px;
-    padding: 1rem;
-  }
-  #page-home .card {
-    background: white;
-    border-radius: var(--border-radius);
-    box-shadow: 0 3px 12px rgb(0 136 204 / 0.15);
-    margin-bottom: 1rem;
-    padding: 1rem;
-  }
-  .profile {
+  footer {
     display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1rem;
-    background: white;
-    padding: 1rem;
-    border-radius: var(--border-radius);
-    box-shadow: 0 2px 8px rgb(0 0 0 / 0.05);
+    background: #222242;
+    box-shadow: 0 -6px 20px rgba(0,0,0,0.6);
   }
-  .profile img {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    border: 2px solid var(--primary-color);
-    object-fit: cover;
-  }
-  .profile-info {
+  footer button {
     flex-grow: 1;
-  }
-  .profile-info h2 {
-    margin: 0 0 0.25rem 0;
-    font-weight: 600;
-    font-size: 1.2rem;
-  }
-  nav.footer-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0; right: 0;
-    height: var(--footer-height);
-    background: white;
-    border-top: 1px solid #ddd;
-    box-shadow: 0 -2px 10px rgb(0 0 0 / 0.1);
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    z-index: 1000;
-  }
-  nav.footer-nav button {
+    padding: 12px 0;
     background: none;
     border: none;
-    color: var(--muted-color);
+    color: #bbb;
+    font-size: 0.9rem;
+    cursor: pointer;
     display: flex;
     flex-direction: column;
     align-items: center;
-    font-size: 0.7rem;
-    cursor: pointer;
-    transition: color 0.2s;
+    transition: background 0.3s, color 0.3s;
+    position: relative;
   }
-  nav.footer-nav button.active,
-  nav.footer-nav button:hover {
-    color: var(--primary-color);
+  footer button:hover,
+  footer button.active {
+    color: #fff;
+    background: #5e52f3;
   }
-  nav.footer-nav svg {
-    width: 24px;
-    height: 24px;
-    margin-bottom: 2px;
-    stroke-width: 2;
-    stroke: currentColor;
-    fill: none;
+  footer button svg {
+    width: 24px; height: 24px;
+    margin-bottom: 4px;
+    fill: currentColor;
   }
-  section.page {
-    display: none;
+  .hidden {
+    display: none !important;
   }
-  section.page.active {
-    display: block;
+  button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
   }
-  button.cta {
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: var(--border-radius);
-    padding: 0.75rem 1.25rem;
-    font-size: 1rem;
+  .section-title {
     font-weight: 600;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgb(0 132 204 / 0.8);
-    transition: background-color 0.3s ease;
-  }
-  button.cta:hover:enabled {
-    background: var(--accent-color);
-  }
-  button.cta:disabled {
-    background: #ccc;
-    cursor: default;
-    box-shadow: none;
+    font-size: 1.3rem;
+    margin-bottom: 16px;
+    border-bottom: 2px solid #5e52f3;
+    padding-bottom: 6px;
   }
   .card {
-    background: white;
-    border-radius: var(--border-radius);
-    box-shadow: 0 2px 8px rgb(0 0 0 / 0.07);
-    margin-bottom: 1rem;
-    padding: 1rem;
-  }
-  input[type=number],
-  input[type=text],
-  input[type=email],
-  input[type=tel],
-  select {
-    width: 100%;
-    padding: 0.5rem;
-    margin-top: 0.5rem;
-    margin-bottom: 1rem;
-    border: 1.5px solid #ccc;
-    border-radius: var(--border-radius);
-    font-size: 1rem;
-    font-family: 'Poppins', sans-serif;
-  }
-  label {
-    font-weight: 600;
+    background: #2c2c55;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: inset 0 0 20px rgb(94,82,243, 0.6);
   }
   .referral-link {
-    font-size: 0.95rem;
-    word-break: break-word;
-    background: #f1f9ff;
-    padding: 0.5rem;
-    border-radius: var(--border-radius);
-    margin-top: 0.25rem;
+    background: #3d3d7a;
+    border-radius: 8px;
+    padding: 10px;
+    font-family: monospace;
+    user-select: all;
   }
-  .status {
+  .copy-button {
+    margin-top: 8px;
+    padding: 8px 14px;
+    background: #5e52f3;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
     font-weight: 600;
-    margin-top: 0.25rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
   }
-  .reward-counter {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    color: var(--primary-color);
-    text-align: center;
+  .copy-button:hover {
+    background-color: #483acb;
   }
-  .total-balance {
-    font-size: 1.3rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    color: #007acc;
-    text-align: center;
-  }
-  .video-container {
-    position: relative;
-    padding-bottom: 56.25%;
-    height: 0;
-    margin-bottom: 1rem;
-  }
-  iframe {
-    position: absolute;
-    top:0;
-    left:0;
+  input[type=number], input[type=text], select {
     width: 100%;
-    height: 100%;
-    border-radius: var(--border-radius);
+    padding: 10px 12px;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    margin-top: 8px;
+    background: rgba(255 255 255 / 0.1);
+    color: #eee;
+    transition: background-color 0.3s;
   }
-  .investments-list {
-    max-height: 240px;
-    overflow-y: auto;
-    margin-top: 0.5rem;
+  input[type=number]:focus, input[type=text]:focus, select:focus {
+    background: rgba(255 255 255 / 0.20);
   }
-  .investment-item {
-    border-bottom: 1px solid #eee;
-    padding: 0.5rem 0;
-  }
-  .investment-item:last-child {
-    border-bottom: none;
-  }
-  .bonus {
-    font-size: 0.9rem;
-    color: #2a9d8f;
+  label {
+    margin-top: 12px;
     font-weight: 600;
-    margin-bottom: 0.75rem;
   }
-  .footer-spacer {
-    height: var(--footer-height);
+  .btn-primary {
+    background: #8a64f5;
+    color:#fff;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 16px;
+    width: 100%;
+    transition: background-color 0.3s;
   }
-  .disabled {
-    opacity: 0.5;
+  .btn-primary:disabled {
+    background: #54438e;
+    cursor: not-allowed;
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: #6f45e7;
+  }
+  .video-wrapper {
+    aspect-ratio: 16 / 9;
+    margin-bottom: 16px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgb(94,82,243, 0.6);
+  }
+  .admin-section {
+    background: #421f59;
+    padding: 14px;
+    border-radius: 12px;
+  }
+  .admin-controls label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+  }
+  .admin-controls input[type=checkbox] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+  }
+  .toast {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #4444cc;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 30px;
+    box-shadow: 0 4px 20px rgb(100 80 255 / 0.9);
+    font-weight: 600;
+    opacity: 0;
     pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 1000;
   }
-  /* Scrollbar for investments */
-  .investments-list::-webkit-scrollbar {
-    width: 6px;
+  .toast.show {
+    opacity: 1;
+    pointer-events: auto;
   }
-  .investments-list::-webkit-scrollbar-thumb {
-    background-color: var(--primary-color);
-    border-radius: 5px;
+  .user-info {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .user-info img {
+    border-radius: 50%;
+    width: 88px;
+    height: 88px;
+    border: 3px solid #5e52f3;
+    margin-bottom: 12px;
+  }
+  .user-info .username {
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 4px;
+  }
+  /* Total balance frame style */
+  .total-balance-card {
+    background: linear-gradient(135deg, #7b53ff, #5e52f3);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 18px;
+    box-shadow: 0 0 20px #957fff77;
+    text-align: center;
+  }
+  .total-balance-card .balance-label {
+    font-size: 1rem;
+    font-weight: 600;
+    opacity: 0.85;
+    margin-bottom: 6px;
+  }
+  .total-balance-card .balance-amount {
+    font-size: 2.2rem;
+    font-weight: 800;
+  }
+  /* Daily bonus UI */
+  .daily-bonus {
+    background: #3a2a6a;
+    border-radius: 14px;
+    padding: 14px 18px;
+    margin-bottom: 24px;
+    text-align: center;
+    box-shadow: 0 0 12px #6b52e6aa;
+  }
+  .daily-bonus .bonus-amount {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #b8a1ff;
+  }
+  .daily-bonus .bonus-timer {
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+    opacity: 0.9;
   }
 </style>
 </head>
 <body>
-<header>Telegram Mini App Rewards & Investment</header>
+<div id="app">
+<header>
+  Telegram Mini App
+</header>
 <main>
-  <section class="page active" id="page-home" role="main" tabindex="0" aria-label="Home page">
-    <div class="profile" aria-live="polite">
-      <img src="" alt="User  profile picture" id="user-photo" />
-      <div class="profile-info">
-        <h2 id="user-name">Loading...</h2>
-        <p>Your Telegram account</p>
-      </div>
+  <div id="login-section" class="">
+    <!-- Telegram Login Widget placeholder -->
+    <div style="text-align:center; margin-top:50px;">
+      <img src="https://cdn.iconscout.com/icon/free/png-256/telegram-17-458475.png" alt="Telegram" width="80" />
+      <h2>Login with Telegram</h2>
+      <button id="btn-tl-login" class="btn-primary">Simulate Telegram Login</button>
+      <p>Click the button to simulate Telegram login (since API integration requires backend).</p>
     </div>
-    <div class="card">
-      <div class="total-balance" id="total-balance">Total Balance: $0.00</div>
-      <div class="bonus" id="bonus-info">Referral Bonus: 0</div>
-      <div class="reward-counter" id="total-rewards">Total Rewards: 0</div>
-      <button class="cta" id="claim-bonus-btn">Claim Bonus</button>
+  </div>
+  <section id="home-section" class="hidden">
+    <div class="user-info">
+      <img id="user-photo" src="" alt="User Photo" />
+      <div class="username" id="user-name"></div>
+      <div class="user-id" id="user-id" style="opacity:0.7; font-size:0.8rem;"></div>
     </div>
-    <div class="card">
-      <h3>Referral Link</h3>
-      <p>Share this link to invite friends and earn bonuses:</p>
-      <div class="referral-link" id="referral-link" tabindex="0" role="textbox" aria-readonly="true"></div>
-      <button class="cta" id="copy-referral-btn">Copy Referral Link</button>
-    </div>
-  </section>
-  <section class="page" id="page-rewards" role="main" tabindex="0" aria-label="Rewards and Ads page">
-    <div class="card">
-      <h3>Video Ad Rewards</h3>
-      <p>Watch this video ad to earn rewards:</p>
-      <div class="video-container">
-        <iframe id="video-ad" src="https://www.youtube.com/embed/dQw4w9WgXcQ?enablejsapi=1&rel=0" frameborder="0" allowfullscreen allow="autoplay"></iframe>
-      </div>
-      <button class="cta" id="watch-video-btn">Watch Video & Earn 10 Points</button>
-    </div>
-    <div class="card">
-      <h3>Pay Per Click Rewards</h3>
-      <p>Click the button below to earn points:</p>
-      <button class="cta" id="click-reward-btn">Click to Earn 2 Points</button>
-      <div id="click-timer" style="margin-top: 0.5rem; font-weight: 600; color: var(--primary-color);"></div>
-    </div>
-  </section>
-  <section class="page" id="page-investment" role="main" tabindex="0" aria-label="Investment page">
-    <div class="card">
-      <h3>Weekly Investment System</h3>
-      <label for="investment-amount">Enter amount to invest (min 10):</label>
-      <input type="number" id="investment-amount" min="10" step="1" aria-describedby="investment-note"/>
-      <div id="investment-note" style="font-size:0.85rem;color:#555;margin-bottom:0.75rem;">
-        Each investment lasts 7 days and yields 5% bonus.
-      </div>
-      <button class="cta" id="invest-btn">Invest Now</button>
-    </div>
-    <div class="card">
-      <h4>Your Investments</h4>
-      <div class="investments-list" id="investments-list" tabindex="0" aria-label="List of your investments"></div>
-    </div>
-  </section>
-  <section class="page" id="page-wallet" role="main" tabindex="0" aria-label="Deposit and Withdraw page">
-    <div class="card">
-      <h3>Offline Deposit</h3>
-      <label for="deposit-method">Select Deposit Method:</label>
-      <select id="deposit-method" aria-label="Select deposit method">
-        <option value="paypal">PayPal</option>
-        <option value="bkash">bKash</option>
-      </select>
-      <div id="deposit-paypal-fields" class="payment-fields">
-        <label for="deposit-paypal-email">PayPal Email:</label>
-        <input type="email" id="deposit-paypal-email" placeholder="your-paypal-email@example.com" />
-      </div>
-      <div id="deposit-bkash-fields" class="payment-fields" style="display:none;">
-        <label for="deposit-bkash-number">bKash Phone Number:</label>
-        <input type="tel" id="deposit-bkash-number" placeholder="+8801XXXXXXXXX" />
-      </div>
-      <label for="deposit-amount">Amount to Deposit:</label>
-      <input type="number" id="deposit-amount" min="1" step="any" />
-      <button class="cta" id="deposit-btn">Deposit (Offline)</button>
-    </div>
-    <div class="card">
-      <h3>Offline Withdraw</h3>
-      <label for="withdraw-method">Select Withdraw Method:</label>
-      <select id="withdraw-method" aria-label="Select withdraw method">
-        <option value="paypal">PayPal</option>
-        <option value="bkash">bKash</option>
-      </select>
-      <div id="withdraw-paypal-fields" class="payment-fields">
-        <label for="withdraw-paypal-email">PayPal Email:</label>
-        <input type="email" id="withdraw-paypal-email" placeholder="your-paypal-email@example.com" />
-      </div>
-      <div id="withdraw-bkash-fields" class="payment-fields" style="display:none;">
-        <label for="withdraw-bkash-number">bKash Phone Number:</label>
-        <input type="tel" id="withdraw-bkash-number" placeholder="+8801XXXXXXXXX" />
-      </div>
-      <label for="withdraw-amount">Amount to Withdraw:</label>
-      <input type="number" id="withdraw-amount" min="1" step="any" />
-      <button class="cta" id="withdraw-btn">Withdraw (Offline)</button>
-    </div>
-    <div class="card">
-      <h4>Deposit & Withdraw Status</h4>
-      <ul id="transaction-status-list" aria-live="polite" style="list-style:none;padding-left:0;max-height:150px;overflow-y:auto;margin-top:0.5rem;">
-        <!-- Transactions will be added here -->
-      </ul>
-      <small style="color:#555;font-style:italic;">Your transactions will be reviewed and approved from backend.</small>
-    </div>
-  </section>
-  <div class="footer-spacer"></div>
-</main>
 
-<nav class="footer-nav" role="navigation" aria-label="Main navigation">
-  <button id="nav-home" aria-label="Home" class="active" type="button" tabindex="0">
-    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-5H9v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2z"/></svg>
+    <!-- Total Balance Card -->
+    <div class="total-balance-card">
+      <div class="balance-label">Total Balance</div>
+      <div class="balance-amount" id="total-balance">0.00 TGR</div>
+    </div>
+
+    <!-- Daily Bonus Section -->
+    <div class="daily-bonus">
+      <div class="bonus-amount">Daily Bonus: +5 TGR</div>
+      <div class="bonus-timer" id="daily-bonus-timer">Loading...</div>
+      <button id="claim-daily-bonus" class="btn-primary" disabled>Claim Daily Bonus</button>
+    </div>
+
+    <p>Welcome to the Telegram Mini App dashboard.</p>
+    <div class="card">
+      <h3 class="section-title">Referral & Bonus System</h3>
+      <div>Your referral link:</div>
+      <div class="referral-link" id="referral-link"></div>
+      <button class="copy-button" id="copy-referral">Copy Referral Link</button>
+      <div style="margin-top: 12px;">
+        <strong>Referral Count:</strong> <span id="referral-count">0</span><br/>
+        <strong>Bonus Earned:</strong> <span id="bonus-earned">0.00</span> TGR
+      </div>
+    </div>
+  </section>
+  <section id="video-ads-section" class="hidden">
+    <h3 class="section-title">Video Ads Reward (Claim every hour)</h3>
+    <div class="video-wrapper">
+      <iframe
+        id="video-iframe"
+        src="https://www.youtube.com/embed/dQw4w9WgXcQ?enablejsapi=1&controls=1"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+        title="Reward Video"
+      ></iframe>
+    </div>
+    <button id="claim-video-reward" class="btn-primary">Claim Video Ad Reward</button>
+    <div id="video-reward-timer" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;"></div>
+  </section>
+  <section id="ppc-section" class="hidden">
+    <h3 class="section-title">Pay Per Click Rewards (Claim every hour)</h3>
+    <button id="claim-ppc-reward" class="btn-primary">Claim PPC Reward</button>
+    <div id="ppc-reward-timer" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;"></div>
+  </section>
+  <section id="investment-section" class="hidden">
+    <h3 class="section-title">Weekly Investment System</h3>
+    <div class="card">
+      <label for="investment-amount">Select Investment Amount (TGR):</label>
+      <select id="investment-amount">
+        <option value="10">10</option>
+        <option value="25">25</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+        <option value="250">250</option>
+      </select>
+      <button id="invest-btn" class="btn-primary">Invest Now</button>
+      <div style="margin-top: 12px;">
+        <strong>Your Current Investment:</strong> <span id="current-investment">0</span> TGR
+      </div>
+    </div>
+  </section>
+  <section id="deposit-withdraw-section" class="hidden">
+    <h3 class="section-title">Offline Deposit & Withdraw</h3>
+    <div class="card">
+      <h4>Deposit</h4>
+      <form id="deposit-form">
+        <label for="deposit-method">Deposit Method:</label>
+        <select id="deposit-method" required>
+          <option value="">Select Method</option>
+          <option value="paypal">PayPal</option>
+          <option value="bkash">bKash</option>
+        </select>
+        <label for="deposit-amount">Amount (USD/TGR):</label>
+        <input type="number" id="deposit-amount" min="1" required />
+        <label for="deposit-reference">Transaction Reference:</label>
+        <input type="text" id="deposit-reference" placeholder="Transaction ID or Details" required />
+        <button type="submit" class="btn-primary">Submit Deposit Request</button>
+      </form>
+    </div>
+    <div class="card" style="margin-top:24px;">
+      <h4>Withdraw</h4>
+      <form id="withdraw-form">
+        <label for="withdraw-method">Withdraw Method:</label>
+        <select id="withdraw-method" required>
+          <option value="">Select Method</option>
+          <option value="paypal">PayPal</option>
+          <option value="bkash">bKash</option>
+        </select>
+        <label for="withdraw-amount">Amount (TGR):</label>
+        <input type="number" id="withdraw-amount" min="1" required />
+        <label for="withdraw-address">Withdrawal Address / Info:</label>
+        <input type="text" id="withdraw-address" placeholder="Your PayPal or bKash Info" required />
+        <button type="submit" class="btn-primary">Submit Withdraw Request</button>
+      </form>
+    </div>
+  </section>
+  <section id="admin-section" class="hidden admin-section">
+    <h3 class="section-title">Admin Panel</h3>
+    <div class="admin-controls">
+      <label>
+        <input type="checkbox" id="toggle-deposit-enabled" /> Deposits Enabled
+      </label>
+      <label>
+        <input type="checkbox" id="toggle-withdraw-enabled" /> Withdrawals Enabled
+      </label>
+    </div>
+  </section>
+</main>
+<footer>
+  <button id="nav-home" class="active" aria-label="Home" title="Home">
+    <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
     Home
   </button>
-  <button id="nav-rewards" aria-label="Rewards" type="button" tabindex="0">
-    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M14.31 8l5.74 9.94M9.69 8h11.48M7.38 12l5.74-9.94"/></svg>
-    Rewards
+  <button id="nav-referral" aria-label="Referral" title="Referral">
+    <svg viewBox="0 0 24 24"><path d="M12 4.5C7.86 4.5 4.5 7.86 4.5 12s3.36 7.5 7.5 7.5 7.5-3.36 7.5-7.5-3.36-7.5-7.5-7.5zm-.75 11.25v-3h-2.25v-1.5h2.25v-3l3.75 3.75-3.75 3.75z"/></svg>
+    Referral
   </button>
-  <button id="nav-investment" aria-label="Investment" type="button" tabindex="0">
-    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="7" height="10"/><rect x="14" y="7" width="7" height="14"/><circle cx="10" cy="8" r="4"/></svg>
-    Investment
+  <button id="nav-video" aria-label="Video Ads" title="Video Ads">
+    <svg viewBox="0 0 24 24"><path d="M10 16.5l6-4.5-6-4.5v9z"/></svg>
+    Video Ads
   </button>
-  <button id="nav-wallet" aria-label="Wallet" type="button" tabindex="0">
-    <svg viewBox="0 0 24 24" stroke-linejoin="round" stroke-linejoin="round"><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9l5 5z"/><circle cx="18" cy="15" r="3"/></svg>
-    Wallet
+  <button id="nav-ppc" aria-label="PPC Rewards" title="PPC Rewards">
+    <svg viewBox="0 0 24 24"><path d="M13 17h-2v-2h2v2zm0-6h-2v-2h2v2zm4 4h-2v-2h2v2zm-8 0H7v-2h2v2zm8-4h-2V9h2v2zm-4 8c3.31 0 6-2.69 6-6h-2a4 4 0 01-4 4v2zm-6-6a6 6 0 0111.9-1h-2A4 4 0 009 13v2H7v-2z"/></svg>
+    PPC
   </button>
-</nav>
+  <button id="nav-investment" aria-label="Investment" title="Investment">
+    <svg viewBox="0 0 24 24"><path d="M4 19h16v2H4zM8 11h8v2H8zm-4-4h16v2H4z"/></svg>
+    Invest
+  </button>
+  <button id="nav-deposit" aria-label="Deposit & Withdraw" title="Deposit & Withdraw">
+    <svg viewBox="0 0 24 24"><path d="M20 14h-5v-4h5v4zM4 6h16v2H4V6zm0 10h7v2H4v-2z"/></svg>
+    Deposit
+  </button>
+  <button id="nav-admin" aria-label="Admin Panel" title="Admin Panel" class="hidden">
+    <svg viewBox="0 0 24 24"><path d="M12 2L2 7v6c0 5 4 9 10 9s10-4 10-9V7l-10-5zm0 4l6 3.5v5L12 17l-6-2.5v-5L12 6z"/></svg>
+    Admin
+  </button>
+</footer>
+</div>
+
+<div id="toast" class="toast">Message</div>
 
 <script>
-  // Telegram Web Apps integration & fallback
-  let tg = null;
-  let userData = {
-    id: '',
-    first_name: '',
-    last_name: '',
-    username: '',
-    photo_url: ''
-  };
-  if (window.Telegram?.WebApp) {
-    tg = window.Telegram.WebApp;
-    tg.expand();
-    userData.id = tg.initDataUnsafe?.user?.id || '';
-    userData.first_name = tg.initDataUnsafe?.user?.first_name || '';
-    userData.last_name = tg.initDataUnsafe?.user?.last_name || '';
-    userData.username = tg.initDataUnsafe?.user?.username || '';
-    userData.photo_url = tg.initDataUnsafe?.user?.photo_url || '';
-  } else {
-    // Fallback for testing outside Telegram
-    userData.first_name = 'Guest';
-    userData.username = 'guest_user';
-    userData.photo_url = 'https://telegram.org/file/811140521/1/q080hBCAcBg/fec23c6bb6f9e7fea8'; // fallback icon
-  }
+  (() => {
+    const userDataKey = 'telegramMiniAppUser';
+    const referralBaseURL = 'https://t.me/your_bot?start=';
+    const referralBonusPerReferral = 1.5; // TGR coins per referral
+    const dailyBonusAmount = 5; // Daily bonus amount TGR
+    const videoRewardAmount = 2.5; // TGR per video ad claim
+    const ppcRewardAmount = 1.2; // TGR per PPC claim
+    // Reward claim cooldowns in ms
+    const rewardCooldown = 1000 * 60 * 60; // 1 hour cooldown
+    const dailyBonusCooldown = 1000 * 60 * 60 * 24; // 24 hours for daily bonus
 
-  // Helper to update profile display
-  function updateProfile() {
-    const nameEl = document.getElementById('user-name');
-    const photoEl = document.getElementById('user-photo');
+    // Admin login check (for demo purpose only)
+    const adminUserId = 1234567890; // Example admin user id
 
-    let displayName = user
+    // State
+    let user = null;
+    let referrals = []; // Array of user ids who used referral link
+    let bonus = 0;
+    let currentInvestment = 0;
+    let depositEnabled = true;
+    let withdrawEnabled = true;
+
+    // Elements
+    const loginSection = document.getElementById('login-section');
+    const homeSection = document.getElementById('home-section');
+    const videoAdsSection = document.getElementById('video-ads-section');
+    const ppcSection = document.getElementById('ppc-section');
+    const investmentSection = document.getElementById('investment-section');
+    const depositWithdrawSection = document.getElementById('deposit-withdraw-section');
+    const adminSection = document.getElementById('admin-section');
+
+    const navButtons = {
+      home: document.getElementById('nav-home'),
+      referral: document.getElementById('nav-referral'),
+      video: document.getElementById('nav-video'),
+      ppc: document.getElementById('nav-ppc'),
+      investment: document.getElementById('nav-investment'),
+      deposit: document.getElementById('nav-deposit'),
+      admin: document.getElementById('nav-admin')
+    };
+
+    const userPhotoEl = document.getElementById('user-photo');
+    const userNameEl = document.getElementById('user-name');
+    const userIdEl = document.getElementById('user-id');
+
+    const referralLinkEl = document.getElementById('referral-link');
+    const referralCountEl = document.getElementById('referral-count');
+    const bonusEarnedEl = document.getElementById('bonus-earned');
+
+    const copyReferralBtn = document.getElementById('copy-referral');
+
+    const claimVideoRewardBtn = document.getElementById('claim-video-reward');
+    const videoRewardTimer = document.getElementById('video-reward-timer');
+
+    const claimPpcRewardBtn = document.getElementById('claim-ppc-reward');
+    const ppcRewardTimer = document.getElementById('ppc-reward-timer');
+
+    const investmentAmountSel = document.getElementById('investment-amount');
+    const investBtn = document.getElementById('invest-btn');
+    const currentInvestmentEl = document.getElementById('current-investment');
+
+    const depositForm = document.getElementById('deposit-form');
+    const withdrawForm = document.getElementById('withdraw-form');
+
+    const depositMethodSelect = document.getElementById('deposit-method');
+    const withdrawMethodSelect = document.getElementById('withdraw-method');
+
+    const depositAmountInput = document.getElementById('deposit-amount');
+    const depositReferenceInput = document.getElementById('deposit-reference');
+
+    const withdrawAmountInput = document.getElementById('withdraw-amount');
+    const withdrawAddressInput = document.getElementById('withdraw-address');
+
+    const toggleDepositEnabled = document.getElementById('toggle-deposit-enabled');
+    const toggleWithdrawEnabled = document.getElementById('toggle-withdraw-enabled');
+
+    const toastEl = document.getElementById('toast');
+
+    // New daily bonus elements
+    const dailyBonusTimerEl = document.getElementById('daily-bonus-timer');
+    const claimDailyBonusBtn = document.getElementById('claim-daily-bonus');
+    const totalBalanceEl = document.getElementById('total-balance');
+
+    // Utility for toast message
+    function showToast(msg, duration=3000) {
+      toastEl.textContent = msg;
+      toastEl.classList.add('show');
+      setTimeout(() => {
+        toastEl.classList.remove('show');
+      }, duration);
+    }
+
+    // Save user data and state to localStorage
+    function saveUserData() {
+      localStorage.setItem(userDataKey, JSON.stringify({
+        user,
+        referrals,
+        bonus,
+        currentInvestment,
+        lastVideoClaim: parseInt(localStorage.getItem('lastVideoClaim')) || 0,
+        lastPpcClaim: parseInt(localStorage.getItem('lastPpcClaim')) || 0,
+        depositEnabled,
+        withdrawEnabled,
+        lastDailyBonusClaim: parseInt(localStorage.getItem('lastDailyBonusClaim')) || 0
+      }));
+    }
+
+    // Load user data from localStorage
+    function loadUserData() {
+      const saved = localStorage.getItem(userDataKey);
+      if (saved) {
+        try {
+          const data = JSON.parse(saved);
+          user = data.user || null;
+          referrals = data.referrals || [];
+          bonus = data.bonus || 0;
+          currentInvestment = data.currentInvestment || 0;
+          depositEnabled = data.depositEnabled !== undefined ? data.depositEnabled : true;
+          withdrawEnabled = data.withdrawEnabled !== undefined ? data.withdrawEnabled : true;
+          return true;
+        } catch {
+          return false;
+        }
+      }
+      return false;
+    }
+
+    // Format time left in h:mm:ss
+    function formatTimeLeft(ms) {
+      if (ms <= 0) return 'Ready to claim';
+      const totalSeconds = Math.floor(ms / 1000);
+      const h = Math.floor(totalSeconds / 3600);
+      const m = Math.floor((totalSeconds % 3600) / 60);
+      const s = totalSeconds % 60;
+      return `${h ? h + 'h ' : ''}${m}m ${s}s`;
+    }
+
+    // Check if user is admin
+    function isAdmin() {
+      return user && (user.id === adminUserId);
+    }
+
+    // Render user info and UI parts according to user state
+    function renderUI() {
+      if (!user) {
+        loginSection.classList.remove('hidden');
+        homeSection.classList.add('hidden');
+        videoAdsSection.classList.add('hidden');
+        ppcSection.classList.add('hidden');
+        investmentSection.classList.add('hidden');
+        depositWithdrawSection.classList.add('hidden');
+        adminSection.classList.add('hidden');
+        navButtons.admin.classList.add('hidden');
+        return;
+      }
+      loginSection.classList.add('hidden');
+      // Show home section and other sections as per nav
+      navButtons.admin.classList.toggle('hidden', !isAdmin());
+
+      // Show the first active content (home)
+      showSection('home');
+
+      // Update user info display
+      userPhotoEl.src = user.photo_url || 'https://cdn.iconscout.com/icon/free/png-256/telegram-17-458475.png';
+      userNameEl.textContent = user.first_name + (user.last_name ? ' ' + user.last_name : '');
+      userIdEl.textContent = "User ID: " + user.id;
+
+      referralLinkEl.textContent = referralBaseURL + user.id;
+      referralCountEl.textContent = referrals.length;
+      bonusEarnedEl.textContent = bonus.toFixed(2);
+      currentInvestmentEl.textContent = currentInvestment.toFixed(2);
+
+      // Total Balance = bonus + currentInvestment for demonstration
+      const totalBalance = bonus + currentInvestment;
+      totalBalanceEl.textContent = totalBalance.toFixed(2) + ' TGR';
+
+      // Set deposit/withdraw enable switches in admin panel
+      toggleDepositEnabled.checked = depositEnabled;
+      toggleWithdrawEnabled.checked = withdrawEnabled;
+
+      // Enable or disable deposit/withdraw forms based on admin control
+      depositMethodSelect.disabled = !depositEnabled;
+      depositAmountInput.disabled = !depositEnabled;
+      depositReferenceInput.disabled = !depositEnabled;
+      depositForm.querySelector('button[type="submit"]').disabled = !depositEnabled;
+
+      withdrawMethodSelect.disabled = !withdrawEnabled;
+      withdrawAmountInput.disabled = !withdrawEnabled;
+      withdrawAddressInput.disabled = !withdrawEnabled;
+      withdrawForm.querySelector('button[type="submit"]').disabled = !withdrawEnabled;
+
+      // Update reward buttons cooldown timers
+      updateRewardButtons();
+
+      // Update daily bonus state UI
+      updateDailyBonusUI();
+    }
+
+    // Show only one main section at a time
+    function showSection(sectionName) {
+      const sections = {
+        home: homeSection,
+        referral: homeSection,
+        video: videoAdsSection,
+        ppc: ppcSection,
+        investment: investmentSection,
+        deposit: depositWithdrawSection,
+        admin: adminSection
+      };
+      Object.entries(sections).forEach(([key, el]) => {
+        el.classList.toggle('hidden', key !== sectionName);
+      });
+      // Set active nav button
+      Object.entries(navButtons).forEach(([key, btn]) => {
+        btn.classList.toggle('active', key === sectionName);
+      });
+    }
+
+    // Navigation buttons listeners
+    Object.entries(navButtons).forEach(([key, btn]) => {
+      btn.addEventListener('click', () => {
+        if (key === 'referral') key = 'home'; // Show referral inside home section
+        if (!user) {
+          showToast('Please login first.');
+          return;
+        }
+        showSection(key);
+      });
+    });
+
+    // Copy referral link
+    copyReferralBtn.addEventListener('click', () => {
+      if (!navigator.clipboard) {
+        showToast('Clipboard not supported');
+        return;
+      }
+      navigator.clipboard.writeText(referralLinkEl.textContent)
+        .then(() => showToast('Referral link copied!'))
+        .catch(() => showToast('Failed to copy'));
+    });
+
+    // Handle Telegram login simulation
+    document.getElementById('btn-tl-login').addEventListener('click', () => {
+      // Simulate login and store user data
+      // Normally you get this data from Telegram widget with backend token check
+      const simulatedUser = {
+        id: Math.floor(Math.random() * 1000000) + 10000,
+        first_name: 'Demo',
+        last_name: 'User',
+        username: 'demouser',
+        photo_url: 'https://randomuser.me/api/portraits/lego/5.jpg'
+      };
+      setUser(simulatedUser);
+    });
+
+    // Set user after login
+    function setUser(newUser) {
+      user = newUser;
+      // Check if this user came from referral param in URL (simulate it)
+      const urlParams = new URLSearchParams(window.location.search);
+      const referralId = urlParams.get('start'); // Telegram passes referral as ?start=...
+      if (referralId && referralId != user.id.toString()) {
+        // Add referral if not already
+        if (!referrals.includes(referralId)) {
+          referrals.push(referralId);
+          bonus += referralBonusPerReferral;
+          showToast(`Referral bonus added: +${referralBonusPerReferral} TGR`);
+        }
+      }
+      saveUserData();
+      renderUI();
+      showToast('Logged in as ' + user.first_name);
+    }
+
+    // Reward claim timers
+    function canClaim(lastClaimKey, cooldown) {
+      const lastClaim = parseInt(localStorage.getItem(lastClaimKey)) || 0;
+      let now = Date.now();
+      return now - lastClaim >= cooldown;
+    }
+    function timeToNextClaim(lastClaimKey, cooldown) {
+      const lastClaim = parseInt(localStorage.getItem(lastClaimKey)) || 0;
+      let now = Date.now();
+      const diff = cooldown - (now - lastClaim);
+      return diff > 0 ? diff : 0;
+    }
+
+    // Claim video ad reward handler
+    claimVideoRewardBtn.addEventListener('click', () => {
+      if (!user) {
+        showToast('Please login first');
+        return;
+      }
+      if (!canClaim('lastVideoClaim', rewardCooldown)) {
+        showToast('Video reward already claimed. Please wait.');
+        return;
+      }
+      // Simulate watching ad completion
+      claimVideoRewardBtn.disabled = true;
+      showToast('Watching Video Ad...');
+      setTimeout(() => {
+        bonus += videoRewardAmount;
+        localStorage.setItem('lastVideoClaim', Date.now().toString());
+        saveUserData();
+        updateRewardButtons();
+        showToast(`You earned +${videoRewardAmount} TGR from video ad!`);
+        claimVideoRewardBtn.disabled = false;
+        bonusEarnedEl.textContent = bonus.toFixed(2);
+        updateTotalBalance();
+      }, 4000);
+    });
+
+    // Claim PPC reward handler
+    claimPpcRewardBtn.addEventListener('click', () => {
+      if (!user) {
+        showToast('Please login first');
+        return;
+      }
+      if (!canClaim('lastPpcClaim', rewardCooldown)) {
+        showToast('PPC reward already claimed. Please wait.');
+        return;
+      }
+      claimPpcRewardBtn.disabled = true;
+      showToast('Processing PPC claim...');
+      setTimeout(() => {
+        bonus += ppcRewardAmount;
+        localStorage.setItem('lastPpcClaim', Date.now().toString());
+        saveUserData();
+        updateRewardButtons();
+        showToast(`You earned +${ppcRewardAmount} TGR from PPC!`);
+        claimPpcRewardBtn.disabled = false;
+        bonusEarnedEl.textContent = bonus.toFixed(2);
+        updateTotalBalance();
+      }, 3000);
+    });
+
+    // Update cooldown timers for reward buttons
+    function updateRewardButtons() {
+      // Video ad reward
+      if (canClaim('lastVideoClaim', rewardCooldown)) {
+        videoRewardTimer.textContent = 'Ready to claim';
+        claimVideoRewardBtn.disabled = false;
+      } else {
+        const timeLeft = timeToNextClaim('lastVideoClaim', rewardCooldown);
+        videoRewardTimer.textContent = 'Next claim in: ' + formatTimeLeft(timeLeft);
+        claimVideoRewardBtn.disabled = true;
+      }
+      // PPC reward
+      if (canClaim('lastPpcClaim', rewardCooldown)) {
+        ppcRewardTimer.textContent = 'Ready to claim';
+        claimPpcRewardBtn.disabled = false;
+      } else {
+        const timeLeft = timeToNextClaim('lastPpcClaim', rewardCooldown);
+        ppcRewardTimer.textContent = 'Next claim in: ' + formatTimeLeft(timeLeft);
+        claimPpcRewardBtn.disabled = true;
+      }
+    }
+
+    // Update total balance display
+    function updateTotalBalance() {
+      const totalBalance = bonus + currentInvestment;
+      totalBalanceEl.textContent = totalBalance.toFixed(2) + ' TGR';
+    }
+
+    // Daily bonus UI update
+    function updateDailyBonusUI() {
+      if (!user) {
+        dailyBonusTimerEl.textContent = '';
+        claimDailyBonusBtn.disabled = true;
+        return;
+      }
+      if (canClaim('lastDailyBonusClaim', dailyBonusCooldown)) {
+        dailyBonusTimerEl.textContent = 'Ready to claim your daily bonus!';
+        claimDailyBonusBtn.disabled = false;
+      } else {
+        const timeLeft = timeToNextClaim('lastDailyBonusClaim', dailyBonusCooldown);
+        dailyBonusTimerEl.textContent = 'Next daily bonus in: ' + formatTimeLeft(timeLeft);
+        claimDailyBonusBtn.disabled = true;
+      }
+    }
+
+    // Daily bonus claim handler
+    claimDailyBonusBtn.addEventListener('click', () => {
+      if (!user) {
+        showToast('Please login first');
+        return;
+      }
+      if (!canClaim('lastDailyBonusClaim', dailyBonusCooldown)) {
+        showToast('Daily bonus already claimed. Please wait.');
+        return;
+      }
+      bonus += dailyBonusAmount;
+      localStorage.setItem('lastDailyBonusClaim', Date.now().toString());
+      saveUserData();
+      updateDailyBonusUI();
+      bonusEarnedEl.textContent = bonus.toFixed(2);
+      updateTotalBalance();
+      showToast(`You claimed your daily bonus of +${dailyBonusAmount} TGR!`);
+    });
+
+    // Update timers every second
+    setInterval(() => {
+      if (user) {
+        updateRewardButtons();
+        updateDailyBonusUI();
+      }
+    }, 1000);
+
+    // Investment button
+    investBtn.addEventListener('click', () => {
+      if (!user) {
+        showToast('Please login first');
+        return;
+      }
+      const amount = parseFloat(investmentAmountSel.value);
+      if (isNaN(amount) || amount <= 0) {
+        showToast('Select a valid amount');
+        return;
+      }
+      currentInvestment += amount;
+      saveUserData();
+      currentInvestmentEl.textContent = currentInvestment.toFixed(2);
+      updateTotalBalance();
+      showToast(`Invested ${amount.toFixed(2)} TGR successfully!`);
+    });
+
+    // Deposit form handling
+    depositForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!depositEnabled) {
+        showToast('Deposits are currently disabled.');
+        return;
+      }
+      const method = depositMethodSelect.value;
+      const amount = parseFloat(depositAmountInput.value);
+      const reference = depositReferenceInput.value.trim();
+      if (!method || isNaN(amount) || amount <= 0 || !reference) {
+        showToast('Please fill all deposit fields correctly.');
+        return;
+      }
+      // Simulate deposit submission
+      showToast(`Deposit request sent (${method.toUpperCase()}, ${amount}). Admin will verify soon.`);
+      depositForm.reset();
+    });
+    // Withdraw form handling
+    withdrawForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!withdrawEnabled) {
+        showToast('Withdrawals are currently disabled.');
+        return;
+      }
+      const method = withdrawMethodSelect.value;
+      const amount = parseFloat(withdrawAmountInput.value);
+      const address = withdrawAddressInput.value.trim();
+      if (!method || isNaN(amount) || amount <= 0 || !address) {
+        showToast('Please fill all withdraw fields correctly.');
+        return;
+      }
+      // Check if user has enough bonus balance to withdraw
+      if (amount > bonus) {
+        showToast('Insufficient balance to withdraw that amount.');
+        return;
+      }
+      bonus -= amount;
+      saveUserData();
+      bonusEarnedEl.textContent = bonus.toFixed(2);
+      updateTotalBalance();
+      showToast(`Withdraw request sent (${method.toUpperCase()}, ${amount}). Admin will process soon.`);
+      withdrawForm.reset();
+    });
+
+    // Admin toggle controls
+    toggleDepositEnabled.addEventListener('change', () => {
+      depositEnabled = toggleDepositEnabled.checked;
+      saveUserData();
+      renderUI();
+    });
+    toggleWithdrawEnabled.addEventListener('change', () => {
+      withdrawEnabled = toggleWithdrawEnabled.checked;
+      saveUserData();
+      renderUI();
+    });
+
+    // Initialization
+    if (!loadUserData()) {
+      console.log('No saved user data found.');
+    }
+    renderUI();
+
+  })();
+</script>
+</body>
+</html>
+
+
