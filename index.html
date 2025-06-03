@@ -1,855 +1,855 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TapSwap Mini App</title>
-    <style>
-        :root {
-            --primary-color: #007bff;
-            --secondary-color: #6c757d;
-            --background-color: #f8f9fa;
-            --surface-color: #ffffff;
-            --text-color: #212529;
-            --text-light-color: #6c757d;
-            --success-color: #28a745;
-            --warning-color: #ffc107;
-            --danger-color: #dc3545;
-            --border-color: #dee2e6;
-            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            --bottom-nav-height: 60px;
-            --header-height: 50px;
-        }
-
-
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            font-family: var(--font-family);
-            background-color: var(--background-color);
-            color: var(--text-color);
-            overflow: hidden; /* Prevent scrollbars on body */
-        }
-
-
-        #app-container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh; /* Full viewport height */
-            background-color: var(--background-color);
-        }
-
-
-        .page-header {
-            height: var(--header-height);
-            background-color: var(--surface-color);
-            color: var(--primary-color);
-            font-size: 1.2em;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-bottom: 1px solid var(--border-color);
-            padding: 0 15px;
-            box-sizing: border-box;
-        }
-        
-        .page-content-wrapper {
-            flex-grow: 1;
-            overflow-y: auto; /* Enable scrolling for page content */
-            padding-bottom: var(--bottom-nav-height); /* Space for bottom nav */
-        }
-
-
-        .page {
-            display: none; /* Hidden by default */
-            flex-direction: column; /* Ensure pages can have internal flex layouts */
-            height: 100%; /* Make page take full height of its container */
-        }
-
-
-        .page.active {
-            display: flex; /* Show active page */
-        }
-
-
-        .page-content {
-            padding: 20px;
-            flex-grow: 1;
-        }
-
-
-        #bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: var(--bottom-nav-height);
-            background-color: var(--surface-color);
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 1000;
-            padding-bottom: env(safe-area-inset-bottom); /* For iOS notches */
-        }
-
-
-        #bottom-nav button {
-            background: none;
-            border: none;
-            color: var(--secondary-color);
-            font-size: 10px;
-            cursor: pointer;
-            padding: 8px 5px;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-        }
-        
-        #bottom-nav button .icon {
-            font-size: 20px; /* Icon size */
-            margin-bottom: 4px;
-        }
-
-
-        #bottom-nav button.active {
-            color: var(--primary-color);
-            font-weight: bold;
-        }
-
-
-        /* Tap Page specific styles */
-        #tap-page-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-
-
-        #points-display {
-            font-size: 2.5em;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: var(--primary-color);
-        }
-        
-        #dog-tap-area {
-            width: 150px;
-            height: 150px;
-            background-color: var(--warning-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 5em; /* Dog emoji size */
-            cursor: pointer;
-            user-select: none;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: transform 0.1s ease-out;
-        }
-        #dog-tap-area:active {
-            transform: scale(0.95);
-        }
-
-
-        #energy-bar-container {
-            width: 80%;
-            max-width: 300px;
-            height: 25px;
-            background-color: var(--border-color);
-            border-radius: 12.5px;
-            overflow: hidden;
-            margin-bottom: 10px;
-        }
-
-
-        #energy-bar {
-            width: 100%;
-            height: 100%;
-            background-color: var(--success-color);
-            border-radius: 12.5px;
-            transition: width 0.2s ease-in-out;
-        }
-
-
-        #energy-text {
-            font-size: 0.9em;
-            color: var(--text-light-color);
-        }
-
-
-        .floating-point {
-            position: absolute;
-            font-size: 1.5em;
-            color: var(--primary-color);
-            opacity: 1;
-            animation: floatUp 1s ease-out forwards;
-            pointer-events: none; /* So it doesn't interfere with taps */
-        }
-
-
-        @keyframes floatUp {
-            to {
-                transform: translateY(-50px);
-                opacity: 0;
-            }
-        }
-
-
-        /* Profile, Task, Withdraw Page common styles */
-        .info-item, .task-item, .withdraw-option {
-            background-color: var(--surface-color);
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-        .info-item strong { color: var(--primary-color); }
-
-
-        /* Task Page specific styles */
-        .task-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .task-item button {
-            padding: 8px 12px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .task-item button:disabled {
-            background-color: var(--secondary-color);
-            cursor: not-allowed;
-        }
-
-
-        /* Withdraw Page specific styles */
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        .form-group input[type="number"],
-        .form-group input[type="text"],
-        .form-group input[type="email"],
-        .form-group select {
-            width: calc(100% - 22px); /* Full width minus padding and border */
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 5px;
-            font-size: 1em;
-        }
-        #withdraw-button {
-            width: 100%;
-            padding: 12px;
-            background-color: var(--success-color);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 1.1em;
-            cursor: pointer;
-        }
-        #withdraw-button:disabled {
-            background-color: var(--secondary-color);
-        }
-        .withdraw-details { display: none; }
-        .withdraw-details.active { display: block; }
-
-
-        /* Toast Notification */
-        #toast-notification {
-            position: fixed;
-            bottom: calc(var(--bottom-nav-height) + 20px); /* Above bottom nav */
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(0,0,0,0.75);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            z-index: 2000;
-            opacity: 0;
-            transition: opacity 0.3s ease, bottom 0.3s ease;
-            visibility: hidden;
-        }
-        #toast-notification.show {
-            opacity: 1;
-            visibility: visible;
-            bottom: calc(var(--bottom-nav-height) + 30px);
-        }
-
-
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Telegram Mini App - Investment & Rewards</title>
+<style>
+  /* Modern clean Telegram inspired UI */
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    font-family: 'Inter', sans-serif;
+    background: #F3F6FB;
+    color: #1A1A1A;
+  }
+  #app {
+    max-width: 480px;
+    margin: auto;
+    background: white;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+  }
+  header {
+    background: #2AABEE;
+    color: white;
+    padding: 15px 20px;
+    font-weight: 600;
+    font-size: 1.3rem;
+    text-align: center;
+    box-shadow: inset 0 -1px 0 rgba(255 255 255 / 0.3);
+  }
+  nav {
+    display: flex;
+    background: #E6F7FF;
+    border-bottom: 1px solid #B3E5FC;
+  }
+  nav button {
+    flex: 1;
+    border: none;
+    background: none;
+    padding: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #2AABEE;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: border-color 0.3s;
+  }
+  nav button.active {
+    border-bottom: 3px solid #2AABEE;
+    background: white;
+    font-weight: 700;
+  }
+  main {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 15px 20px;
+  }
+  .section {
+    display: none;
+  }
+  .section.active {
+    display: block;
+  }
+  h2 {
+    color: #179CD7;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .info-box {
+    background: #E6F7FF;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    color: #0B72B9;
+    font-weight: 600;
+  }
+  .btn {
+    background: #2AABEE;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+    user-select: none;
+    transition: background 0.3s;
+  }
+  .btn:hover:not(:disabled) {
+    background: #1e90d9;
+  }
+  .btn:disabled {
+    background: #a0d5fb;
+    cursor: not-allowed;
+  }
+  input[type="text"], input[type="number"], input[type="password"] {
+    width: 100%;
+    padding: 8px 10px;
+    margin: 5px 0 10px 0;
+    box-sizing: border-box;
+    border: 1.5px solid #b3e5fc;
+    border-radius: 5px;
+    font-size: 1rem;
+    color: #1a1a1a;
+  }
+  label {
+    font-weight: 600;
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 4px;
+    color: #179cd7;
+  }
+  .reward-item, .investment-item, .transaction-item, .user-item {
+    background: #eef9ff;
+    border-radius: 8px;
+    padding: 10px 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+  }
+  .reward-item > div, .investment-item > div, .transaction-item > div, .user-item > div {
+    margin-bottom: 6px;
+  }
+  .small-button {
+    background: #179CD7;
+    font-size: 0.8rem;
+    padding: 6px 10px;
+    margin-left: 10px;
+    border-radius: 5px;
+    user-select: none;
+  }
+  .small-button:hover {
+    background: #117abb;
+  }
+  .flex-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .inline {
+    display: inline-block;
+  }
+  .success-msg {
+    color: #2ABA6D;
+    font-weight: 600;
+  }
+  .error-msg {
+    color: #d9534f;
+    font-weight: 600;
+  }
+  footer {
+    padding: 10px 20px;
+    background: #E6F7FF;
+    color: #0B72B9;
+    font-size: 0.9rem;
+    text-align: center;
+  }
+  a {
+    color: #1e90d9;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+  .admin-warning {
+    background: #ffdede;
+    border-radius: 8px;
+    padding: 10px 15px;
+    color: #d9534f;
+    font-weight: 700;
+    margin-bottom: 15px;
+  }
+</style>
 </head>
 <body>
-    <div id="app-container">
-        <!-- Profile Page -->
-        <div id="profile-page" class="page">
-            <div class="page-header">Profile</div>
-            <div class="page-content">
-                <div class="info-item"><strong>Name:</strong> <span id="profile-name"></span></div>
-                <div class="info-item"><strong>User ID:</strong> <span id="profile-userid"></span></div>
-                <div class="info-item"><strong>Points:</strong> <span id="profile-points"></span></div>
-                <div class="info-item"><strong>Joined:</strong> <span id="profile-join-date"></span></div>
-                <div class="info-item"><strong>Referral Code:</strong> <span id="profile-referral"></span></div>
-            </div>
+<div id="app">
+  <header>
+    Telegram Mini App Investment & Rewards
+  </header>
+  <nav>
+    <button class="active" data-tab="profile">Profile</button>
+    <button data-tab="referrals">Referral</button>
+    <button data-tab="rewards">Rewards</button>
+    <button data-tab="investment">Investment</button>
+    <button data-tab="finance">Deposit/Withdraw</button>
+    <button data-tab="admin">Admin Panel</button>
+  </nav>
+  <main>
+    <!-- Profile tab -->
+    <section class="section active" id="profile-section">
+      <h2>Welcome</h2>
+      <div id="welcome-msg" class="info-box">Loading user info...</div>
+      <div><strong>Telegram User ID:</strong> <span id="user-id-display"></span></div>
+      <div><strong>Balance:</strong> $<span id="balance-display">0.00</span></div>
+      <div><strong>Bonus Balance:</strong> $<span id="bonus-balance-display">0.00</span></div>
+      <div><strong>Total Referral Bonus:</strong> $<span id="total-referral-bonus">0.00</span></div>
+      <div><strong>Total Profit Earned:</strong> $<span id="total-profit-earned">0.00</span></div>
+    </section>
+
+    <!-- Referral tab -->
+    <section class="section" id="referrals-section">
+      <h2>Referral Program</h2>
+      <div>
+        Share your referral link to earn bonuses when your friends join:
+      </div>
+      <div style="margin: 12px 0; padding: 10px; background: #dff6ff; border-radius: 6px; font-weight: 700; color: #0b72b9;">
+        <input type="text" readonly id="referral-link" style="width:100%; border:none; background:none; font-weight: 700; color:#0b72b9; cursor: pointer;" />
+      </div>
+      <button class="btn" id="copy-ref-link">Copy Referral Link</button>
+      <h3 style="margin-top: 20px;">Your Referrals</h3>
+      <ul id="referral-list" style="list-style:none; padding-left:0;"></ul>
+    </section>
+
+    <!-- Rewards tab -->
+    <section class="section" id="rewards-section">
+      <h2>Rewards</h2>
+      <div class="reward-item">
+        <div><strong>Watch Video Ad</strong></div>
+        <div>Earn $0.50 bonus for each video ad watched.</div>
+        <button class="btn" id="watch-video-ad">Watch Video Ad</button>
+      </div>
+      <div class="reward-item">
+        <div><strong>Pay Per Click Ads</strong></div>
+        <div>Earn $0.10 bonus for each ad clicked.</div>
+        <button class="btn" id="click-ad">Click an Ad</button>
+      </div>
+      <div id="rewards-msg" style="margin-top: 12px;"></div>
+    </section>
+
+    <!-- Investment tab -->
+    <section class="section" id="investment-section">
+      <h2>Investment Package</h2>
+      <div>
+        <p>
+          Invest your balance in the weekly package to earn 10% profit every 7 days.
+          Your investment will be locked for 7 days. After that, you can withdraw your profit and principal.
+        </p>
+      </div>
+      <div>
+        <label for="investment-amount">Investment Amount ($):</label>
+        <input type="number" id="investment-amount" min="10" step="1" placeholder="Minimum $10" />
+        <button class="btn" id="make-investment">Invest</button>
+      </div>
+      <h3 style="margin-top: 20px;">Active Investments</h3>
+      <div id="investment-list"></div>
+    </section>
+
+    <!-- Deposit & Withdraw tab -->
+    <section class="section" id="finance-section">
+      <h2>Deposit & Withdrawal</h2>
+      <div style="margin-bottom: 20px;">
+        <h3>Manual Deposit</h3>
+        <label for="deposit-amount">Deposit Amount ($):</label>
+        <input type="number" id="deposit-amount" min="1" step="1" placeholder="Enter deposit amount" />
+        <button class="btn" id="make-deposit">Deposit</button>
+        <div id="deposit-msg"></div>
+      </div>
+      <div>
+        <h3>Request Withdrawal</h3>
+        <label for="withdraw-amount">Withdrawal Amount ($):</label>
+        <input type="number" id="withdraw-amount" min="1" step="1" placeholder="Enter withdrawal amount" />
+        <button class="btn" id="make-withdrawal">Request Withdrawal</button>
+        <div id="withdraw-msg"></div>
+      </div>
+
+      <h3 style="margin-top: 30px;">Withdrawal Requests</h3>
+      <ul id="withdrawal-requests-list" style="list-style:none; padding-left:0;"></ul>
+    </section>
+
+    <!-- Admin Panel tab -->
+    <section class="section" id="admin-section">
+      <h2>Admin Panel</h2>
+      <div id="admin-login-section">
+        <p><strong>Admin Access Required</strong></p>
+        <label for="admin-password">Enter Admin Password:</label>
+        <input type="password" id="admin-password" placeholder="Admin password" />
+        <button class="btn" id="admin-login-button">Login</button>
+        <div id="admin-login-msg"></div>
+      </div>
+      <div id="admin-panel" style="display:none;">
+        <div class="admin-warning">
+          <strong>Warning:</strong> Admin Mode Enabled. Handle with care.
         </div>
-
-
-        <!-- Tap Page -->
-        <div id="tap-page" class="page">
-            <div class="page-header">TapSwap</div>
-            <div class="page-content" id="tap-page-content">
-                <div id="points-display">0</div>
-                <div id="dog-tap-area">🐕</div>
-                <div id="energy-bar-container">
-                    <div id="energy-bar"></div>
-                </div>
-                <div id="energy-text">100/100</div>
-            </div>
-        </div>
-
-
-        <!-- Task Page -->
-        <div id="task-page" class="page">
-            <div class="page-header">Tasks</div>
-            <div class="page-content" id="task-list">
-                <!-- Tasks will be rendered here by JS -->
-            </div>
-        </div>
-
-
-        <!-- Withdraw Page -->
-        <div id="withdraw-page" class="page">
-            <div class="page-header">Withdraw</div>
-            <div class="page-content">
-                <div class="info-item"><strong>Available Points:</strong> <span id="withdraw-available-points"></span></div>
-                <div class="form-group">
-                    <label for="withdraw-amount">Amount to Withdraw:</label>
-                    <input type="number" id="withdraw-amount" placeholder="Enter amount">
-                </div>
-                <div class="form-group">
-                    <label for="withdraw-method">Withdrawal Method:</label>
-                    <select id="withdraw-method">
-                        <option value="">-- Select Method --</option>
-                        <option value="paypal">PayPal</option>
-                        <option value="bank">Wire Transfer</option>
-                        <option value="crypto">Crypto (USDT)</option>
-                    </select>
-                </div>
-                
-                <div id="paypal-details" class="withdraw-details">
-                    <div class="form-group">
-                        <label for="paypal-email">PayPal Email:</label>
-                        <input type="email" id="paypal-email" placeholder="your.email@example.com">
-                    </div>
-                </div>
-                <div id="bank-details" class="withdraw-details">
-                    <div class="form-group">
-                        <label for="bank-account-name">Account Holder Name:</label>
-                        <input type="text" id="bank-account-name" placeholder="Full Name">
-                    </div>
-                    <div class="form-group">
-                        <label for="bank-account-number">Account Number:</label>
-                        <input type="text" id="bank-account-number" placeholder="Account Number">
-                    </div>
-                    <div class="form-group">
-                        <label for="bank-swift-code">SWIFT/BIC Code:</label>
-                        <input type="text" id="bank-swift-code" placeholder="SWIFT or BIC">
-                    </div>
-                </div>
-                 <div id="crypto-details" class="withdraw-details">
-                    <div class="form-group">
-                        <label for="crypto-address">USDT Wallet Address (TRC20):</label>
-                        <input type="text" id="crypto-address" placeholder="Your TRC20 USDT Address">
-                    </div>
-                </div>
-                <button id="withdraw-button">Withdraw Points</button>
-            </div>
-        </div>
-    </div>
-
-
-    <nav id="bottom-nav">
-        <button data-page="profile-page"><span class="icon">👤</span>Profile</button>
-        <button data-page="tap-page" class="active"><span class="icon">👆</span>Tap</button>
-        <button data-page="task-page"><span class="icon">📝</span>Tasks</button>
-        <button data-page="withdraw-page"><span class="icon">💸</span>Withdraw</button>
-    </nav>
-
-
-    <div id="toast-notification"></div>
-
-
-    <script>
-        // Mock Telegram WebApp object if not running in Telegram environment
-        if (typeof Telegram === 'undefined') {
-            window.Telegram = {
-                WebApp: {
-                    ready: () => console.log("Telegram.WebApp.ready() called (mocked)"),
-                    initDataUnsafe: {
-                        user: {
-                            id: 123456789,
-                            first_name: "Demo",
-                            last_name: "User",
-                            username: "demouser",
-                            language_code: "en"
-                        }
-                    },
-                    HapticFeedback: {
-                        impactOccurred: (style) => console.log(`Haptic feedback: ${style} (mocked)`),
-                        notificationOccurred: (type) => console.log(`Haptic notification: ${type} (mocked)`),
-                        selectionChanged: () => console.log(`Haptic selection changed (mocked)`)
-                    },
-                    expand: () => console.log("WebApp expanded (mocked)"),
-                    // You can add more mock methods if needed
-                }
-            };
-            console.log("Telegram WebApp mocked for browser use.");
-        }
-
-
-        // --- Constants ---
-        const LOCAL_STORAGE_KEY = 'tapSwapUserData_v3';
-        const MAX_ENERGY = 1000;
-        const ENERGY_PER_TAP = 10;
-        const POINTS_PER_TAP = 1;
-        const ENERGY_REFILL_INTERVAL_MS = 1000; // Check every second
-        const ENERGY_REFILL_RATE_PER_SECOND = 2; // Energy points refilled per second
-
-
-        // --- App State ---
-        let appState = {
-            currentUser: Telegram.WebApp.initDataUnsafe.user || { first_name: "Guest", id: '00000', username: 'guest' },
-            points: 0,
-            energy: MAX_ENERGY,
-            joinDate: new Date().toISOString(),
-            referralCode: `REF${(Telegram.WebApp.initDataUnsafe.user ? Telegram.WebApp.initDataUnsafe.user.id : 'DEMOUSER')}`,
-            tasks: [
-                { id: 'yt1', title: "Watch Intro Video", reward: 1000, completed: false, url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ" },
-                { id: 'yt2', title: "Learn Tapping Basics", reward: 1200, completed: false, url: "https://www.youtube.com/watch?v=oHg5SJYRHA0" },
-                { id: 'yt3', title: "Understand Energy", reward: 800, completed: false, url: "https://www.youtube.com/watch?v=C0DPdy98e4c" },
-                { id: 'yt4', title: "Check Withdrawal Options", reward: 1500, completed: false, url: "https://www.youtube.com/watch?v=V-_O7nl0Ii0" },
-                { id: 'yt5', title: "Join Community", reward: 500, completed: false, url: "https://www.youtube.com/watch?v=8ybW48rKBME" }
-            ],
-            lastEnergyUpdateTimestamp: Date.now(),
-            activePage: 'tap-page',
-        };
-
-
-        // --- DOM Elements ---
-        const DOMElements = {
-            pages: document.querySelectorAll('.page'),
-            navButtons: document.querySelectorAll('#bottom-nav button'),
-            
-            // Profile Page
-            profileName: document.getElementById('profile-name'),
-            profileUserId: document.getElementById('profile-userid'),
-            profilePoints: document.getElementById('profile-points'),
-            profileJoinDate: document.getElementById('profile-join-date'),
-            profileReferral: document.getElementById('profile-referral'),
-
-
-            // Tap Page
-            pointsDisplay: document.getElementById('points-display'),
-            dogTapArea: document.getElementById('dog-tap-area'),
-            energyBar: document.getElementById('energy-bar'),
-            energyText: document.getElementById('energy-text'),
-            tapPageContent: document.getElementById('tap-page-content'),
-
-
-
-
-            // Task Page
-            taskList: document.getElementById('task-list'),
-
-
-            // Withdraw Page
-            withdrawAvailablePoints: document.getElementById('withdraw-available-points'),
-            withdrawAmountInput: document.getElementById('withdraw-amount'),
-            withdrawMethodSelect: document.getElementById('withdraw-method'),
-            paypalDetailsDiv: document.getElementById('paypal-details'),
-            bankDetailsDiv: document.getElementById('bank-details'),
-            cryptoDetailsDiv: document.getElementById('crypto-details'),
-            withdrawButton: document.getElementById('withdraw-button'),
-
-
-            // Toast
-            toastNotification: document.getElementById('toast-notification'),
-        };
-
-
-        // --- Local Storage ---
-        function saveData() {
-            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(appState));
-        }
-
-
-        function loadData() {
-            const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
-            if (savedData) {
-                const parsedData = JSON.parse(savedData);
-                // Merge tasks carefully: keep existing task structure but update completion status
-                const currentTaskIds = new Set(appState.tasks.map(t => t.id));
-                const savedTasks = parsedData.tasks.filter(st => currentTaskIds.has(st.id));
-                
-                // Update completion status from saved data
-                appState.tasks.forEach(currentTask => {
-                    const savedTask = savedTasks.find(st => st.id === currentTask.id);
-                    if (savedTask) {
-                        currentTask.completed = savedTask.completed;
-                    }
-                });
-
-
-                // Update other state properties
-                appState = {
-                    ...appState, // Keeps default tasks and currentUser from latest code
-                    ...parsedData, // Overwrites with saved data
-                    tasks: [...appState.tasks] // Uses the merged tasks
-                };
-
-
-                // Ensure currentUser is up-to-date from Telegram if available
-                 appState.currentUser = Telegram.WebApp.initDataUnsafe.user || appState.currentUser;
-                 appState.referralCode = `REF${(appState.currentUser.id || 'DEMOUSER')}`;
-
-
-
-
-            } else {
-                // If no saved data, use initial appState, which already includes Telegram user if available
-                appState.joinDate = new Date().toISOString(); // Set join date to now for new users
-                 appState.lastEnergyUpdateTimestamp = Date.now();
-            }
-            // Always ensure energy isn't stale
-            refillEnergy(); // Initial energy calculation based on time passed
-        }
-
-
-        // --- UI Update Functions ---
-        function showPage(pageId) {
-            appState.activePage = pageId;
-            DOMElements.pages.forEach(page => {
-                page.classList.toggle('active', page.id === pageId);
-            });
-            DOMElements.navButtons.forEach(button => {
-                button.classList.toggle('active', button.dataset.page === pageId);
-            });
-
-
-            // Render page content when it becomes active
-            if (pageId === 'profile-page') renderProfilePage();
-            if (pageId === 'task-page') renderTaskPage();
-            if (pageId === 'withdraw-page') renderWithdrawPage();
-            // Tap page is mostly dynamic, its core elements (points, energy) update constantly
-            updatePointsDisplay();
-            updateEnergyDisplay();
-        }
-        
-        function updatePointsDisplay() {
-            const formattedPoints = Math.floor(appState.points).toLocaleString();
-            if (DOMElements.pointsDisplay) DOMElements.pointsDisplay.textContent = formattedPoints;
-            if (DOMElements.profilePoints) DOMElements.profilePoints.textContent = formattedPoints;
-            if (DOMElements.withdrawAvailablePoints) DOMElements.withdrawAvailablePoints.textContent = formattedPoints;
-        }
-
-
-        function updateEnergyDisplay() {
-            const energyPercentage = (appState.energy / MAX_ENERGY) * 100;
-            if (DOMElements.energyBar) DOMElements.energyBar.style.width = `${energyPercentage}%`;
-            if (DOMElements.energyText) DOMElements.energyText.textContent = `${Math.floor(appState.energy)}/${MAX_ENERGY}`;
-        }
-
-
-        function renderProfilePage() {
-            DOMElements.profileName.textContent = `${appState.currentUser.first_name || ''} ${appState.currentUser.last_name || ''}`.trim() || 'N/A';
-            DOMElements.profileUserId.textContent = appState.currentUser.id || 'N/A';
-            DOMElements.profileJoinDate.textContent = new Date(appState.joinDate).toLocaleDateString();
-            DOMElements.profileReferral.textContent = appState.referralCode;
-        }
-
-
-        function renderTaskPage() {
-            DOMElements.taskList.innerHTML = ''; // Clear existing tasks
-            appState.tasks.forEach(task => {
-                const taskItem = document.createElement('div');
-                taskItem.className = 'task-item';
-                taskItem.innerHTML = `
-                    <div>
-                        <strong>${task.title}</strong><br>
-                        <small>Reward: ${task.reward.toLocaleString()} points</small>
-                    </div>
-                    <button data-task-id="${task.id}" ${task.completed ? 'disabled' : ''}>
-                        ${task.completed ? 'Claimed' : 'Complete Task'}
-                    </button>
-                `;
-                const button = taskItem.querySelector('button');
-                if (!task.completed) {
-                    button.onclick = () => completeTask(task.id);
-                }
-                DOMElements.taskList.appendChild(taskItem);
-            });
-        }
-        
-        function renderWithdrawPage() {
-            DOMElements.withdrawAmountInput.value = '';
-            DOMElements.withdrawMethodSelect.value = '';
-            toggleWithdrawDetails(''); // Hide all detail sections
-            updatePointsDisplay(); // Ensure available points is current
-        }
-
-
-        // --- Core Logic ---
-        function handleTap(event) {
-            refillEnergy(); // Update energy before tap
-            if (appState.energy >= ENERGY_PER_TAP) {
-                appState.energy -= ENERGY_PER_TAP;
-                appState.points += POINTS_PER_TAP;
-                
-                updatePointsDisplay();
-                updateEnergyDisplay();
-                saveData();
-
-
-                try { Telegram.WebApp.HapticFeedback.impactOccurred('light'); } catch (e) { console.error("Haptic error:", e); }
-
-
-                // Show floating point animation
-                const pointsEarnedText = document.createElement('div');
-                pointsEarnedText.className = 'floating-point';
-                pointsEarnedText.textContent = `+${POINTS_PER_TAP}`;
-                
-                // Position relative to the tap area or click position
-                const rect = DOMElements.dogTapArea.getBoundingClientRect();
-                // Use clientX/Y if available from touch/mouse event, otherwise center of dog tap area
-                const x = event.clientX || (rect.left + rect.width / 2);
-                const y = event.clientY || (rect.top + rect.height / 2);
-
-
-                pointsEarnedText.style.left = `${x - rect.left}px`; // Position within tap-page-content
-                pointsEarnedText.style.top = `${y - rect.top - DOMElements.pointsDisplay.offsetHeight - 20}px`; // Adjust to appear above dog
-
-
-                DOMElements.tapPageContent.appendChild(pointsEarnedText);
-                setTimeout(() => {
-                    pointsEarnedText.remove();
-                }, 1000);
-
-
-            } else {
-                showToast("Not enough energy!");
-            }
-        }
-
-
-        function refillEnergy() {
-            const now = Date.now();
-            const timeElapsedSeconds = (now - appState.lastEnergyUpdateTimestamp) / 1000;
-            const energyToRefill = timeElapsedSeconds * ENERGY_REFILL_RATE_PER_SECOND;
-
-
-            if (energyToRefill > 0) {
-                appState.energy = Math.min(MAX_ENERGY, appState.energy + energyToRefill);
-                appState.lastEnergyUpdateTimestamp = now;
-                updateEnergyDisplay();
-                saveData(); // Save data less frequently for energy refills to avoid too many writes
-            }
-        }
-        
-        setInterval(() => {
-            if (appState.energy < MAX_ENERGY) {
-                refillEnergy();
-            }
-        }, ENERGY_REFILL_INTERVAL_MS);
-
-
-
-
-        function completeTask(taskId) {
-            const task = appState.tasks.find(t => t.id === taskId);
-            if (task && !task.completed) {
-                task.completed = true;
-                appState.points += task.reward;
-                
-                updatePointsDisplay();
-                renderTaskPage(); // Re-render tasks to update button state
-                saveData();
-                showToast(`Task "${task.title}" completed! +${task.reward} points.`);
-                try { Telegram.WebApp.HapticFeedback.notificationOccurred('success'); } catch (e) { console.error("Haptic error:", e); }
-            }
-        }
-
-
-        function toggleWithdrawDetails(method) {
-            DOMElements.paypalDetailsDiv.classList.toggle('active', method === 'paypal');
-            DOMElements.bankDetailsDiv.classList.toggle('active', method === 'bank');
-            DOMElements.cryptoDetailsDiv.classList.toggle('active', method === 'crypto');
-        }
-
-
-        DOMElements.withdrawMethodSelect.addEventListener('change', (event) => {
-            toggleWithdrawDetails(event.target.value);
-        });
-        
-        function handleWithdrawal() {
-            const amount = parseFloat(DOMElements.withdrawAmountInput.value);
-            const method = DOMElements.withdrawMethodSelect.value;
-
-
-            if (isNaN(amount) || amount <= 0) {
-                showToast("Please enter a valid amount.", "error");
-                return;
-            }
-            if (amount > appState.points) {
-                showToast("Insufficient points.", "error");
-                return;
-            }
-            if (!method) {
-                showToast("Please select a withdrawal method.", "error");
-                return;
-            }
-
-
-            // Basic validation for selected method fields (can be expanded)
-            let detailsFilled = true;
-            if (method === 'paypal' && !document.getElementById('paypal-email').value) detailsFilled = false;
-            if (method === 'bank' && (!document.getElementById('bank-account-name').value || !document.getElementById('bank-account-number').value)) detailsFilled = false;
-            if (method === 'crypto' && !document.getElementById('crypto-address').value) detailsFilled = false;
-            
-            if (!detailsFilled) {
-                showToast("Please fill in all required details for the selected method.", "error");
-                return;
-            }
-
-
-            // Simulate withdrawal
-            appState.points -= amount;
-            updatePointsDisplay();
-            saveData();
-            
-            DOMElements.withdrawAmountInput.value = ''; // Clear input
-            showToast(`Withdrawal of ${amount.toLocaleString()} points via ${method} initiated. (This is a simulation)`, "success");
-            try { Telegram.WebApp.HapticFeedback.notificationOccurred('success'); } catch (e) { console.error("Haptic error:", e); }
-        }
-
-
-        let toastTimeout;
-        function showToast(message, type = 'info') { // type can be 'info', 'success', 'error'
-            DOMElements.toastNotification.textContent = message;
-            DOMElements.toastNotification.className = 'show'; // Reset classes then add 'show'
-            
-            // Optional: Add type-specific styling if needed via classes
-            // DOMElements.toastNotification.classList.add(type); 
-
-
-            clearTimeout(toastTimeout);
-            toastTimeout = setTimeout(() => {
-                DOMElements.toastNotification.className = '';
-                // DOMElements.toastNotification.classList.remove(type);
-            }, 3000);
-        }
-
-
-        // --- Initialization ---
-        function init() {
-            Telegram.WebApp.ready(); // Inform Telegram API that the app is ready
-            try { Telegram.WebApp.expand(); } catch (e) { console.error("Expand error:", e); }
-
-
-
-
-            loadData(); // Load saved data or set defaults
-
-
-            // Setup Navigation
-            DOMElements.navButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    showPage(button.dataset.page);
-                });
-            });
-
-
-            // Setup Tap Action
-            DOMElements.dogTapArea.addEventListener('click', handleTap); // Pass event for click coordinates
-            DOMElements.dogTapArea.addEventListener('touchstart', (e) => { // Prevent double tap zoom on mobile
-                e.preventDefault();
-                handleTap(e.touches[0]); // Pass touch event for coordinates
-            }, { passive: false });
-
-
-
-
-            // Setup Withdraw Action
-            DOMElements.withdrawButton.addEventListener('click', handleWithdrawal);
-            
-            // Initial Page Load
-            showPage(appState.activePage || 'tap-page'); // Show last active page or default to tap
-
-
-            // Initial UI updates
-            updatePointsDisplay();
-            updateEnergyDisplay();
-            refillEnergy(); // Recalculate energy based on time since last open
-
-
-            console.log("TapSwap App Initialized");
-            console.log("Current User:", appState.currentUser);
-            console.log("Current State:", appState);
-        }
-
-
-        // --- Start the app ---
-        // Use DOMContentLoaded for browsers, Telegram.WebApp.ready() handles its own timing
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', init);
-        } else {
-            init(); // DOMContentLoaded has already fired
-        }
-
-
-    </script>
-
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyAKdJNv0J_ZMlPUuWafXDqS6b281aZmEk4",
-    authDomain: "eazycash-tap-earning.firebaseapp.com",
-    databaseURL: "https://eazycash-tap-earning-default-rtdb.firebaseio.com",
-    projectId: "eazycash-tap-earning",
-    storageBucket: "eazycash-tap-earning.firebasestorage.app",
-    messagingSenderId: "842900439557",
-    appId: "1:842900439557:web:af9886cda0fb3b5358d26c",
-    measurementId: "G-6GLDMD7PDX"
+        <h3>Users</h3>
+        <ul id="admin-users-list" style="list-style:none; padding-left:0; max-height: 200px; overflow-y: auto;"></ul>
+        <h3>Pending Withdrawal Requests</h3>
+        <ul id="admin-withdrawals-list" style="list-style:none; padding-left:0; max-height: 200px; overflow-y: auto;"></ul>
+      </div>
+    </section>
+  </main>
+  <footer>
+    &copy; 2024 Telegram Mini App Investment System
+  </footer>
+</div>
+
+<script>
+  // Telegram Mini App simulation (replace with actual Telegram API calls in deployment)
+  // For development/testing, simulate Telegram login data
+  const telegramMockUser = {
+    id: '123456789',
+    first_name: 'John',
+    last_name: 'Doe',
+    username: 'john_doe',
   };
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
+  // Admin password (should be more secure in real backend)
+  const ADMIN_PASSWORD = "admin123";
+
+  // Utility: format number as currency string
+  function formatMoney(num) {
+    return num.toFixed(2);
+  }
+
+  // Parse URL query parameter (for referral)
+  function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+  }
+
+  // State variables and localStorage keys
+  const LS_KEY = 'telegram_mini_app_data_v2';
+
+  // Load stored data or default
+  let appData = {
+    users: {}, // userId -> {id, firstName, lastName, username, balance, bonusBalance, referrals:[], referralBonusTotal, totalProfit, investRecords:[], deposits:[], withdrawals:[]}
+    currentUserId: null,
+  };
+
+  function saveAppData() {
+    localStorage.setItem(LS_KEY, JSON.stringify(appData));
+  }
+
+  function loadAppData() {
+    const data = localStorage.getItem(LS_KEY);
+    if (data) {
+      appData = JSON.parse(data);
+    }
+  }
+
+  // Initialize user from Telegram login
+  function initUser(telegramUserInfo) {
+    loadAppData();
+    let user = appData.users[telegramUserInfo.id];
+    if (!user) {
+      // Create new user
+      user = {
+        id: telegramUserInfo.id,
+        firstName: telegramUserInfo.first_name || '',
+        lastName: telegramUserInfo.last_name || '',
+        username: telegramUserInfo.username || '',
+        balance: 0,
+        bonusBalance: 0,
+        referrals: [],
+        referralBonusTotal: 0,
+        totalProfit: 0,
+        investRecords: [],
+        deposits: [],
+        withdrawals: [],
+        joined: Date.now(),
+      };
+
+      // Referral bonus if ?ref=someid and referrer exists and is not self
+      const referralId = getQueryParam('ref');
+      if (referralId && referralId !== telegramUserInfo.id && appData.users[referralId]) {
+        // Award referrer some bonus
+        appData.users[referralId].bonusBalance += 5;
+        appData.users[referralId].referrals.push(user.id);
+        appData.users[referralId].referralBonusTotal += 5;
+        saveAppData();
+        // Also give new user a joining bonus
+        user.bonusBalance += 2;
+      }
+
+      appData.users[user.id] = user;
+      saveAppData();
+    }
+    appData.currentUserId = user.id;
+    saveAppData();
+    return user;
+  }
+
+  // Get current user object
+  function getCurrentUser() {
+    if (!appData.currentUserId) return null;
+    return appData.users[appData.currentUserId] || null;
+  }
+
+  // Update UI display for profile
+  function updateProfileUI(user) {
+    if (!user) {
+      document.getElementById('welcome-msg').textContent = 'User data not found.';
+      return;
+    }
+    let fullname = user.firstName || '';
+    if (user.lastName) fullname += ' ' + user.lastName;
+    if (!fullname.trim()) fullname = 'User';
+    document.getElementById('welcome-msg').textContent = `Welcome back, ${fullname}!`;
+    document.getElementById('user-id-display').textContent = user.id;
+    document.getElementById('balance-display').textContent = formatMoney(user.balance);
+    document.getElementById('bonus-balance-display').textContent = formatMoney(user.bonusBalance);
+    document.getElementById('total-referral-bonus').textContent = formatMoney(user.referralBonusTotal);
+    document.getElementById('total-profit-earned').textContent = formatMoney(user.totalProfit);
+  }
+
+  // Generate referral link for current user
+  function getReferralLink(user) {
+    const baseUrl = window.location.origin + window.location.pathname;
+    return `${baseUrl}?ref=${user.id}`;
+  }
+
+  // Update referral UI
+  function updateReferralUI(user) {
+    const refLinkInput = document.getElementById('referral-link');
+    if (!user) {
+      refLinkInput.value = '';
+      return;
+    }
+    refLinkInput.value = getReferralLink(user);
+    const referralListUl = document.getElementById('referral-list');
+    referralListUl.innerHTML = '';
+    if (!user.referrals.length) {
+      referralListUl.innerHTML = '<li>No referrals yet.</li>';
+    } else {
+      user.referrals.forEach(refId => {
+        const refUser = appData.users[refId];
+        if (refUser) {
+          const li = document.createElement('li');
+          li.textContent = `${refUser.firstName || ''} ${refUser.lastName || ''} (${refUser.username || 'no username'})`;
+          referralListUl.appendChild(li);
+        }
+      });
+    }
+  }
+
+  // Copy referral link button handler
+  function setupReferralCopyButton() {
+    const btn = document.getElementById('copy-ref-link');
+    btn.onclick = () => {
+      const refLinkInput = document.getElementById('referral-link');
+      refLinkInput.select();
+      refLinkInput.setSelectionRange(0, 99999);
+      try {
+        document.execCommand('copy');
+        btn.textContent = 'Copied!';
+        setTimeout(() => { btn.textContent = 'Copy Referral Link'; }, 2000);
+      } catch (e) {
+        alert('Failed to copy referral link.');
+      }
+    };
+  }
+
+  // Rewards system
+  function setupRewardsHandlers() {
+    const watchBtn = document.getElementById('watch-video-ad');
+    const clickBtn = document.getElementById('click-ad');
+    const rewardsMsg = document.getElementById('rewards-msg');
+
+    watchBtn.onclick = () => {
+      watchBtn.disabled = true;
+      rewardsMsg.textContent = 'Playing video ad...';
+      // Simulate video ad duration 5 seconds
+      setTimeout(() => {
+        const user = getCurrentUser();
+        if (user) {
+          user.bonusBalance += 0.5;
+          saveAppData();
+          updateProfileUI(user);
+          rewardsMsg.innerHTML = '<span class="success-msg">Video ad watched! $0.50 bonus added.</span>';
+        }
+        watchBtn.disabled = false;
+      }, 5000);
+    };
+
+    clickBtn.onclick = () => {
+      // Simulate ad click
+      const user = getCurrentUser();
+      if (user) {
+        user.bonusBalance += 0.1;
+        saveAppData();
+        updateProfileUI(user);
+        rewardsMsg.innerHTML = '<span class="success-msg">Ad clicked! $0.10 bonus added.</span>';
+      }
+    };
+  }
+
+  // Investment logic
+  // Profit is 10% after 7 days from investment timestamp, investment locked during this period
+
+  function updateInvestmentUI() {
+    const investmentListDiv = document.getElementById('investment-list');
+    investmentListDiv.innerHTML = '';
+    const user = getCurrentUser();
+    if (!user) return;
+
+    if (!user.investRecords.length) {
+      investmentListDiv.innerHTML = '<p>No active investments.</p>';
+      return;
+    }
+
+    const now = Date.now();
+    user.investRecords = user.investRecords.filter(inv => inv.status !== 'withdrawn'); // Clean withdrawn
+
+    if (!user.investRecords.length) {
+      investmentListDiv.innerHTML = '<p>No active investments.</p>';
+      return;
+    }
+
+    user.investRecords.forEach((inv, idx) => {
+      const investedAt = inv.timestamp;
+      const lockedUntil = investedAt + 7 * 24 * 60 * 60 * 1000; // 7 days
+      let profit = 0;
+      let profitEarned = 0;
+      if (now >= lockedUntil && inv.status === 'active') {
+        // Profit 10%
+        profit = inv.amount * 0.10;
+        profitEarned = profit;
+      }
+      const container = document.createElement('div');
+      container.className = 'investment-item';
+      container.innerHTML = 
+        `<div><strong>Investment $${formatMoney(inv.amount)}</strong></div>
+         <div>Invested on: ${new Date(investedAt).toLocaleString()}</div>
+         <div>Locked until: ${new Date(lockedUntil).toLocaleString()}</div>
+         <div>Profit after 7 days: $${formatMoney(inv.amount * 0.10)}</div>
+         <div>Status: ${inv.status === 'active' ? (now >= lockedUntil ? 'Ready to withdraw' : 'Active (Locked)') : inv.status}</div>
+      `;
+
+      if (inv.status === 'active' && now >= lockedUntil) {
+        const withdrawBtn = document.createElement('button');
+        withdrawBtn.className = 'small-button';
+        withdrawBtn.textContent = 'Withdraw Investment+Profit';
+        withdrawBtn.onclick = () => {
+          // Add investment + profit to balance
+          user.balance += inv.amount + profitEarned;
+          user.totalProfit += profitEarned;
+          inv.status = 'withdrawn';
+          saveAppData();
+          updateProfileUI(user);
+          updateInvestmentUI();
+          alert(`Investment and profit $${formatMoney(inv.amount + profitEarned)} withdrawn to your balance.`);
+        };
+        container.appendChild(withdrawBtn);
+      }
+
+      investmentListDiv.appendChild(container);
+    });
+    saveAppData();
+  }
+
+  // Investment button handler
+  function setupInvestmentHandler() {
+    document.getElementById('make-investment').onclick = () => {
+      const amtInput = document.getElementById('investment-amount');
+      const amount = parseFloat(amtInput.value);
+      const user = getCurrentUser();
+      if (!user) return alert('User not found.');
+      if (isNaN(amount) || amount < 10) return alert('Please enter a valid amount of at least $10.');
+      if (user.balance < amount) return alert('Insufficient balance to invest.');
+      // Deduct balance and add investment
+      user.balance -= amount;
+      const investRecord = {
+        amount,
+        timestamp: Date.now(),
+        status: 'active',
+      };
+      user.investRecords.push(investRecord);
+      saveAppData();
+      updateProfileUI(user);
+      updateInvestmentUI();
+      amtInput.value = '';
+      alert(`Invested $${formatMoney(amount)} in the weekly package.`);
+    };
+  }
+
+  // Deposit and Withdrawal functions
+
+  function updateDepositsWithdrawalsUI() {
+    const user = getCurrentUser();
+    if (!user) return;
+
+    // Withdrawal requests list for user
+    const withdrawList = document.getElementById('withdrawal-requests-list');
+    withdrawList.innerHTML = '';
+    const pendingWithdrawals = user.withdrawals.filter(w => w.status === 'pending');
+    if (!pendingWithdrawals.length) {
+      withdrawList.innerHTML = '<li>No pending withdrawal requests.</li>';
+    } else {
+      pendingWithdrawals.forEach(w => {
+        const li = document.createElement('li');
+        li.className = 'transaction-item';
+        li.textContent = `Amount: $${formatMoney(w.amount)} | Requested on: ${new Date(w.timestamp).toLocaleString()}`;
+        withdrawList.appendChild(li);
+      });
+    }
+  }
+
+  function setupDepositWithdrawHandlers() {
+    const depositBtn = document.getElementById('make-deposit');
+    const depositMsg = document.getElementById('deposit-msg');
+    depositBtn.onclick = () => {
+      depositMsg.textContent = '';
+      const amount = parseFloat(document.getElementById('deposit-amount').value);
+      const user = getCurrentUser();
+      if (!user) {
+        depositMsg.textContent = 'User not found.';
+        depositMsg.className = 'error-msg';
+        return;
+      }
+      if (isNaN(amount) || amount <= 0) {
+        depositMsg.textContent = 'Enter a valid deposit amount.';
+        depositMsg.className = 'error-msg';
+        return;
+      }
+      // For manual deposit, just add to balance & deposit records
+      user.balance += amount;
+      user.deposits.push({
+        amount,
+        timestamp: Date.now(),
+      });
+      saveAppData();
+      updateProfileUI(user);
+      depositMsg.textContent = `Deposit of $${formatMoney(amount)} added to your balance.`;
+      depositMsg.className = 'success-msg';
+      document.getElementById('deposit-amount').value = '';
+    };
+
+    const withdrawBtn = document.getElementById('make-withdrawal');
+    const withdrawMsg = document.getElementById('withdraw-msg');
+    withdrawBtn.onclick = () => {
+      withdrawMsg.textContent = '';
+      const amount = parseFloat(document.getElementById('withdraw-amount').value);
+      const user = getCurrentUser();
+      if (!user) {
+        withdrawMsg.textContent = 'User not found.';
+        withdrawMsg.className = 'error-msg';
+        return;
+      }
+      if (isNaN(amount) || amount <= 0) {
+        withdrawMsg.textContent = 'Enter a valid withdrawal amount.';
+        withdrawMsg.className = 'error-msg';
+        return;
+      }
+      if (amount > user.balance + user.bonusBalance) {
+        withdrawMsg.textContent = 'Insufficient total balance (balance + bonus) to withdraw this amount.';
+        withdrawMsg.className = 'error-msg';
+        return;
+      }
+
+      // Withdrawal requests deduct from regular balance first, then bonus balance if needed
+      let remaining = amount;
+      if (user.balance >= remaining) {
+        user.balance -= remaining;
+        remaining = 0;
+      } else {
+        remaining -= user.balance;
+        user.balance = 0;
+      }
+      if (remaining > 0) {
+        if (user.bonusBalance >= remaining) {
+          user.bonusBalance -= remaining;
+          remaining = 0;
+        } else {
+          withdrawMsg.textContent = 'Unexpected error due to insufficient funds.';
+          withdrawMsg.className = 'error-msg';
+          return;
+        }
+      }
+
+      const withdrawalRequest = {
+        amount,
+        timestamp: Date.now(),
+        status: 'pending',
+        userId: user.id,
+      };
+      user.withdrawals.push(withdrawalRequest);
+      appData.users[user.id] = user;
+      saveAppData();
+      updateProfileUI(user);
+      updateDepositsWithdrawalsUI();
+      withdrawMsg.textContent = `Withdrawal request for $${formatMoney(amount)} submitted for approval.`;
+      withdrawMsg.className = 'success-msg';
+      document.getElementById('withdraw-amount').value = '';
+    };
+  }
+
+  // Admin panel functionality
+
+  let isAdminLoggedIn = false;
+
+  function updateAdminUsersList() {
+    const ul = document.getElementById('admin-users-list');
+    ul.innerHTML = '';
+    Object.values(appData.users).forEach(user => {
+      const li = document.createElement('li');
+      li.className = 'user-item';
+      li.innerHTML = `
+        <div><strong>${user.firstName || ''} ${user.lastName || ''} (${user.username || 'no username'})</strong></div>
+        <div>User ID: ${user.id}</div>
+        <div>Balance: $${formatMoney(user.balance)}, Bonus: $${formatMoney(user.bonusBalance)}</div>
+        <div>Referrals: ${user.referrals.length}, Referral Bonus: $${formatMoney(user.referralBonusTotal)}</div>
+        <div>Total Profit: $${formatMoney(user.totalProfit)}</div>
+      `;
+      ul.appendChild(li);
+    });
+  }
+
+  function updateAdminWithdrawalsList() {
+    const ul = document.getElementById('admin-withdrawals-list');
+    ul.innerHTML = '';
+    let found = false;
+    Object.values(appData.users).forEach(user => {
+      user.withdrawals.forEach(w => {
+        if (w.status === 'pending') {
+          found = true;
+          const li = document.createElement('li');
+          li.className = 'transaction-item';
+          li.style.display = 'flex';
+          li.style.justifyContent = 'space-between';
+          li.style.alignItems = 'center';
+          li.style.marginBottom = '12px';
+
+          li.innerHTML = `
+            <div>
+              <strong>User ID: ${user.id}</strong><br />
+              Amount: $${formatMoney(w.amount)}<br />
+              Requested on: ${new Date(w.timestamp).toLocaleString()}
+            </div>
+          `;
+          const actionsDiv = document.createElement('div');
+
+          const approveBtn = document.createElement('button');
+          approveBtn.className = 'small-button';
+          approveBtn.textContent = 'Approve';
+          approveBtn.style.background = '#2ABA6D';
+          approveBtn.style.marginRight = '8px';
+          approveBtn.onclick = () => {
+            // Approve withdrawal: change status, confirm no funds returned (already deducted on request)
+            w.status = 'approved';
+            saveAppData();
+            alert(`Withdrawal of $${formatMoney(w.amount)} approved for User ID ${user.id}.`);
+            updateAdminWithdrawalsList();
+            updateDepositsWithdrawalsUI();
+            updateProfileUI(getCurrentUser());
+          };
+
+          const rejectBtn = document.createElement('button');
+          rejectBtn.className = 'small-button';
+          rejectBtn.textContent = 'Reject';
+          rejectBtn.style.background = '#d9534f';
+          rejectBtn.onclick = () => {
+            // Reject withdrawal: refund funds to user balances (balance + bonus)
+            // Refund funds in priority: balance, then bonus balance
+            if (w.status !== 'pending') return;
+            let refundAmount = w.amount;
+            // Refund logic - add all to balance since the deduction was from balance + bonus
+            user.balance += refundAmount;
+            w.status = 'rejected';
+            saveAppData();
+            alert(`Withdrawal of $${formatMoney(w.amount)} rejected and amount refunded to User ID ${user.id}.`);
+            updateAdminWithdrawalsList();
+            updateDepositsWithdrawalsUI();
+            updateProfileUI(getCurrentUser());
+          };
+
+          actionsDiv.appendChild(approveBtn);
+          actionsDiv.appendChild(rejectBtn);
+          li.appendChild(actionsDiv);
+          ul.appendChild(li);
+        }
+      });
+    });
+    if (!found) {
+      ul.innerHTML = '<li>No pending withdrawal requests.</li>';
+    }
+  }
+
+  function setupAdminLogin() {
+    const adminLoginBtn = document.getElementById('admin-login-button');
+    const adminPasswordInput = document.getElementById('admin-password');
+    const adminLoginMsg = document.getElementById('admin-login-msg');
+    const adminLoginSection = document.getElementById('admin-login-section');
+    const adminPanel = document.getElementById('admin-panel');
+
+    adminLoginBtn.onclick = () => {
+      if (adminPasswordInput.value === ADMIN_PASSWORD) {
+        isAdminLoggedIn = true;
+        adminLoginMsg.textContent = '';
+        adminLoginSection.style.display = 'none';
+        adminPanel.style.display = 'block';
+        updateAdminUsersList();
+        updateAdminWithdrawalsList();
+      } else {
+        adminLoginMsg.textContent = 'Incorrect password.';
+        adminLoginMsg.className = 'error-msg';
+        isAdminLoggedIn = false;
+      }
+    };
+  }
+
+  // Tab navigation
+  function setupTabNavigation() {
+    const buttons = document.querySelectorAll('nav button');
+    buttons.forEach(btn => {
+      btn.onclick = () => {
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const tab = btn.getAttribute('data-tab');
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.getElementById(tab + '-section').classList.add('active');
+      };
+    });
+  }
+
+  // Main init function after Telegram environment ready
+  function main() {
+    // Simulate Telegram login info - in real app use Telegram.WebApp.initDataUnsafe.user
+    const telegramUser = telegramMockUser;
+
+    // Initialize or load user
+    const user = initUser(telegramUser);
+
+    // Show profile info
+    updateProfileUI(user);
+
+    // Setup referral link and list
+    updateReferralUI(user);
+    setupReferralCopyButton();
+
+    // Rewards button handlers
+    setupRewardsHandlers();
+
+    // Investment handlers and UI update
+    setupInvestmentHandler();
+    updateInvestmentUI();
+
+    // Deposit and withdrawal handlers and UI update
+    setupDepositWithdrawHandlers();
+    updateDepositsWithdrawalsUI();
+
+    // Admin login setup
+    setupAdminLogin();
+
+    // Tab navigation setup
+    setupTabNavigation();
+  }
+
+  window.onload = main;
 </script>
-    
 </body>
 </html>
+
