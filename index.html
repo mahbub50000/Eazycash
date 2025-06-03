@@ -174,6 +174,24 @@
     font-weight: 700;
     margin-bottom: 15px;
   }
+  .status-badge {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .status-pending {
+    background: #ffe699;
+    color: #a67c00;
+  }
+  .status-approved {
+    background: #c6efce;
+    color: #256029;
+  }
+  .status-rejected {
+    background: #f8d7da;
+    color: #721c24;
+  }
 </style>
 </head>
 <body>
@@ -253,10 +271,10 @@
     <section class="section" id="finance-section">
       <h2>Deposit & Withdrawal</h2>
       <div style="margin-bottom: 20px;">
-        <h3>Manual Deposit</h3>
+        <h3>Request Deposit</h3>
         <label for="deposit-amount">Deposit Amount ($):</label>
         <input type="number" id="deposit-amount" min="1" step="1" placeholder="Enter deposit amount" />
-        <button class="btn" id="make-deposit">Deposit</button>
+        <button class="btn" id="request-deposit">Request Deposit</button>
         <div id="deposit-msg"></div>
       </div>
       <div>
@@ -267,7 +285,10 @@
         <div id="withdraw-msg"></div>
       </div>
 
-      <h3 style="margin-top: 30px;">Withdrawal Requests</h3>
+      <h3 style="margin-top: 30px;">Deposit Requests</h3>
+      <ul id="deposit-requests-list" style="list-style:none; padding-left:0; margin-bottom: 20px;"></ul>
+
+      <h3 style="margin-top: 10px;">Withdrawal Requests</h3>
       <ul id="withdrawal-requests-list" style="list-style:none; padding-left:0;"></ul>
     </section>
 
@@ -287,6 +308,8 @@
         </div>
         <h3>Users</h3>
         <ul id="admin-users-list" style="list-style:none; padding-left:0; max-height: 200px; overflow-y: auto;"></ul>
+        <h3>Pending Deposit Requests</h3>
+        <ul id="admin-deposits-list" style="list-style:none; padding-left:0; max-height: 200px; overflow-y: auto; margin-bottom: 20px;"></ul>
         <h3>Pending Withdrawal Requests</h3>
         <ul id="admin-withdrawals-list" style="list-style:none; padding-left:0; max-height: 200px; overflow-y: auto;"></ul>
       </div>
@@ -496,18 +519,15 @@
     const user = getCurrentUser();
     if (!user) return;
 
+    // Clean withdrawn investments from active list
+    user.investRecords = user.investRecords.filter(inv => inv.status !== 'withdrawn');
+
     if (!user.investRecords.length) {
       investmentListDiv.innerHTML = '<p>No active investments.</p>';
       return;
     }
 
     const now = Date.now();
-    user.investRecords = user.investRecords.filter(inv => inv.status !== 'withdrawn'); // Clean withdrawn
-
-    if (!user.investRecords.length) {
-      investmentListDiv.innerHTML = '<p>No active investments.</p>';
-      return;
-    }
 
     user.investRecords.forEach((inv, idx) => {
       const investedAt = inv.timestamp;
@@ -582,6 +602,30 @@
     const user = getCurrentUser();
     if (!user) return;
 
+    // Deposit requests list for user
+    const depositList = document.getElementById('deposit-requests-list');
+    depositList.innerHTML = '';
+
+    if (!user.deposits.length) {
+      depositList.innerHTML = '<li>No deposit requests.</li>';
+    } else {
+      user.deposits.forEach(dep => {
+        const li = document.createElement('li');
+        li.className = 'transaction-item';
+        let statusClass = '';
+        if(dep.status === 'pending') statusClass = 'status-pending';
+        else if(dep.status === 'approved') statusClass = 'status-approved';
+        else if(dep.status === 'rejected') statusClass = 'status-rejected';
+
+        li.innerHTML = `
+          Amount: $${formatMoney(dep.amount)} 
+          <span class="status-badge ${statusClass}">${dep.status.charAt(0).toUpperCase() + dep.status.slice(1)}</span><br />
+          Requested on: ${new Date(dep.timestamp).toLocaleString()}
+        `;
+        depositList.appendChild(li);
+      });
+    }
+
     // Withdrawal requests list for user
     const withdrawList = document.getElementById('withdrawal-requests-list');
     withdrawList.innerHTML = '';
@@ -599,7 +643,7 @@
   }
 
   function setupDepositWithdrawHandlers() {
-    const depositBtn = document.getElementById('make-deposit');
+    const depositBtn = document.getElementById('request-deposit');
     const depositMsg = document.getElementById('deposit-msg');
     depositBtn.onclick = () => {
       depositMsg.textContent = '';
@@ -615,15 +659,15 @@
         depositMsg.className = 'error-msg';
         return;
       }
-      // For manual deposit, just add to balance & deposit records
-      user.balance += amount;
+      // Add deposit request with status pending, no balance increase yet
       user.deposits.push({
         amount,
         timestamp: Date.now(),
+        status: 'pending',
       });
       saveAppData();
-      updateProfileUI(user);
-      depositMsg.textContent = `Deposit of $${formatMoney(amount)} added to your balance.`;
+      updateDepositsWithdrawalsUI();
+      depositMsg.textContent = `Deposit request for $${formatMoney(amount)} submitted for approval.`;
       depositMsg.className = 'success-msg';
       document.getElementById('deposit-amount').value = '';
     };
@@ -706,6 +750,72 @@
       `;
       ul.appendChild(li);
     });
+  }
+
+  function updateAdminDepositsList() {
+    const ul = document.getElementById('admin-deposits-list');
+    ul.innerHTML = '';
+    let found = false;
+    Object.values(appData.users).forEach(user => {
+      user.deposits.forEach(d => {
+        if (d.status === 'pending') {
+          found = true;
+          const li = document.createElement('li');
+          li.className = 'transaction-item';
+          li.style.display = 'flex';
+          li.style.justifyContent = 'space-between';
+          li.style.alignItems = 'center';
+          li.style.marginBottom = '12px';
+
+          li.innerHTML = `
+            <div>
+              <strong>User ID: ${user.id}</strong><br />
+              Amount: $${formatMoney(d.amount)}<br />
+              Requested on: ${new Date(d.timestamp).toLocaleString()}
+            </div>
+          `;
+          const actionsDiv = document.createElement('div');
+
+          const approveBtn = document.createElement('button');
+          approveBtn.className = 'small-button';
+          approveBtn.textContent = 'Approve';
+          approveBtn.style.background = '#2ABA6D';
+          approveBtn.style.marginRight = '8px';
+          approveBtn.onclick = () => {
+            // Approve deposit: mark status approved, add amount to balance
+            d.status = 'approved';
+            user.balance += d.amount;
+            saveAppData();
+            alert(`Deposit of $${formatMoney(d.amount)} approved for User ID ${user.id}.`);
+            updateAdminDepositsList();
+            updateDepositsWithdrawalsUI();
+            updateProfileUI(getCurrentUser());
+          };
+
+          const rejectBtn = document.createElement('button');
+          rejectBtn.className = 'small-button';
+          rejectBtn.textContent = 'Reject';
+          rejectBtn.style.background = '#d9534f';
+          rejectBtn.onclick = () => {
+            // Reject deposit: mark rejected without balance addition
+            if (d.status !== 'pending') return;
+            d.status = 'rejected';
+            saveAppData();
+            alert(`Deposit of $${formatMoney(d.amount)} rejected for User ID ${user.id}.`);
+            updateAdminDepositsList();
+            updateDepositsWithdrawalsUI();
+          };
+
+          actionsDiv.appendChild(approveBtn);
+          actionsDiv.appendChild(rejectBtn);
+          li.appendChild(actionsDiv);
+          ul.appendChild(li);
+        }
+      });
+    });
+    if (!found) {
+      ul.innerHTML = '<li>No pending deposit requests.</li>';
+    }
   }
 
   function updateAdminWithdrawalsList() {
@@ -792,6 +902,7 @@
         adminLoginSection.style.display = 'none';
         adminPanel.style.display = 'block';
         updateAdminUsersList();
+        updateAdminDepositsList();
         updateAdminWithdrawalsList();
       } else {
         adminLoginMsg.textContent = 'Incorrect password.';
