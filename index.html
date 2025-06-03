@@ -126,6 +126,10 @@
     color: #eee;
     transition: background-color 0.3s;
   }
+  /* Change background color for withdraw method select */
+  #withdraw-method {
+    background-color: #4a3b8f !important;
+  }
   input[type=number]:focus, input[type=text]:focus, select:focus {
     background: rgba(255 255 255 / 0.20);
   }
@@ -437,9 +441,9 @@
     const rewardCooldown = 1000 * 60 * 60; // 1 hour cooldown
     const dailyBonusCooldown = 1000 * 60 * 60 * 24; // 24 hours for daily bonus
 
-    // Admin login check (for demo purpose only)
-    const adminUserId = 1234567890; // Example admin user id
-
+    // Admin settings and state
+    const ADMIN_SETTINGS_KEY = 'adminSettings';
+    
     // State
     let user = null;
     let referrals = []; // Array of user ids who used referral link
@@ -447,6 +451,24 @@
     let currentInvestment = 0;
     let depositEnabled = true;
     let withdrawEnabled = true;
+    let registrationsEnabled = true;
+    let rewardsEnabled = true;
+
+    // Load admin settings
+    function loadAdminSettings() {
+      const settings = localStorage.getItem(ADMIN_SETTINGS_KEY);
+      if (settings) {
+        try {
+          const adminSettings = JSON.parse(settings);
+          depositEnabled = adminSettings.depositsEnabled;
+          withdrawEnabled = adminSettings.withdrawalsEnabled;
+          registrationsEnabled = adminSettings.registrationsEnabled;
+          rewardsEnabled = adminSettings.rewardsEnabled;
+        } catch (e) {
+          console.error('Error loading admin settings:', e);
+        }
+      }
+    }
 
     // Elements
     const loginSection = document.getElementById('login-section');
@@ -562,9 +584,20 @@
       return `${h ? h + 'h ' : ''}${m}m ${s}s`;
     }
 
-    // Check if user is admin
+    // Check if user is admin (using admin session)
     function isAdmin() {
-      return user && (user.id === adminUserId);
+      const adminSession = localStorage.getItem('adminSession');
+      if (!adminSession) return false;
+      
+      try {
+        const sessionData = JSON.parse(adminSession);
+        const now = Date.now();
+        const sessionAge = now - sessionData.timestamp;
+        const maxAge = 24 * 60 * 60 * 1000; // 24 hours
+        return sessionAge < maxAge;
+      } catch {
+        return false;
+      }
     }
 
     // Render user info and UI parts according to user state
@@ -666,6 +699,10 @@
 
     // Handle Telegram login simulation
     document.getElementById('btn-tl-login').addEventListener('click', () => {
+      if (!registrationsEnabled) {
+        showToast('New registrations are currently disabled by admin.');
+        return;
+      }
       // Simulate login and store user data
       // Normally you get this data from Telegram widget with backend token check
       const simulatedUser = {
@@ -716,6 +753,10 @@
         showToast('Please login first');
         return;
       }
+      if (!rewardsEnabled) {
+        showToast('Rewards are currently disabled by admin.');
+        return;
+      }
       if (!canClaim('lastVideoClaim', rewardCooldown)) {
         showToast('Video reward already claimed. Please wait.');
         return;
@@ -739,6 +780,10 @@
     claimPpcRewardBtn.addEventListener('click', () => {
       if (!user) {
         showToast('Please login first');
+        return;
+      }
+      if (!rewardsEnabled) {
+        showToast('Rewards are currently disabled by admin.');
         return;
       }
       if (!canClaim('lastPpcClaim', rewardCooldown)) {
@@ -808,6 +853,10 @@
     claimDailyBonusBtn.addEventListener('click', () => {
       if (!user) {
         showToast('Please login first');
+        return;
+      }
+      if (!rewardsEnabled) {
+        showToast('Rewards are currently disabled by admin.');
         return;
       }
       if (!canClaim('lastDailyBonusClaim', dailyBonusCooldown)) {
@@ -894,17 +943,22 @@
       withdrawForm.reset();
     });
 
-    // Admin toggle controls
-    toggleDepositEnabled.addEventListener('change', () => {
-      depositEnabled = toggleDepositEnabled.checked;
-      saveUserData();
-      renderUI();
+    // Admin section navigation
+    navButtons.admin.addEventListener('click', () => {
+      if (!user) {
+        showToast('Please login first');
+        return;
+      }
+      // Redirect to admin panel if admin
+      if (isAdmin()) {
+        window.location.href = 'admin.html';
+      } else {
+        showToast('Access denied: Admin privileges required');
+      }
     });
-    toggleWithdrawEnabled.addEventListener('change', () => {
-      withdrawEnabled = toggleWithdrawEnabled.checked;
-      saveUserData();
-      renderUI();
-    });
+
+    // Load admin settings on initialization
+    loadAdminSettings();
 
     // Initialization
     if (!loadUserData()) {
