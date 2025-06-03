@@ -5,1166 +5,825 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Telegram Mini App - Investment & Rewards</title>
 <style>
-  /* Modern clean Telegram inspired UI */
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
-  html, body {
-    margin: 0; padding: 0; height: 100%;
-    font-family: 'Inter', sans-serif;
-    background: #F3F6FB;
-    color: #1A1A1A;
+  /* Reset & base */
+  * {
+    box-sizing: border-box;
   }
-  #app {
-    max-width: 480px;
-    margin: auto;
-    background: white;
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #0088cc, #006699);
+    color: #fff;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 0 15px rgba(0,0,0,0.1);
   }
   header {
-    background: #2AABEE;
-    color: white;
-    padding: 15px 20px;
-    font-weight: 600;
-    font-size: 1.3rem;
+    background: #005f99;
+    padding: 1rem;
     text-align: center;
-    box-shadow: inset 0 -1px 0 rgba(255 255 255 / 0.3);
-  }
-  nav {
-    display: flex;
-    background: #E6F7FF;
-    border-bottom: 1px solid #B3E5FC;
-  }
-  nav button {
-    flex: 1;
-    border: none;
-    background: none;
-    padding: 10px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    color: #2AABEE;
-    cursor: pointer;
-    border-bottom: 3px solid transparent;
-    transition: border-color 0.3s;
-  }
-  nav button.active {
-    border-bottom: 3px solid #2AABEE;
-    background: white;
+    font-size: 1.5rem;
     font-weight: 700;
+    letter-spacing: 0.03em;
   }
   main {
     flex-grow: 1;
-    overflow-y: auto;
-    padding: 15px 20px;
-  }
-  .section {
-    display: none;
-  }
-  .section.active {
-    display: block;
+    max-width: 480px;
+    margin: 1rem auto;
+    background: rgba(0, 0, 0, 0.35);
+    border-radius: 10px;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.7);
   }
   h2 {
-    color: #179CD7;
+    margin-top: 0;
     font-weight: 700;
-    margin-bottom: 10px;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
-  .info-box {
-    background: #E6F7FF;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 20px;
-    color: #0B72B9;
-    font-weight: 600;
-  }
-  .btn {
-    background: #2AABEE;
-    color: white;
+  button, input[type="submit"] {
+    background: #00b8fa;
     border: none;
-    padding: 10px 18px;
-    font-weight: 600;
-    font-size: 1rem;
     border-radius: 6px;
+    padding: 0.6rem 1.2rem;
+    margin: 0.5rem 0;
+    font-weight: 600;
+    color: #00345c;
     cursor: pointer;
-    margin-top: 10px;
-    user-select: none;
-    transition: background 0.3s;
+    transition: background-color 0.3s ease;
   }
-  .btn:hover:not(:disabled) {
-    background: #1e90d9;
+  button:hover, input[type="submit"]:hover {
+    background: #0095cc;
+    color: white;
   }
-  .btn:disabled {
-    background: #a0d5fb;
-    cursor: not-allowed;
-  }
-  input[type="text"], input[type="number"], input[type="password"] {
+  input[type="text"], input[type="password"], input[type="number"] {
     width: 100%;
-    padding: 8px 10px;
-    margin: 5px 0 10px 0;
-    box-sizing: border-box;
-    border: 1.5px solid #b3e5fc;
-    border-radius: 5px;
+    padding: 0.5rem 0.75rem;
+    margin: 0.4rem 0 1rem 0;
+    border-radius: 6px;
+    border: none;
     font-size: 1rem;
-    color: #1a1a1a;
+  }
+  section {
+    margin-bottom: 2rem;
   }
   label {
     font-weight: 600;
-    display: block;
-    margin-top: 10px;
-    margin-bottom: 4px;
-    color: #179cd7;
   }
-  .reward-item, .investment-item, .transaction-item, .user-item {
-    background: #eef9ff;
-    border-radius: 8px;
-    padding: 10px 15px;
-    margin-bottom: 15px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+  .btn-secondary {
+    background: #0070b8;
+    color: #cce9fb;
   }
-  .reward-item > div, .investment-item > div, .transaction-item > div, .user-item > div {
-    margin-bottom: 6px;
+  .btn-danger {
+    background: #cc3300;
+    color: #fff;
   }
-  .small-button {
-    background: #179CD7;
-    font-size: 0.8rem;
-    padding: 6px 10px;
-    margin-left: 10px;
-    border-radius: 5px;
-    user-select: none;
+  .hidden {
+    display: none !important;
   }
-  .small-button:hover {
-    background: #117abb;
-  }
-  .flex-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .inline {
-    display: inline-block;
-  }
-  .success-msg {
-    color: #2ABA6D;
+  .notification {
+    background: #0070b8;
+    margin: 0.75rem 0;
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    box-shadow: 0 0 5px #0070b8af;
+    text-align: center;
     font-weight: 600;
+    letter-spacing: 0.03em;
   }
-  .error-msg {
-    color: #d9534f;
-    font-weight: 600;
-  }
-  footer {
-    padding: 10px 20px;
-    background: #E6F7FF;
-    color: #0B72B9;
-    font-size: 0.9rem;
+  nav {
+    margin-bottom: 1rem;
     text-align: center;
   }
-  a {
-    color: #1e90d9;
-    text-decoration: none;
-    font-weight: 600;
+  nav button {
+    margin: 0 6px;
   }
-  a:hover {
-    text-decoration: underline;
+  .referral-link {
+    word-break: break-word;
+    background: #004466;
+    padding: 0.8rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    text-align: center;
   }
-  .admin-warning {
-    background: #ffdede;
-    border-radius: 8px;
-    padding: 10px 15px;
-    color: #d9534f;
-    font-weight: 700;
-    margin-bottom: 15px;
+  .referral-link:hover {
+    background: #003355;
   }
-  .status-badge {
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 0.85rem;
-    font-weight: 600;
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.5rem;
   }
-  .status-pending {
-    background: #ffe699;
-    color: #a67c00;
+  table th, table td {
+    border: 1px solid #0095cc;
+    padding: 0.4rem 0.8rem;
+    text-align: center;
   }
-  .status-approved {
-    background: #c6efce;
-    color: #256029;
+  table th {
+    background-color: #0077aa;
   }
-  .status-rejected {
-    background: #f8d7da;
-    color: #721c24;
+  footer {
+    text-align: center;
+    padding: 1rem 0;
+    font-size: 0.9rem;
+    background: #003355;
+    color: #aaccff;
+  }
+  /* Scroll area */
+  #adminPanel .scrollable {
+    max-height: 250px;
+    overflow-y: auto;
+    margin-top: 0.5rem;
+    border-radius: 6px;
+  }
+  /* Video ad placeholder */
+  #videoAd {
+    background: #002633;
+    border: 2px solid #0095cc;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px 0;
+    text-align: center;
+  }
+  #videoAd video {
+    max-width: 100%;
+    border-radius: 10px;
   }
 </style>
 </head>
 <body>
-<div id="app">
-  <header>
-    Telegram Mini App Investment & Rewards
-  </header>
-  <nav>
-    <button class="active" data-tab="profile">Profile</button>
-    <button data-tab="referrals">Referral</button>
-    <button data-tab="rewards">Rewards</button>
-    <button data-tab="investment">Investment</button>
-    <button data-tab="finance">Deposit/Withdraw</button>
-    <button data-tab="admin">Admin Panel</button>
+<header>Telegram Mini App</header>
+<main>
+  <nav id="navBar" class="hidden">
+    <button id="btnDashboard" class="btn-secondary">Dashboard</button>
+    <button id="btnInvest" class="btn-secondary">Investment</button>
+    <button id="btnRewards" class="btn-secondary">Rewards</button>
+    <button id="btnDepositWithdraw" class="btn-secondary">Deposit/Withdraw</button>
+    <button id="btnReferral" class="btn-secondary">Referral</button>
+    <button id="btnAdmin" class="btn-danger">Admin Panel</button>
+    <button id="btnLogout" class="btn-danger">Logout</button>
   </nav>
-  <main>
-    <!-- Profile tab -->
-    <section class="section active" id="profile-section">
-      <h2>Welcome</h2>
-      <div id="welcome-msg" class="info-box">Loading user info...</div>
-      <div><strong>Telegram User ID:</strong> <span id="user-id-display"></span></div>
-      <div><strong>Balance:</strong> $<span id="balance-display">0.00</span></div>
-      <div><strong>Bonus Balance:</strong> $<span id="bonus-balance-display">0.00</span></div>
-      <div><strong>Total Referral Bonus:</strong> $<span id="total-referral-bonus">0.00</span></div>
-      <div><strong>Total Profit Earned:</strong> $<span id="total-profit-earned">0.00</span></div>
-    </section>
 
-    <!-- Referral tab -->
-    <section class="section" id="referrals-section">
-      <h2>Referral Program</h2>
-      <div>
-        Share your referral link to earn bonuses when your friends join:
-      </div>
-      <div style="margin: 12px 0; padding: 10px; background: #dff6ff; border-radius: 6px; font-weight: 700; color: #0b72b9;">
-        <input type="text" readonly id="referral-link" style="width:100%; border:none; background:none; font-weight: 700; color:#0b72b9; cursor: pointer;" />
-      </div>
-      <button class="btn" id="copy-ref-link">Copy Referral Link</button>
-      <h3 style="margin-top: 20px;">Your Referrals</h3>
-      <ul id="referral-list" style="list-style:none; padding-left:0;"></ul>
-    </section>
+  <!-- Login Screen -->
+  <section id="sectionLogin">
+    <h2>Login with Telegram</h2>
+    <div id="loginMsg" class="notification" style="background:#0095cc;">Please click the button below to login with your Telegram account.</div>
+    <button id="loginTelegramBtn">Login with Telegram Account</button>
+  </section>
 
-    <!-- Rewards tab -->
-    <section class="section" id="rewards-section">
-      <h2>Rewards</h2>
-      <div class="reward-item">
-        <div><strong>Watch Video Ad</strong></div>
-        <div>Earn $0.50 bonus for each video ad watched.</div>
-        <button class="btn" id="watch-video-ad">Watch Video Ad</button>
-      </div>
-      <div class="reward-item">
-        <div><strong>Pay Per Click Ads</strong></div>
-        <div>Earn $0.10 bonus for each ad clicked.</div>
-        <button class="btn" id="click-ad">Click an Ad</button>
-      </div>
-      <div id="rewards-msg" style="margin-top: 12px;"></div>
-    </section>
+  <!-- Dashboard -->
+  <section id="sectionDashboard" class="hidden">
+    <h2>Dashboard</h2>
+    <p><strong>User:</strong> <span id="userNameDisplay"></span></p>
+    <p><strong>Balance:</strong> <span id="userBalanceDisplay">0</span> tokens</p>
+    <p><strong>Referral Bonus:</strong> <span id="userReferralBonusDisplay">0</span> tokens</p>
+    <p><strong>Weekly Profit:</strong> <span id="userProfitDisplay">0</span> tokens</p>
+    <p><strong>Investment Package:</strong> <span id="userInvestPackage">None</span></p>
+  </section>
 
-    <!-- Investment tab -->
-    <section class="section" id="investment-section">
-      <h2>Investment Package</h2>
-      <div>
-        <p>
-          Invest your balance in the weekly package to earn 10% profit every 7 days.
-          Your investment will be locked for 7 days. After that, you can withdraw your profit and principal.
-        </p>
+  <!-- Investment Section -->
+  <section id="sectionInvest" class="hidden">
+    <h2>Weekly Investment Packages</h2>
+    <div>
+      <p>Select a package to invest. Profits will be generated weekly (simulated).</p>
+      <table>
+        <thead>
+          <tr><th>Package</th><th>Investment</th><th>Weekly Profit %</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Basic</td>
+            <td>100 tokens</td>
+            <td>5%</td>
+            <td><button class="buyInvestPackage" data-package="Basic" data-amount="100" data-profit="5">Invest</button></td>
+          </tr>
+          <tr>
+            <td>Standard</td>
+            <td>500 tokens</td>
+            <td>7%</td>
+            <td><button class="buyInvestPackage" data-package="Standard" data-amount="500" data-profit="7">Invest</button></td>
+          </tr>
+          <tr>
+            <td>Premium</td>
+            <td>1000 tokens</td>
+            <td>10%</td>
+            <td><button class="buyInvestPackage" data-package="Premium" data-amount="1000" data-profit="10">Invest</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <div id="investMsg" class="notification hidden"></div>
+      <button id="backToDashboardFromInvest" class="btn-secondary">Back to Dashboard</button>
+    </div>
+  </section>
+
+  <!-- Rewards Section -->
+  <section id="sectionRewards" class="hidden">
+    <h2>Rewards System</h2>
+    <p>Earn tokens by watching video ads or clicking rewarded ads.</p>
+
+    <div id="videoAd">
+      <video id="rewardVideo" width="320" height="180" controls preload="none" poster="https://i.imgur.com/YU8ldIU.jpg">
+        <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm" type="video/webm"/>
+        Your browser does not support the video tag.
+      </video>
+      <button id="btnWatchAd" class="btn-secondary">Watch Video Ad (+10 tokens)</button>
+      <p id="videoRewardStatus" style="font-size:0.9rem;color:#a4d4ff;"></p>
+    </div>
+
+    <div style="margin-top: 1rem;">
+      <button id="btnPayPerClick" class="btn-secondary">Click Here for PPC Reward (+5 tokens)</button>
+      <p id="ppcRewardStatus" style="font-size:0.9rem;color:#a4d4ff;"></p>
+    </div>
+
+    <button id="backToDashboardFromRewards" class="btn-secondary">Back to Dashboard</button>
+  </section>
+
+  <!-- Deposit and Withdraw -->
+  <section id="sectionDepositWithdraw" class="hidden">
+    <h2>Offline Deposit and Withdrawal</h2>
+    <p>Request deposit or withdrawal. Admin approval required.</p>
+    <form id="depositWithdrawForm">
+      <label for="operation">Operation:</label>
+      <select id="operation" required>
+        <option value="">Select operation</option>
+        <option value="deposit">Deposit</option>
+        <option value="withdraw">Withdraw</option>
+      </select>
+      <label for="amount">Amount (tokens):</label>
+      <input type="number" id="amount" min="1" required />
+      <input type="submit" value="Submit Request" />
+    </form>
+    <div id="depositWithdrawMsg" class="notification hidden"></div>
+    <button id="backToDashboardFromDW" class="btn-secondary">Back to Dashboard</button>
+  </section>
+
+  <!-- Referral Section -->
+  <section id="sectionReferral" class="hidden">
+    <h2>Referral Program</h2>
+    <p>Your referral link (click to copy):</p>
+    <div id="referralLinkDisplay" class="referral-link" tabindex="0"></div>
+    <p>Referrals joined: <span id="referralsCount">0</span></p>
+    <p>Referral bonus earned: <span id="referralBonusEarned">0</span> tokens</p>
+    <button id="backToDashboardFromReferral" class="btn-secondary">Back to Dashboard</button>
+  </section>
+
+  <!-- Admin Panel -->
+  <section id="sectionAdmin" class="hidden">
+    <h2>Admin Panel</h2>
+    <div id="adminLoginSection">
+      <label for="adminPassword">Enter Admin Password:</label>
+      <input type="password" id="adminPassword" placeholder="Admin Password" />
+      <button id="btnAdminLogin">Login to Admin Panel</button>
+      <p id="adminLoginMsg" style="color:#fcc"></p>
+    </div>
+    <div id="adminPanel" class="hidden">
+      <h3>Pending Deposit/Withdrawal Requests</h3>
+      <div class="scrollable">
+        <table id="requestsTable">
+          <thead>
+            <tr><th>User</th><th>Operation</th><th>Amount</th><th>Status</th><th>Action</th></tr>
+          </thead>
+          <tbody>
+            <!-- Requests inserted here dynamically -->
+          </tbody>
+        </table>
       </div>
-      <div>
-        <label for="investment-amount">Investment Amount ($):</label>
-        <input type="number" id="investment-amount" min="10" step="1" placeholder="Minimum $10" />
-        <button class="btn" id="make-investment">Invest</button>
-      </div>
-      <h3 style="margin-top: 20px;">Active Investments</h3>
-      <div id="investment-list"></div>
-    </section>
-
-   <!-- Deposit & Withdraw tab -->
-<section class="section" id="finance-section">
-  <h2>Deposit & Withdrawal</h2>
-  <div style="margin-bottom: 20px;">
-    <h3>Request Deposit</h3>
-    <label for="deposit-amount">Deposit Amount ($):</label>
-    <input type="number" id="deposit-amount" min="1" step="1" placeholder="Enter deposit amount" />
-    <button class="btn" id="request-deposit">Request Deposit</button>
-    <div id="deposit-msg"></div>
-  </div>
-  <div>
-    <h3>Request Withdrawal</h3>
-    <label for="withdraw-amount">Withdrawal Amount ($):</label>
-    <input type="number" id="withdraw-amount" min="1" step="1" placeholder="Enter withdrawal amount" />
-    <button class="btn" id="make-withdrawal">Request Withdrawal</button>
-    <div id="withdraw-msg"></div>
-  </div>
-
-  <h3 style="margin-top: 30px;">Deposit Requests</h3>
-  <ul id="deposit-requests-list" style="list-style:none; padding-left:0; margin-bottom: 20px;"></ul>
-
-  <h3 style="margin-top: 10px;">Withdrawal Requests</h3>
-  <ul id="withdrawal-requests-list" style="list-style:none; padding-left:0;"></ul>
-</section>
+      <button id="btnLogoutAdmin" class="btn-danger">Logout Admin Panel</button>
+    </div>
+  </section>
+</main>
+<footer>
+  &copy; 2024 Telegram Mini App Demo
+</footer>
 
 <script>
-  // Deposit and Withdrawal functions
+  // Telegram Mini App Demo - Frontend Only Logic
+  (() => {
+    const telegramDomain = 'https://t.me/yourchannel'; // Placeholder for referral link base
 
-  function updateDepositsWithdrawalsUI() {
-    const user = getCurrentUser ();
-    if (!user) return;
-
-    // Deposit requests list for user
-    const depositList = document.getElementById('deposit-requests-list');
-    depositList.innerHTML = '';
-
-    if (!user.deposits.length) {
-      depositList.innerHTML = '<li>No deposit requests.</li>';
-    } else {
-      user.deposits.forEach(dep => {
-        const li = document.createElement('li');
-        li.className = 'transaction-item';
-        let statusClass = '';
-        if(dep.status === 'pending') statusClass = 'status-pending';
-        else if(dep.status === 'approved') statusClass = 'status-approved';
-        else if(dep.status === 'rejected') statusClass = 'status-rejected';
-
-        li.innerHTML = `
-          Amount: $${formatMoney(dep.amount)} 
-          <span class="status-badge ${statusClass}">${dep.status.charAt(0).toUpperCase() + dep.status.slice(1)}</span><br />
-          Requested on: ${new Date(dep.timestamp).toLocaleString()}
-        `;
-        depositList.appendChild(li);
-      });
-    }
-
-    // Withdrawal requests list for user
-    const withdrawList = document.getElementById('withdrawal-requests-list');
-    withdrawList.innerHTML = '';
-    const pendingWithdrawals = user.withdrawals.filter(w => w.status === 'pending');
-    if (!pendingWithdrawals.length) {
-      withdrawList.innerHTML = '<li>No pending withdrawal requests.</li>';
-    } else {
-      pendingWithdrawals.forEach(w => {
-        const li = document.createElement('li');
-        li.className = 'transaction-item';
-        li.textContent = `Amount: $${formatMoney(w.amount)} | Requested on: ${new Date(w.timestamp).toLocaleString()}`;
-        withdrawList.appendChild(li);
-      });
-    }
-  }
-
-  function setupDepositWithdrawHandlers() {
-    const depositBtn = document.getElementById('request-deposit');
-    const depositMsg = document.getElementById('deposit-msg');
-    depositBtn.onclick = () => {
-      depositMsg.textContent = '';
-      const amount = parseFloat(document.getElementById('deposit-amount').value);
-      const user = getCurrentUser ();
-      if (!user) {
-        depositMsg.textContent = 'User  not found.';
-        depositMsg.className = 'error-msg';
-        return;
-      }
-      if (isNaN(amount) || amount <= 0) {
-        depositMsg.textContent = 'Enter a valid deposit amount.';
-        depositMsg.className = 'error-msg';
-        return;
-      }
-      // Add deposit request with status pending, no balance increase yet
-      user.deposits.push({
-        amount,
-        timestamp: Date.now(),
-        status: 'pending',
-      });
-      saveAppData();
-      updateDepositsWithdrawalsUI();
-      depositMsg.textContent = `Deposit request for $${formatMoney(amount)} submitted for approval.`;
-      depositMsg.className = 'success-msg';
-      document.getElementById('deposit-amount').value = '';
+    // Globals
+    const appData = {
+      users: {}, // key: telegram_id string, value: user object
+      currentUserId: null,
+      adminPassword: 'admin123', // hardcoded admin pwd for demo only
+      requests: [], // deposit/withdrawal requests queued
     };
 
-    const withdrawBtn = document.getElementById('make-withdrawal');
-    const withdrawMsg = document.getElementById('withdraw-msg');
-    withdrawBtn.onclick = () => {
-      withdrawMsg.textContent = '';
-      const amount = parseFloat(document.getElementById('withdraw-amount').value);
-      const user = getCurrentUser ();
-      if (!user) {
-        withdrawMsg.textContent = 'User  not found.';
-        withdrawMsg.className = 'error-msg';
-        return;
+    // Util to generate random referral codes for users
+    function generateReferralCode() {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let code = '';
+      for (let i=0; i < 8; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
       }
-      if (isNaN(amount) || amount <= 0) {
-        withdrawMsg.textContent = 'Enter a valid withdrawal amount.';
-        withdrawMsg.className = 'error-msg';
-        return;
-      }
-      if (amount > user.balance + user.bonusBalance) {
-        withdrawMsg.textContent = 'Insufficient total balance (balance + bonus) to withdraw this amount.';
-        withdrawMsg.className = 'error-msg';
-        return;
-      }
+      return code;
+    }
 
-      // Withdrawal requests deduct from regular balance first, then bonus balance if needed
-      let remaining = amount;
-      if (user.balance >= remaining) {
-        user.balance -= remaining;
-        remaining = 0;
-      } else {
-        remaining -= user.balance;
-        user.balance = 0;
-      }
-      if (remaining > 0) {
-        if (user.bonusBalance >= remaining) {
-          user.bonusBalance -= remaining;
-          remaining = 0;
-        } else {
-          withdrawMsg.textContent = 'Unexpected error due to insufficient funds.';
-          withdrawMsg.className = 'error-msg';
-          return;
-        }
-      }
+    // Storage keys for local persistence
+    const STORAGE_KEY = 'telegram_mini_app_data';
 
-      const withdrawalRequest = {
-        amount,
-        timestamp: Date.now(),
-        status: 'pending',
-        userId: user.id,
+    // Save appData.users and requests to localStorage
+    function saveData() {
+      const toSave = {
+        users: appData.users,
+        requests: appData.requests
       };
-      user.withdrawals.push(withdrawalRequest);
-      appData.users[user.id] = user;
-      saveAppData();
-      updateProfileUI(user);
-      updateDepositsWithdrawalsUI();
-      withdrawMsg.textContent = `Withdrawal request for $${formatMoney(amount)} submitted for approval.`;
-      withdrawMsg.className = 'success-msg';
-      document.getElementById('withdraw-amount').value = '';
-    };
-  }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+    }
 
-  // Admin panel functionality
-
-  function updateAdminDepositsList() {
-    const ul = document.getElementById('admin-deposits-list');
-    ul.innerHTML = '';
-    let found = false;
-    Object.values(appData.users).forEach(user => {
-      user.deposits.forEach(d => {
-        if (d.status === 'pending') {
-          found = true;
-          const li = document.createElement('li');
-          li.className = 'transaction-item';
-          li.style.display = 'flex';
-          li.style.justifyContent = 'space-between';
-          li.style.alignItems = 'center';
-          li.style.marginBottom = '12px';
-
-          li.innerHTML = `
-            <div>
-              <strong>User ID: ${user.id}</strong><br />
-              Amount: $${formatMoney(d.amount)}<br />
-              Requested on: ${new Date(d.timestamp).toLocaleString()}
-            </div>
-          `;
-          const actionsDiv = document.createElement('div');
-
-          const approveBtn = document.createElement('button');
-          approveBtn.className = 'small-button';
-          approveBtn.textContent = 'Approve';
-          approveBtn.style.background = '#2ABA6D';
-          approveBtn.style.marginRight = '8px';
-          approveBtn.onclick = () => {
-            // Approve deposit: mark status approved, add amount to balance
-            d.status = 'approved';
-            user.balance += d.amount;
-            saveAppData();
-            alert(`Deposit of $${formatMoney(d.amount)} approved for User ID ${user.id}.`);
-            updateAdminDepositsList();
-            updateDepositsWithdrawalsUI();
-            updateProfileUI(getCurrentUser ());
-          };
-
-          const rejectBtn = document.createElement('button');
-          rejectBtn.className = 'small-button';
-          rejectBtn.textContent = 'Reject';
-          rejectBtn.style.background = '#d9534f';
-          rejectBtn.onclick = () => {
-            // Reject deposit: mark rejected without balance addition
-            if (d.status !== 'pending') return;
-            d.status = 'rejected';
-            saveAppData();
-            alert(`Deposit of $${formatMoney(d.amount)} rejected for User ID ${user.id}.`);
-            updateAdminDepositsList();
-            updateDepositsWithdrawalsUI();
-          };
-
-          actionsDiv.appendChild(approveBtn);
-          actionsDiv.appendChild(rejectBtn);
-          li.appendChild(actionsDiv);
-          ul.appendChild(li);
+    // Load data from localStorage
+    function loadData() {
+      const json = localStorage.getItem(STORAGE_KEY);
+      if (json) {
+        try {
+          const parsed = JSON.parse(json) || {};
+          appData.users = parsed.users || {};
+          appData.requests = parsed.requests || [];
+        } catch (e) {
+          // corrupt data reset
+          appData.users = {};
+          appData.requests = [];
+          localStorage.removeItem(STORAGE_KEY);
         }
-      });
-    });
-    if (!found) {
-      ul.innerHTML = '<li>No pending deposit requests.</li>';
-    }
-  }
-
-
-    <!-- Admin Panel tab -->
-    <section class="section" id="admin-section">
-      <h2>Admin Panel</h2>
-      <div id="admin-login-section">
-        <p><strong>Admin Access Required</strong></p>
-        <label for="admin-password">Enter Admin Password:</label>
-        <input type="password" id="admin-password" placeholder="Admin password" />
-        <button class="btn" id="admin-login-button">Login</button>
-        <div id="admin-login-msg"></div>
-      </div>
-      <div id="admin-panel" style="display:none;">
-        <div class="admin-warning">
-          <strong>Warning:</strong> Admin Mode Enabled. Handle with care.
-        </div>
-        <h3>Users</h3>
-        <ul id="admin-users-list" style="list-style:none; padding-left:0; max-height: 200px; overflow-y: auto;"></ul>
-        <h3>Pending Deposit Requests</h3>
-        <ul id="admin-deposits-list" style="list-style:none; padding-left:0; max-height: 200px; overflow-y: auto; margin-bottom: 20px;"></ul>
-        <h3>Pending Withdrawal Requests</h3>
-        <ul id="admin-withdrawals-list" style="list-style:none; padding-left:0; max-height: 200px; overflow-y: auto;"></ul>
-      </div>
-    </section>
-  </main>
-  <footer>
-    &copy; 2024 Telegram Mini App Investment System
-  </footer>
-</div>
-
-<script>
-  // Telegram Mini App simulation (replace with actual Telegram API calls in deployment)
-  // For development/testing, simulate Telegram login data
-  const telegramMockUser = {
-    id: '123456789',
-    first_name: 'John',
-    last_name: 'Doe',
-    username: 'john_doe',
-  };
-
-  // Admin password (should be more secure in real backend)
-  const ADMIN_PASSWORD = "admin123";
-
-  // Utility: format number as currency string
-  function formatMoney(num) {
-    return num.toFixed(2);
-  }
-
-  // Parse URL query parameter (for referral)
-  function getQueryParam(param) {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(param);
-  }
-
-  // State variables and localStorage keys
-  const LS_KEY = 'telegram_mini_app_data_v2';
-
-  // Load stored data or default
-  let appData = {
-    users: {}, // userId -> {id, firstName, lastName, username, balance, bonusBalance, referrals:[], referralBonusTotal, totalProfit, investRecords:[], deposits:[], withdrawals:[]}
-    currentUserId: null,
-  };
-
-  function saveAppData() {
-    localStorage.setItem(LS_KEY, JSON.stringify(appData));
-  }
-
-  function loadAppData() {
-    const data = localStorage.getItem(LS_KEY);
-    if (data) {
-      appData = JSON.parse(data);
-    }
-  }
-
-  // Initialize user from Telegram login
-  function initUser(telegramUserInfo) {
-    loadAppData();
-    let user = appData.users[telegramUserInfo.id];
-    if (!user) {
-      // Create new user
-      user = {
-        id: telegramUserInfo.id,
-        firstName: telegramUserInfo.first_name || '',
-        lastName: telegramUserInfo.last_name || '',
-        username: telegramUserInfo.username || '',
-        balance: 0,
-        bonusBalance: 0,
-        referrals: [],
-        referralBonusTotal: 0,
-        totalProfit: 0,
-        investRecords: [],
-        deposits: [],
-        withdrawals: [],
-        joined: Date.now(),
-      };
-
-      // Referral bonus if ?ref=someid and referrer exists and is not self
-      const referralId = getQueryParam('ref');
-      if (referralId && referralId !== telegramUserInfo.id && appData.users[referralId]) {
-        // Award referrer some bonus
-        appData.users[referralId].bonusBalance += 5;
-        appData.users[referralId].referrals.push(user.id);
-        appData.users[referralId].referralBonusTotal += 5;
-        saveAppData();
-        // Also give new user a joining bonus
-        user.bonusBalance += 2;
       }
-
-      appData.users[user.id] = user;
-      saveAppData();
     }
-    appData.currentUserId = user.id;
-    saveAppData();
-    return user;
-  }
 
-  // Get current user object
-  function getCurrentUser() {
-    if (!appData.currentUserId) return null;
-    return appData.users[appData.currentUserId] || null;
-  }
-
-  // Update UI display for profile
-  function updateProfileUI(user) {
-    if (!user) {
-      document.getElementById('welcome-msg').textContent = 'User data not found.';
-      return;
-    }
-    let fullname = user.firstName || '';
-    if (user.lastName) fullname += ' ' + user.lastName;
-    if (!fullname.trim()) fullname = 'User';
-    document.getElementById('welcome-msg').textContent = `Welcome back, ${fullname}!`;
-    document.getElementById('user-id-display').textContent = user.id;
-    document.getElementById('balance-display').textContent = formatMoney(user.balance);
-    document.getElementById('bonus-balance-display').textContent = formatMoney(user.bonusBalance);
-    document.getElementById('total-referral-bonus').textContent = formatMoney(user.referralBonusTotal);
-    document.getElementById('total-profit-earned').textContent = formatMoney(user.totalProfit);
-  }
-
-  // Generate referral link for current user
-  function getReferralLink(user) {
-    const baseUrl = window.location.origin + window.location.pathname;
-    return `${baseUrl}?ref=${user.id}`;
-  }
-
-  // Update referral UI
-  function updateReferralUI(user) {
-    const refLinkInput = document.getElementById('referral-link');
-    if (!user) {
-      refLinkInput.value = '';
-      return;
-    }
-    refLinkInput.value = getReferralLink(user);
-    const referralListUl = document.getElementById('referral-list');
-    referralListUl.innerHTML = '';
-    if (!user.referrals.length) {
-      referralListUl.innerHTML = '<li>No referrals yet.</li>';
-    } else {
-      user.referrals.forEach(refId => {
-        const refUser = appData.users[refId];
-        if (refUser) {
-          const li = document.createElement('li');
-          li.textContent = `${refUser.firstName || ''} ${refUser.lastName || ''} (${refUser.username || 'no username'})`;
-          referralListUl.appendChild(li);
-        }
-      });
-    }
-  }
-
-  // Copy referral link button handler
-  function setupReferralCopyButton() {
-    const btn = document.getElementById('copy-ref-link');
-    btn.onclick = () => {
-      const refLinkInput = document.getElementById('referral-link');
-      refLinkInput.select();
-      refLinkInput.setSelectionRange(0, 99999);
-      try {
-        document.execCommand('copy');
-        btn.textContent = 'Copied!';
-        setTimeout(() => { btn.textContent = 'Copy Referral Link'; }, 2000);
-      } catch (e) {
-        alert('Failed to copy referral link.');
-      }
+    // UI elements
+    const sections = {
+      login: document.getElementById('sectionLogin'),
+      dashboard: document.getElementById('sectionDashboard'),
+      invest: document.getElementById('sectionInvest'),
+      rewards: document.getElementById('sectionRewards'),
+      depositWithdraw: document.getElementById('sectionDepositWithdraw'),
+      referral: document.getElementById('sectionReferral'),
+      admin: document.getElementById('sectionAdmin'),
     };
-  }
+    const navBar = document.getElementById('navBar');
+    const btnDashboard = document.getElementById('btnDashboard');
+    const btnInvest = document.getElementById('btnInvest');
+    const btnRewards = document.getElementById('btnRewards');
+    const btnDepositWithdraw = document.getElementById('btnDepositWithdraw');
+    const btnReferral = document.getElementById('btnReferral');
+    const btnAdmin = document.getElementById('btnAdmin');
+    const btnLogout = document.getElementById('btnLogout');
 
-  // Rewards system
-  function setupRewardsHandlers() {
-    const watchBtn = document.getElementById('watch-video-ad');
-    const clickBtn = document.getElementById('click-ad');
-    const rewardsMsg = document.getElementById('rewards-msg');
+    // Dashboard Elements
+    const userNameDisplay = document.getElementById('userNameDisplay');
+    const userBalanceDisplay = document.getElementById('userBalanceDisplay');
+    const userReferralBonusDisplay = document.getElementById('userReferralBonusDisplay');
+    const userProfitDisplay = document.getElementById('userProfitDisplay');
+    const userInvestPackage = document.getElementById('userInvestPackage');
 
-    watchBtn.onclick = () => {
-      watchBtn.disabled = true;
-      rewardsMsg.textContent = 'Playing video ad...';
-      // Simulate video ad duration 5 seconds
-      setTimeout(() => {
-        const user = getCurrentUser();
-        if (user) {
-          user.bonusBalance += 0.5;
-          saveAppData();
-          updateProfileUI(user);
-          rewardsMsg.innerHTML = '<span class="success-msg">Video ad watched! $0.50 bonus added.</span>';
-        }
-        watchBtn.disabled = false;
-      }, 5000);
-    };
+    // Investment
+    const investMsg = document.getElementById('investMsg');
+    const backToDashboardFromInvest = document.getElementById('backToDashboardFromInvest');
 
-    clickBtn.onclick = () => {
-      // Simulate ad click
-      const user = getCurrentUser();
-      if (user) {
-        user.bonusBalance += 0.1;
-        saveAppData();
-        updateProfileUI(user);
-        rewardsMsg.innerHTML = '<span class="success-msg">Ad clicked! $0.10 bonus added.</span>';
-      }
-    };
-  }
+    // Rewards
+    const btnWatchAd = document.getElementById('btnWatchAd');
+    const rewardVideo = document.getElementById('rewardVideo');
+    const videoRewardStatus = document.getElementById('videoRewardStatus');
+    const btnPayPerClick = document.getElementById('btnPayPerClick');
+    const ppcRewardStatus = document.getElementById('ppcRewardStatus');
+    const backToDashboardFromRewards = document.getElementById('backToDashboardFromRewards');
 
-  // Investment logic
-  // Profit is 10% after 7 days from investment timestamp, investment locked during this period
+    // Deposit Withdraw
+    const depositWithdrawForm = document.getElementById('depositWithdrawForm');
+    const depositWithdrawMsg = document.getElementById('depositWithdrawMsg');
+    const backToDashboardFromDW = document.getElementById('backToDashboardFromDW');
 
-  function updateInvestmentUI() {
-    const investmentListDiv = document.getElementById('investment-list');
-    investmentListDiv.innerHTML = '';
-    const user = getCurrentUser();
-    if (!user) return;
+    // Referral
+    const referralLinkDisplay = document.getElementById('referralLinkDisplay');
+    const referralsCount = document.getElementById('referralsCount');
+    const referralBonusEarned = document.getElementById('referralBonusEarned');
+    const backToDashboardFromReferral = document.getElementById('backToDashboardFromReferral');
 
-    // Clean withdrawn investments from active list
-    user.investRecords = user.investRecords.filter(inv => inv.status !== 'withdrawn');
+    // Admin Panel
+    const adminSection = sections.admin;
+    const adminLoginSection = document.getElementById('adminLoginSection');
+    const adminPanel = document.getElementById('adminPanel');
+    const adminPasswordInput = document.getElementById('adminPassword');
+    const btnAdminLogin = document.getElementById('btnAdminLogin');
+    const adminLoginMsg = document.getElementById('adminLoginMsg');
+    const requestsTableBody = document.querySelector('#requestsTable tbody');
+    const btnLogoutAdmin = document.getElementById('btnLogoutAdmin');
 
-    if (!user.investRecords.length) {
-      investmentListDiv.innerHTML = '<p>No active investments.</p>';
-      return;
+    // Navigation helpers
+    function showSection(name) {
+      Object.values(sections).forEach(sec => sec.classList.add('hidden'));
+      if(name) sections[name].classList.remove('hidden');
     }
 
-    const now = Date.now();
+    function showNavBar(show = true) {
+      if (show) navBar.classList.remove('hidden');
+      else navBar.classList.add('hidden');
+    }
 
-    user.investRecords.forEach((inv, idx) => {
-      const investedAt = inv.timestamp;
-      const lockedUntil = investedAt + 7 * 24 * 60 * 60 * 1000; // 7 days
-      let profit = 0;
-      let profitEarned = 0;
-      if (now >= lockedUntil && inv.status === 'active') {
-        // Profit 10%
-        profit = inv.amount * 0.10;
-        profitEarned = profit;
-      }
-      const container = document.createElement('div');
-      container.className = 'investment-item';
-      container.innerHTML = 
-        `<div><strong>Investment $${formatMoney(inv.amount)}</strong></div>
-         <div>Invested on: ${new Date(investedAt).toLocaleString()}</div>
-         <div>Locked until: ${new Date(lockedUntil).toLocaleString()}</div>
-         <div>Profit after 7 days: $${formatMoney(inv.amount * 0.10)}</div>
-         <div>Status: ${inv.status === 'active' ? (now >= lockedUntil ? 'Ready to withdraw' : 'Active (Locked)') : inv.status}</div>
-      `;
+    // Simulate Telegram login (since real Telegram login requires backend validation)
+    function telegramLogin() {
+      // Prompt username & id for demo
+      let username = prompt('Enter your Telegram username (without @):', 'user'+Math.floor(Math.random()*1000));
+      if (!username) return alert('Telegram username is required to login.');
+      let telegram_id = username.toLowerCase();
 
-      if (inv.status === 'active' && now >= lockedUntil) {
-        const withdrawBtn = document.createElement('button');
-        withdrawBtn.className = 'small-button';
-        withdrawBtn.textContent = 'Withdraw Investment+Profit';
-        withdrawBtn.onclick = () => {
-          // Add investment + profit to balance
-          user.balance += inv.amount + profitEarned;
-          user.totalProfit += profitEarned;
-          inv.status = 'withdrawn';
-          saveAppData();
-          updateProfileUI(user);
-          updateInvestmentUI();
-          alert(`Investment and profit $${formatMoney(inv.amount + profitEarned)} withdrawn to your balance.`);
+      // Check referral from URL params for referral bonus
+      let urlParams = new URLSearchParams(window.location.search);
+      let referralCode = urlParams.get('ref');
+      // Use or create user
+      if (!appData.users[telegram_id]) {
+        // Create new user
+        let newUser = {
+          telegram_id,
+          username,
+          balance: 50, // welcome bonus
+          referralCode: generateReferralCode(),
+          referredBy: null,
+          referralBonus: 0,
+          referrals: [],
+          profit: 0,
+          investment: {
+            package: null,
+            amount: 0,
+            profit_percent: 0,
+            invest_date: 0,
+            lastProfitClaim: 0
+          }
         };
-        container.appendChild(withdrawBtn);
+        // Handle referral bonus
+        if (referralCode) {
+          // Find referrer user by referralCode
+          let referrer = Object.values(appData.users).find(u => u.referralCode === referralCode);
+          if (referrer && referrer.telegram_id !== telegram_id) {
+            newUser.referredBy = referrer.telegram_id;
+            referrer.referrals.push(telegram_id);
+            referrer.referralBonus += 20; // flat 20 token referral bonus
+            referrer.balance += 20;
+            alert(`You were referred by @${referrer.username}. They received 20 tokens bonus.`);
+          }
+        }
+        appData.users[telegram_id] = newUser;
+        saveData();
       }
 
-      investmentListDiv.appendChild(container);
-    });
-    saveAppData();
-  }
+      appData.currentUserId = telegram_id;
+      initUserUI();
+      showNavBar(true);
+      showSection('dashboard');
+    }
 
-  // Investment button handler
-  function setupInvestmentHandler() {
-    document.getElementById('make-investment').onclick = () => {
-      const amtInput = document.getElementById('investment-amount');
-      const amount = parseFloat(amtInput.value);
-      const user = getCurrentUser();
-      if (!user) return alert('User not found.');
-      if (isNaN(amount) || amount < 10) return alert('Please enter a valid amount of at least $10.');
-      if (user.balance < amount) return alert('Insufficient balance to invest.');
-      // Deduct balance and add investment
+    // Initialize user UI dashboard data
+    function initUserUI() {
+      let user = appData.users[appData.currentUserId];
+      if (!user) return;
+
+      userNameDisplay.textContent = '@' + user.username;
+      userBalanceDisplay.textContent = user.balance.toFixed(2);
+      userReferralBonusDisplay.textContent = user.referralBonus.toFixed(2);
+      userProfitDisplay.textContent = user.profit.toFixed(2);
+      userInvestPackage.textContent = user.investment.package || 'None';
+
+      // Referral Section
+      referralLinkDisplay.textContent = window.location.origin + window.location.pathname + '?ref=' + user.referralCode;
+      referralsCount.textContent = user.referrals.length.toString();
+      referralBonusEarned.textContent = user.referralBonus.toFixed(2);
+    }
+
+    // Logout user
+    function logoutUser() {
+      appData.currentUserId = null;
+      showNavBar(false);
+      showSection('login');
+    }
+
+    // Buy investment package
+    function buyInvestPackage(pkg, amount, profitPercent) {
+      let user = appData.users[appData.currentUserId];
+      if (!user) return alert('User not found');
+
+      if (user.balance < amount) {
+        investMsg.textContent = 'Insufficient balance to invest.';
+        investMsg.classList.remove('hidden');
+        return;
+      }
+      if(user.investment.package) {
+        investMsg.textContent = `You already invested in ${user.investment.package}. Wait for profit or withdraw.`;
+        investMsg.classList.remove('hidden');
+        return;
+      }
+
       user.balance -= amount;
-      const investRecord = {
-        amount,
-        timestamp: Date.now(),
-        status: 'active',
+      user.investment = {
+        package: pkg,
+        amount: amount,
+        profit_percent: profitPercent,
+        invest_date: Date.now(),
+        lastProfitClaim: Date.now(),
       };
-      user.investRecords.push(investRecord);
-      saveAppData();
-      updateProfileUI(user);
-      updateInvestmentUI();
-      amtInput.value = '';
-      alert(`Invested $${formatMoney(amount)} in the weekly package.`);
-    };
-  }
-
-  // Deposit and Withdrawal functions
-
-  function updateDepositsWithdrawalsUI() {
-    const user = getCurrentUser();
-    if (!user) return;
-
-    // Deposit requests list for user
-    const depositList = document.getElementById('deposit-requests-list');
-    depositList.innerHTML = '';
-
-    if (!user.deposits.length) {
-      depositList.innerHTML = '<li>No deposit requests.</li>';
-    } else {
-      user.deposits.forEach(dep => {
-        const li = document.createElement('li');
-        li.className = 'transaction-item';
-        let statusClass = '';
-        if(dep.status === 'pending') statusClass = 'status-pending';
-        else if(dep.status === 'approved') statusClass = 'status-approved';
-        else if(dep.status === 'rejected') statusClass = 'status-rejected';
-
-        li.innerHTML = `
-          Amount: $${formatMoney(dep.amount)} 
-          <span class="status-badge ${statusClass}">${dep.status.charAt(0).toUpperCase() + dep.status.slice(1)}</span><br />
-          Requested on: ${new Date(dep.timestamp).toLocaleString()}
-        `;
-        depositList.appendChild(li);
-      });
+      investMsg.textContent = `Investment in ${pkg} package successful!`;
+      investMsg.classList.remove('hidden');
+      saveData();
+      initUserUI();
     }
 
-    // Withdrawal requests list for user
-    const withdrawList = document.getElementById('withdrawal-requests-list');
-    withdrawList.innerHTML = '';
-    const pendingWithdrawals = user.withdrawals.filter(w => w.status === 'pending');
-    if (!pendingWithdrawals.length) {
-      withdrawList.innerHTML = '<li>No pending withdrawal requests.</li>';
-    } else {
-      pendingWithdrawals.forEach(w => {
-        const li = document.createElement('li');
-        li.className = 'transaction-item';
-        li.textContent = `Amount: $${formatMoney(w.amount)} | Requested on: ${new Date(w.timestamp).toLocaleString()}`;
-        withdrawList.appendChild(li);
-      });
+    // Calculate weekly profit if due (simulate)
+    function calculateWeeklyProfit() {
+      let user = appData.users[appData.currentUserId];
+      if (!user || !user.investment.package) return;
+
+      const now = Date.now();
+      const oneWeek = 7 * 24 * 60 * 60 * 1000;
+      if (now - user.investment.lastProfitClaim >= oneWeek) {
+        let weeks = Math.floor((now - user.investment.lastProfitClaim) / oneWeek);
+        let weeklyProfitTokens = (user.investment.amount * (user.investment.profit_percent / 100)) * weeks;
+        user.balance += weeklyProfitTokens;
+        user.profit += weeklyProfitTokens;
+        user.investment.lastProfitClaim += weeks * oneWeek;
+        saveData();
+        initUserUI();
+        alert(`Weekly profit of ${weeklyProfitTokens.toFixed(2)} tokens credited for ${weeks} week(s).`);
+      }
     }
-  }
 
-  function setupDepositWithdrawHandlers() {
-    const depositBtn = document.getElementById('request-deposit');
-    const depositMsg = document.getElementById('deposit-msg');
-    depositBtn.onclick = () => {
-      depositMsg.textContent = '';
-      const amount = parseFloat(document.getElementById('deposit-amount').value);
-      const user = getCurrentUser();
-      if (!user) {
-        depositMsg.textContent = 'User not found.';
-        depositMsg.className = 'error-msg';
-        return;
-      }
-      if (isNaN(amount) || amount <= 0) {
-        depositMsg.textContent = 'Enter a valid deposit amount.';
-        depositMsg.className = 'error-msg';
-        return;
-      }
-      // Add deposit request with status pending, no balance increase yet
-      user.deposits.push({
-        amount,
-        timestamp: Date.now(),
-        status: 'pending',
-      });
-      saveAppData();
-      updateDepositsWithdrawalsUI();
-      depositMsg.textContent = `Deposit request for $${formatMoney(amount)} submitted for approval.`;
-      depositMsg.className = 'success-msg';
-      document.getElementById('deposit-amount').value = '';
-    };
+    // Reward for watching ad
+    function watchVideoAdReward() {
+      let user = appData.users[appData.currentUserId];
+      if (!user) return;
 
-    const withdrawBtn = document.getElementById('make-withdrawal');
-    const withdrawMsg = document.getElementById('withdraw-msg');
-    withdrawBtn.onclick = () => {
-      withdrawMsg.textContent = '';
-      const amount = parseFloat(document.getElementById('withdraw-amount').value);
-      const user = getCurrentUser();
-      if (!user) {
-        withdrawMsg.textContent = 'User not found.';
-        withdrawMsg.className = 'error-msg';
+      // Basic validation: user must watch video till end
+      if (rewardVideo.readyState < 3) {
+        videoRewardStatus.textContent = 'Load the video first and watch till the end.';
         return;
       }
-      if (isNaN(amount) || amount <= 0) {
-        withdrawMsg.textContent = 'Enter a valid withdrawal amount.';
-        withdrawMsg.className = 'error-msg';
-        return;
-      }
-      if (amount > user.balance + user.bonusBalance) {
-        withdrawMsg.textContent = 'Insufficient total balance (balance + bonus) to withdraw this amount.';
-        withdrawMsg.className = 'error-msg';
-        return;
-      }
-
-      // Withdrawal requests deduct from regular balance first, then bonus balance if needed
-      let remaining = amount;
-      if (user.balance >= remaining) {
-        user.balance -= remaining;
-        remaining = 0;
+      if (rewardVideo.ended) {
+        user.balance += 10;
+        saveData();
+        initUserUI();
+        videoRewardStatus.textContent = 'You earned +10 tokens for watching video ad!';
       } else {
-        remaining -= user.balance;
-        user.balance = 0;
+        videoRewardStatus.textContent = 'Please watch the full video to earn reward.';
       }
-      if (remaining > 0) {
-        if (user.bonusBalance >= remaining) {
-          user.bonusBalance -= remaining;
-          remaining = 0;
+    }
+
+    // Pay per click reward
+    function payPerClickReward() {
+      let user = appData.users[appData.currentUserId];
+      if (!user) return;
+
+      user.balance += 5;
+      saveData();
+      initUserUI();
+      ppcRewardStatus.textContent = 'You earned +5 tokens for PPC!';
+      // Clear message after 3s
+      setTimeout(() => {
+        ppcRewardStatus.textContent = '';
+      }, 3000);
+    }
+
+    // Submit deposit or withdraw request
+    function submitDepositWithdrawRequest(e) {
+      e.preventDefault();
+      let op = document.getElementById('operation').value;
+      let amount = parseFloat(document.getElementById('amount').value);
+      if (!op || isNaN(amount) || amount <= 0) {
+        depositWithdrawMsg.textContent = 'Please fill out all fields correctly.';
+        depositWithdrawMsg.classList.remove('hidden');
+        return;
+      }
+      let user = appData.users[appData.currentUserId];
+      if (!user) {
+        depositWithdrawMsg.textContent = 'User not found.';
+        depositWithdrawMsg.classList.remove('hidden');
+        return;
+      }
+      if (op === 'withdraw' && amount > user.balance) {
+        depositWithdrawMsg.textContent = 'Insufficient balance for withdrawal.';
+        depositWithdrawMsg.classList.remove('hidden');
+        return;
+      }
+      // Create request object
+      const req = {
+        id: 'REQ-' + Date.now() + '-' + Math.floor(Math.random()*999),
+        telegram_id: user.telegram_id,
+        username: user.username,
+        operation: op,
+        amount,
+        status: 'pending',
+        requestDate: Date.now(),
+      };
+      appData.requests.push(req);
+      saveData();
+      depositWithdrawMsg.textContent = `Your ${op} request for ${amount} tokens submitted successfully. Await admin approval.`;
+      depositWithdrawMsg.classList.remove('hidden');
+      depositWithdrawForm.reset();
+      refreshAdminRequests();
+    }
+
+    // Admin login
+    function adminLogin() {
+      let pwd = adminPasswordInput.value.trim();
+      if (pwd === appData.adminPassword) {
+        adminLoginMsg.textContent = '';
+        adminLoginSection.classList.add('hidden');
+        adminPanel.classList.remove('hidden');
+        refreshAdminRequests();
+      } else {
+        adminLoginMsg.textContent = 'Incorrect admin password!';
+      }
+    }
+
+    // Admin logout
+    function adminLogout() {
+      adminLoginSection.classList.remove('hidden');
+      adminPanel.classList.add('hidden');
+      adminPasswordInput.value = '';
+      adminLoginMsg.textContent = '';
+    }
+
+    // Refresh admin requests table
+    function refreshAdminRequests() {
+      if (!adminPanel.classList.contains('hidden')) {
+        requestsTableBody.innerHTML = '';
+        if(appData.requests.length === 0) {
+          requestsTableBody.innerHTML = '<tr><td colspan="5">No requests pending.</td></tr>';
+          return;
+        }
+        appData.requests.forEach(req => {
+          if (req.status === 'pending') {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>@${req.username}</td>
+              <td>${req.operation}</td>
+              <td>${req.amount.toFixed(2)}</td>
+              <td>${req.status}</td>
+              <td>
+                <button data-id="${req.id}" class="approveBtn btn-secondary">Approve</button>
+                <button data-id="${req.id}" class="rejectBtn btn-danger">Reject</button>
+              </td>
+            `;
+            requestsTableBody.appendChild(tr);
+          }
+        });
+        if(requestsTableBody.childElementCount === 0) {
+          requestsTableBody.innerHTML = '<tr><td colspan="5">No pending requests.</td></tr>';
+        }
+      }
+    }
+
+    // Admin approve request
+    function adminApproveRequest(requestId) {
+      const reqIdx = appData.requests.findIndex(r => r.id === requestId);
+      if (reqIdx === -1) return;
+      let req = appData.requests[reqIdx];
+      if (req.status !== 'pending') return;
+      let user = appData.users[req.telegram_id];
+      if (!user) return;
+
+      if (req.operation === 'deposit') {
+        // Admin adds deposit tokens to user balance
+        user.balance += req.amount;
+      } else if (req.operation === 'withdraw') {
+        if (req.amount <= user.balance) {
+          user.balance -= req.amount;
         } else {
-          withdrawMsg.textContent = 'Unexpected error due to insufficient funds.';
-          withdrawMsg.className = 'error-msg';
+          alert('Withdrawal amount exceeds user balance.');
           return;
         }
       }
+      req.status = 'approved';
 
-      const withdrawalRequest = {
-        amount,
-        timestamp: Date.now(),
-        status: 'pending',
-        userId: user.id,
-      };
-      user.withdrawals.push(withdrawalRequest);
-      appData.users[user.id] = user;
-      saveAppData();
-      updateProfileUI(user);
-      updateDepositsWithdrawalsUI();
-      withdrawMsg.textContent = `Withdrawal request for $${formatMoney(amount)} submitted for approval.`;
-      withdrawMsg.className = 'success-msg';
-      document.getElementById('withdraw-amount').value = '';
-    };
-  }
-
-  // Admin panel functionality
-
-  let isAdminLoggedIn = false;
-
-  function updateAdminUsersList() {
-    const ul = document.getElementById('admin-users-list');
-    ul.innerHTML = '';
-    Object.values(appData.users).forEach(user => {
-      const li = document.createElement('li');
-      li.className = 'user-item';
-      li.innerHTML = `
-        <div><strong>${user.firstName || ''} ${user.lastName || ''} (${user.username || 'no username'})</strong></div>
-        <div>User ID: ${user.id}</div>
-        <div>Balance: $${formatMoney(user.balance)}, Bonus: $${formatMoney(user.bonusBalance)}</div>
-        <div>Referrals: ${user.referrals.length}, Referral Bonus: $${formatMoney(user.referralBonusTotal)}</div>
-        <div>Total Profit: $${formatMoney(user.totalProfit)}</div>
-      `;
-      ul.appendChild(li);
-    });
-  }
-
-  function updateAdminDepositsList() {
-    const ul = document.getElementById('admin-deposits-list');
-    ul.innerHTML = '';
-    let found = false;
-    Object.values(appData.users).forEach(user => {
-      user.deposits.forEach(d => {
-        if (d.status === 'pending') {
-          found = true;
-          const li = document.createElement('li');
-          li.className = 'transaction-item';
-          li.style.display = 'flex';
-          li.style.justifyContent = 'space-between';
-          li.style.alignItems = 'center';
-          li.style.marginBottom = '12px';
-
-          li.innerHTML = `
-            <div>
-              <strong>User ID: ${user.id}</strong><br />
-              Amount: $${formatMoney(d.amount)}<br />
-              Requested on: ${new Date(d.timestamp).toLocaleString()}
-            </div>
-          `;
-          const actionsDiv = document.createElement('div');
-
-          const approveBtn = document.createElement('button');
-          approveBtn.className = 'small-button';
-          approveBtn.textContent = 'Approve';
-          approveBtn.style.background = '#2ABA6D';
-          approveBtn.style.marginRight = '8px';
-          approveBtn.onclick = () => {
-            // Approve deposit: mark status approved, add amount to balance
-            d.status = 'approved';
-            user.balance += d.amount;
-            saveAppData();
-            alert(`Deposit of $${formatMoney(d.amount)} approved for User ID ${user.id}.`);
-            updateAdminDepositsList();
-            updateDepositsWithdrawalsUI();
-            updateProfileUI(getCurrentUser());
-          };
-
-          const rejectBtn = document.createElement('button');
-          rejectBtn.className = 'small-button';
-          rejectBtn.textContent = 'Reject';
-          rejectBtn.style.background = '#d9534f';
-          rejectBtn.onclick = () => {
-            // Reject deposit: mark rejected without balance addition
-            if (d.status !== 'pending') return;
-            d.status = 'rejected';
-            saveAppData();
-            alert(`Deposit of $${formatMoney(d.amount)} rejected for User ID ${user.id}.`);
-            updateAdminDepositsList();
-            updateDepositsWithdrawalsUI();
-          };
-
-          actionsDiv.appendChild(approveBtn);
-          actionsDiv.appendChild(rejectBtn);
-          li.appendChild(actionsDiv);
-          ul.appendChild(li);
-        }
-      });
-    });
-    if (!found) {
-      ul.innerHTML = '<li>No pending deposit requests.</li>';
-    }
-  }
-
-  function updateAdminWithdrawalsList() {
-    const ul = document.getElementById('admin-withdrawals-list');
-    ul.innerHTML = '';
-    let found = false;
-    Object.values(appData.users).forEach(user => {
-      user.withdrawals.forEach(w => {
-        if (w.status === 'pending') {
-          found = true;
-          const li = document.createElement('li');
-          li.className = 'transaction-item';
-          li.style.display = 'flex';
-          li.style.justifyContent = 'space-between';
-          li.style.alignItems = 'center';
-          li.style.marginBottom = '12px';
-
-          li.innerHTML = `
-            <div>
-              <strong>User ID: ${user.id}</strong><br />
-              Amount: $${formatMoney(w.amount)}<br />
-              Requested on: ${new Date(w.timestamp).toLocaleString()}
-            </div>
-          `;
-          const actionsDiv = document.createElement('div');
-
-          const approveBtn = document.createElement('button');
-          approveBtn.className = 'small-button';
-          approveBtn.textContent = 'Approve';
-          approveBtn.style.background = '#2ABA6D';
-          approveBtn.style.marginRight = '8px';
-          approveBtn.onclick = () => {
-            // Approve withdrawal: change status, confirm no funds returned (already deducted on request)
-            w.status = 'approved';
-            saveAppData();
-            alert(`Withdrawal of $${formatMoney(w.amount)} approved for User ID ${user.id}.`);
-            updateAdminWithdrawalsList();
-            updateDepositsWithdrawalsUI();
-            updateProfileUI(getCurrentUser());
-          };
-
-          const rejectBtn = document.createElement('button');
-          rejectBtn.className = 'small-button';
-          rejectBtn.textContent = 'Reject';
-          rejectBtn.style.background = '#d9534f';
-          rejectBtn.onclick = () => {
-            // Reject withdrawal: refund funds to user balances (balance + bonus)
-            // Refund funds in priority: balance, then bonus balance
-            if (w.status !== 'pending') return;
-            let refundAmount = w.amount;
-            // Refund logic - add all to balance since the deduction was from balance + bonus
-            user.balance += refundAmount;
-            w.status = 'rejected';
-            saveAppData();
-            alert(`Withdrawal of $${formatMoney(w.amount)} rejected and amount refunded to User ID ${user.id}.`);
-            updateAdminWithdrawalsList();
-            updateDepositsWithdrawalsUI();
-            updateProfileUI(getCurrentUser());
-          };
-
-          actionsDiv.appendChild(approveBtn);
-          actionsDiv.appendChild(rejectBtn);
-          li.appendChild(actionsDiv);
-          ul.appendChild(li);
-        }
-      });
-    });
-    if (!found) {
-      ul.innerHTML = '<li>No pending withdrawal requests.</li>';
-    }
-  }
-
-  function setupAdminLogin() {
-    const adminLoginBtn = document.getElementById('admin-login-button');
-    const adminPasswordInput = document.getElementById('admin-password');
-    const adminLoginMsg = document.getElementById('admin-login-msg');
-    const adminLoginSection = document.getElementById('admin-login-section');
-    const adminPanel = document.getElementById('admin-panel');
-
-    adminLoginBtn.onclick = () => {
-      if (adminPasswordInput.value === ADMIN_PASSWORD) {
-        isAdminLoggedIn = true;
-        adminLoginMsg.textContent = '';
-        adminLoginSection.style.display = 'none';
-        adminPanel.style.display = 'block';
-        updateAdminUsersList();
-        updateAdminDepositsList();
-        updateAdminWithdrawalsList();
-      } else {
-        adminLoginMsg.textContent = 'Incorrect password.';
-        adminLoginMsg.className = 'error-msg';
-        isAdminLoggedIn = false;
+      saveData();
+      refreshAdminRequests();
+      if (appData.currentUserId === user.telegram_id) {
+        initUserUI();
       }
-    };
-  }
+    }
 
-  // Tab navigation
-  function setupTabNavigation() {
-    const buttons = document.querySelectorAll('nav button');
-    buttons.forEach(btn => {
-      btn.onclick = () => {
-        buttons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const tab = btn.getAttribute('data-tab');
-        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        document.getElementById(tab + '-section').classList.add('active');
-      };
+    // Admin reject request
+    function adminRejectRequest(requestId) {
+      const reqIdx = appData.requests.findIndex(r => r.id === requestId);
+      if (reqIdx === -1) return;
+      let req = appData.requests[reqIdx];
+      if (req.status !== 'pending') return;
+      req.status = 'rejected';
+      saveData();
+      refreshAdminRequests();
+    }
+
+    // Copy referral link to clipboard
+    function copyReferralLink() {
+      const text = referralLinkDisplay.textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Referral link copied to clipboard!');
+      }).catch(() => {
+        alert('Failed to copy referral link. Please copy manually.');
+      });
+    }
+
+    // Event listeners
+    document.getElementById('loginTelegramBtn').addEventListener('click', telegramLogin);
+    btnLogout.addEventListener('click', logoutUser);
+
+    btnDashboard.addEventListener('click', () => {
+      showSection('dashboard');
+      calculateWeeklyProfit();
     });
-  }
+    btnInvest.addEventListener('click', () => {
+      investMsg.classList.add('hidden');
+      showSection('invest');
+    });
+    btnRewards.addEventListener('click', () => {
+      videoRewardStatus.textContent = '';
+      ppcRewardStatus.textContent = '';
+      showSection('rewards');
+    });
+    btnDepositWithdraw.addEventListener('click', () => {
+      depositWithdrawMsg.classList.add('hidden');
+      depositWithdrawForm.reset();
+      showSection('depositWithdraw');
+    });
+    btnReferral.addEventListener('click', () => {
+      showSection('referral');
+      initUserUI();
+    });
+    btnAdmin.addEventListener('click', () => {
+      showSection('admin');
+      adminLogout();
+    });
 
-  // Main init function after Telegram environment ready
-  function main() {
-    // Simulate Telegram login info - in real app use Telegram.WebApp.initDataUnsafe.user
-    const telegramUser = telegramMockUser;
+    backToDashboardFromInvest.addEventListener('click', () => {
+      showSection('dashboard');
+      calculateWeeklyProfit();
+    });
+    backToDashboardFromRewards.addEventListener('click', () => showSection('dashboard'));
+    backToDashboardFromDW.addEventListener('click', () => showSection('dashboard'));
+    backToDashboardFromReferral.addEventListener('click', () => showSection('dashboard'));
 
-    // Initialize or load user
-    const user = initUser(telegramUser);
+    investMsg.classList.add('hidden');
 
-    // Show profile info
-    updateProfileUI(user);
+    depositWithdrawForm.addEventListener('submit', submitDepositWithdrawRequest);
 
-    // Setup referral link and list
-    updateReferralUI(user);
-    setupReferralCopyButton();
+    btnWatchAd.addEventListener('click', () => {
+      if (rewardVideo.paused) {
+        rewardVideo.play();
+      } else {
+        watchVideoAdReward();
+      }
+    });
 
-    // Rewards button handlers
-    setupRewardsHandlers();
+    rewardVideo.addEventListener('ended', () => {
+      watchVideoAdReward();
+    });
 
-    // Investment handlers and UI update
-    setupInvestmentHandler();
-    updateInvestmentUI();
+    btnPayPerClick.addEventListener('click', payPerClickReward);
 
-    // Deposit and withdrawal handlers and UI update
-    setupDepositWithdrawHandlers();
-    updateDepositsWithdrawalsUI();
+    // Investment package buttons
+    document.querySelectorAll('.buyInvestPackage').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const pkg = btn.getAttribute('data-package');
+        const amount = parseFloat(btn.getAttribute('data-amount'));
+        const profit = parseFloat(btn.getAttribute('data-profit'));
+        buyInvestPackage(pkg, amount, profit);
+      });
+    });
 
-    // Admin login setup
-    setupAdminLogin();
+    // Referral link copy on click
+    referralLinkDisplay.addEventListener('click', copyReferralLink);
+    referralLinkDisplay.addEventListener('keypress', (evt) => {
+      if(evt.key === 'Enter' || evt.key === ' ') {
+        copyReferralLink();
+      }
+    });
 
-    // Tab navigation setup
-    setupTabNavigation();
-  }
+    btnAdminLogin.addEventListener('click', adminLogin);
+    btnLogoutAdmin.addEventListener('click', () => {
+      adminLogout();
+      showSection('login');
+      showNavBar(false);
+      logoutUser();
+    });
 
-  window.onload = main;
+    requestsTableBody.addEventListener('click', (e) => {
+      if (e.target.classList.contains('approveBtn')) {
+        const reqId = e.target.getAttribute('data-id');
+        adminApproveRequest(reqId);
+      } else if (e.target.classList.contains('rejectBtn')) {
+        const reqId = e.target.getAttribute('data-id');
+        adminRejectRequest(reqId);
+      }
+    });
+
+    // On load
+    loadData();
+    if(appData.currentUserId) {
+      showNavBar(true);
+      showSection('dashboard');
+      initUserUI();
+      calculateWeeklyProfit();
+    } else {
+      showNavBar(false);
+      showSection('login');
+    }
+  })();
 </script>
 </body>
 </html>
