@@ -285,12 +285,12 @@
     <!-- Total Balance Card -->
     <div class="total-balance-card">
       <div class="balance-label">Total Balance</div>
-      <div class="balance-amount" id="total-balance">0.00 TGR</div>
+      <div class="balance-amount" id="total-balance">0.00 BDT</div>
     </div>
 
     <!-- Daily Bonus Section -->
     <div class="daily-bonus">
-      <div class="bonus-amount">Daily Bonus: +5 TGR</div>
+      <div class="bonus-amount">Daily Bonus: +5 BDT</div>
       <div class="bonus-timer" id="daily-bonus-timer">Loading...</div>
       <button id="claim-daily-bonus" class="btn-primary" disabled>Claim Daily Bonus</button>
     </div>
@@ -305,7 +305,7 @@
       <button class="copy-button" id="copy-referral">Copy Referral Link</button>
       <div style="margin-top: 12px;">
         <strong>Referral Count:</strong> <span id="referral-count">0</span><br/>
-        <strong>Bonus Earned:</strong> <span id="bonus-earned">0.00</span> TGR
+        <strong>Bonus Earned:</strong> <span id="bonus-earned">0.00</span> BDT
       </div>
     </div>
   </section>
@@ -332,7 +332,7 @@
   <section id="investment-section" class="hidden">
     <h3 class="section-title">Weekly Investment System</h3>
     <div class="card">
-      <label for="investment-amount">Select Investment Amount (TGR):</label>
+      <label for="investment-amount">Select Investment Amount (BDT):</label>
       <select id="investment-amount">
         <option value="10">10</option>
         <option value="25">25</option>
@@ -342,7 +342,7 @@
       </select>
       <button id="invest-btn" class="btn-primary">Invest Now</button>
       <div style="margin-top: 12px;">
-        <strong>Your Current Investment:</strong> <span id="current-investment">0</span> TGR
+        <strong>Your Current Investment:</strong> <span id="current-investment">0</span> BDT
       </div>
     </div>
   </section>
@@ -357,7 +357,7 @@
           <option value="paypal">PayPal</option>
           <option value="bkash">bKash</option>
         </select>
-        <label for="deposit-amount">Amount (USD/TGR):</label>
+        <label for="deposit-amount">Amount (BDT):</label>
         <input type="number" id="deposit-amount" min="1" required />
         <label for="deposit-reference">Transaction Reference:</label>
         <input type="text" id="deposit-reference" placeholder="Transaction ID or Details" required />
@@ -373,7 +373,7 @@
           <option value="paypal">PayPal</option>
           <option value="bkash">bKash</option>
         </select>
-        <label for="withdraw-amount">Amount (TGR):</label>
+        <label for="withdraw-amount">Amount (BDT):</label>
         <input type="number" id="withdraw-amount" min="1" required />
         <label for="withdraw-address">Withdrawal Address / Info:</label>
         <input type="text" id="withdraw-address" placeholder="Your PayPal or bKash Info" required />
@@ -429,10 +429,10 @@
   (() => {
     const userDataKey = 'telegramMiniAppUser';
     const referralBaseURL = 'https://t.me/your_bot?start=';
-    const referralBonusPerReferral = 1.5; // TGR coins per referral
-    const dailyBonusAmount = 5; // Daily bonus amount TGR
-    const videoRewardAmount = 2.5; // TGR per video ad claim
-    const ppcRewardAmount = 1.2; // TGR per PPC claim
+    const referralBonusPerReferral = 1.5; // BDT coins per referral
+    const dailyBonusAmount = 5; // Daily bonus amount BDT
+    const videoRewardAmount = 2.5; // BDT per video ad claim
+    const ppcRewardAmount = 1.2; // BDT per PPC claim
     // Reward claim cooldowns in ms
     const rewardCooldown = 1000 * 60 * 60; // 1 hour cooldown
     const dailyBonusCooldown = 1000 * 60 * 60 * 24; // 24 hours for daily bonus
@@ -599,7 +599,7 @@
 
       // Total Balance = bonus + currentInvestment for demonstration
       const totalBalance = bonus + currentInvestment;
-      totalBalanceEl.textContent = totalBalance.toFixed(2) + ' TGR';
+      totalBalanceEl.textContent = totalBalance.toFixed(2) + ' BDT';
 
       // Set deposit/withdraw enable switches in admin panel
       toggleDepositEnabled.checked = depositEnabled;
@@ -689,7 +689,7 @@
         if (!referrals.includes(referralId)) {
           referrals.push(referralId);
           bonus += referralBonusPerReferral;
-          showToast(`Referral bonus added: +${referralBonusPerReferral} TGR`);
+          showToast(`Referral bonus added: +${referralBonusPerReferral} BDT`);
         }
       }
       saveUserData();
@@ -728,7 +728,7 @@
         localStorage.setItem('lastVideoClaim', Date.now().toString());
         saveUserData();
         updateRewardButtons();
-        showToast(`You earned +${videoRewardAmount} TGR from video ad!`);
+        showToast(`You earned +${videoRewardAmount} BDT from video ad!`);
         claimVideoRewardBtn.disabled = false;
         bonusEarnedEl.textContent = bonus.toFixed(2);
         updateTotalBalance();
@@ -752,7 +752,7 @@
         localStorage.setItem('lastPpcClaim', Date.now().toString());
         saveUserData();
         updateRewardButtons();
-        showToast(`You earned +${ppcRewardAmount} TGR from PPC!`);
+        showToast(`You earned +${ppcRewardAmount} BDT from PPC!`);
         claimPpcRewardBtn.disabled = false;
         bonusEarnedEl.textContent = bonus.toFixed(2);
         updateTotalBalance();
@@ -784,7 +784,7 @@
     // Update total balance display
     function updateTotalBalance() {
       const totalBalance = bonus + currentInvestment;
-      totalBalanceEl.textContent = totalBalance.toFixed(2) + ' TGR';
+      totalBalanceEl.textContent = totalBalance.toFixed(2) + ' BDT';
     }
 
     // Daily bonus UI update
@@ -820,7 +820,7 @@
       updateDailyBonusUI();
       bonusEarnedEl.textContent = bonus.toFixed(2);
       updateTotalBalance();
-      showToast(`You claimed your daily bonus of +${dailyBonusAmount} TGR!`);
+      showToast(`You claimed your daily bonus of +${dailyBonusAmount} BDT!`);
     });
 
     // Update timers every second
@@ -846,7 +846,7 @@
       saveUserData();
       currentInvestmentEl.textContent = currentInvestment.toFixed(2);
       updateTotalBalance();
-      showToast(`Invested ${amount.toFixed(2)} TGR successfully!`);
+      showToast(`Invested ${amount.toFixed(2)} BDT successfully!`);
     });
 
     // Deposit form handling
