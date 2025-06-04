@@ -433,36 +433,6 @@
             <span class="stat-value" id="avg-investment">0 BDT</span>
           </div>
         </div>
-        
-        <!-- Video Ad Management -->
-        <div class="dashboard-card">
-          <h3>Video Ad Management</h3>
-          <div class="form-group">
-            <label for="video-1-url">Video Ad #1 URL:</label>
-            <input type="text" id="video-1-url" placeholder="YouTube embed URL">
-            <button class="btn-small btn-approve" onclick="updateVideoUrl(1)">Update</button>
-          </div>
-          <div class="form-group">
-            <label for="video-2-url">Video Ad #2 URL:</label>
-            <input type="text" id="video-2-url" placeholder="YouTube embed URL">
-            <button class="btn-small btn-approve" onclick="updateVideoUrl(2)">Update</button>
-          </div>
-          <div class="form-group">
-            <label for="video-3-url">Video Ad #3 URL:</label>
-            <input type="text" id="video-3-url" placeholder="YouTube embed URL">
-            <button class="btn-small btn-approve" onclick="updateVideoUrl(3)">Update</button>
-          </div>
-          <div class="form-group">
-            <label for="video-4-url">Video Ad #4 URL:</label>
-            <input type="text" id="video-4-url" placeholder="YouTube embed URL">
-            <button class="btn-small btn-approve" onclick="updateVideoUrl(4)">Update</button>
-          </div>
-          <div class="form-group">
-            <label for="video-5-url">Video Ad #5 URL:</label>
-            <input type="text" id="video-5-url" placeholder="YouTube embed URL">
-            <button class="btn-small btn-approve" onclick="updateVideoUrl(5)">Update</button>
-          </div>
-        </div>
       </div>
       
       <a href="code.html" class="back-to-app">← Back to Main App</a>
@@ -796,6 +766,21 @@
     const { deposits } = loadTransactions();
     const updatedDeposits = deposits.map(d => {
       if (d.id === depositId) {
+        // Add deposit amount to user's depositBalance in localStorage
+        const userDataKey = 'telegramMiniAppUser';
+        const userDataStr = localStorage.getItem(userDataKey);
+        if (userDataStr) {
+          try {
+            const userData = JSON.parse(userDataStr);
+            if (userData && userData.user && userData.user.id === d.userId) {
+              let currentDepositBalance = parseFloat(localStorage.getItem('depositBalance')) || 0;
+              currentDepositBalance += parseFloat(d.amount) || 0;
+              localStorage.setItem('depositBalance', currentDepositBalance.toFixed(2));
+            }
+          } catch (e) {
+            console.error('Error updating deposit balance:', e);
+          }
+        }
         return { ...d, status: 'approved' };
       }
       return d;
@@ -828,6 +813,30 @@
     const { withdrawals } = loadTransactions();
     const updatedWithdrawals = withdrawals.map(w => {
       if (w.id === withdrawalId) {
+        // Deduct withdrawal amount from user's dailyClaimBonus and referralBonus in localStorage
+        const userDataKey = 'telegramMiniAppUser';
+        const userDataStr = localStorage.getItem(userDataKey);
+        if (userDataStr) {
+          try {
+            const userData = JSON.parse(userDataStr);
+            if (userData) {
+              let remainingAmount = parseFloat(w.amount) || 0;
+              if (userData.dailyClaimBonus >= remainingAmount) {
+                userData.dailyClaimBonus -= remainingAmount;
+                remainingAmount = 0;
+              } else {
+                remainingAmount -= userData.dailyClaimBonus;
+                userData.dailyClaimBonus = 0;
+              }
+              if (remainingAmount > 0) {
+                userData.referralBonus = Math.max(0, (userData.referralBonus || 0) - remainingAmount);
+              }
+              localStorage.setItem(userDataKey, JSON.stringify(userData));
+            }
+          } catch (e) {
+            console.error('Error updating user bonus balance:', e);
+          }
+        }
         return { ...w, status: 'approved' };
       }
       return w;
@@ -933,25 +942,6 @@
     });
   });
   
-  // Video URL management
-  window.updateVideoUrl = function(videoNumber) {
-    const urlInput = document.getElementById(`video-${videoNumber}-url`);
-    const url = urlInput.value.trim();
-    
-    if (!url) {
-      showToast('Please enter a valid YouTube URL');
-      return;
-    }
-    
-    // Save to localStorage
-    const videoUrls = JSON.parse(localStorage.getItem('videoAdUrls') || '{}');
-    videoUrls[`video${videoNumber}`] = url;
-    localStorage.setItem('videoAdUrls', JSON.stringify(videoUrls));
-    
-    showToast(`Video Ad #${videoNumber} URL updated successfully!`);
-    urlInput.value = '';
-  };
-
   // Initialize
   if (isAdminLoggedIn()) {
     // Reload all data when dashboard is shown
@@ -960,17 +950,6 @@
     pendingDeposits = transactions.deposits.filter(d => d.status === 'pending');
     pendingWithdrawals = transactions.withdrawals.filter(w => w.status === 'pending');
     mockInvestments = loadInvestments();
-    
-    // Load saved video URLs
-    const videoUrls = JSON.parse(localStorage.getItem('videoAdUrls') || '{}');
-    Object.entries(videoUrls).forEach(([key, url]) => {
-      const number = key.replace('video', '');
-      const input = document.getElementById(`video-${number}-url`);
-      if (input) {
-        input.value = url;
-      }
-    });
-    
     showDashboard();
   } else {
     showLogin();
