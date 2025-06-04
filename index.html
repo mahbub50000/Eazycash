@@ -422,6 +422,20 @@
   </section>
   <section id="investment-section" class="hidden">
     <h3 class="section-title">Weekly Investment System</h3>
+    <!-- Deposit Balance Card -->
+    <div class="total-balance-card" style="margin-bottom: 20px;">
+      <div class="balance-label">Deposit Balance</div>
+      <div class="balance-amount" id="deposit-balance">0.00 BDT</div>
+    </div>
+    <div class="card" style="margin-bottom: 20px;">
+      <label for="transfer-deposit-amount">Transfer Deposit to Main Balance</label>
+      <input type="number" id="transfer-deposit-amount" min="0" step="0.01" placeholder="Enter amount" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: none; outline: none; background: rgba(255 255 255 / 0.1); color: #eee; transition: background-color 0.3s;" />
+      <button id="transfer-deposit-btn" class="btn-primary" style="margin-top: 12px;">Transfer Deposit to Main Balance</button>
+
+      <label for="transfer-main-amount" style="margin-top: 20px; display: block;">Transfer Main to Deposit</label>
+      <input type="number" id="transfer-main-amount" min="0" step="0.01" placeholder="Enter amount" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: none; outline: none; background: rgba(255 255 255 / 0.1); color: #eee; transition: background-color 0.3s;" />
+      <button id="transfer-main-btn" class="btn-primary" style="margin-top: 12px;">Transfer Main to Deposit</button>
+    </div>
     <div class="card">
       <label for="investment-amount">Select Investment Amount (BDT):</label>
       <select id="investment-amount">
@@ -432,9 +446,10 @@
         <option value="250">250</option>
       </select>
       <button id="invest-btn" class="btn-primary">Invest Now</button>
-      <div style="margin-top: 12px;">
+      <!-- Removed old current investment display as per user request -->
+      <!-- <div style="margin-top: 12px;">
         <strong>Your Current Investment:</strong> <span id="current-investment">0</span> BDT
-      </div>
+      </div> -->
       <div style="margin-top: 16px; padding: 12px; background: rgba(94,82,243,0.1); border-radius: 8px; font-size: 0.9rem;">
         <strong>Investment Note:</strong><br>
         • Weekly Return: 22% of invested amount<br>
@@ -442,8 +457,26 @@
         • Example: Invest 100 BDT → Get 22 BDT weekly for 7 weeks (Total return: 154 BDT)
       </div>
     </div>
+    <!-- Investment Balance and Profit Table -->
+    <div class="card" style="margin-top: 20px;">
+      <h4>Investment Summary</h4>
+      <table style="width: 100%; color: #eee; border-collapse: collapse;">
+        <thead>
+          <tr>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Investment Balance</th>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Profit Balance</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td id="investment-balance" style="padding: 8px; border-bottom: 1px solid #5e52f3;">0.00 BDT</td>
+            <td id="profit-balance" style="padding: 8px; border-bottom: 1px solid #5e52f3;">0.00 BDT</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </section>
-  <section id="deposit-withdraw-section" class="hidden">
+    <section id="deposit-withdraw-section" class="hidden">
     <h3 class="section-title">Offline Deposit & Withdraw</h3>
     <div class="card">
       <h4>Deposit</h4>
@@ -460,6 +493,23 @@
         <input type="text" id="deposit-reference" placeholder="Transaction ID or Details" required />
         <button type="submit" class="btn-primary">Submit Deposit Request</button>
       </form>
+      <!-- Deposit History Table -->
+      <div style="margin-top: 20px;">
+        <h4>Deposit History</h4>
+        <table style="width: 100%; color: #eee; border-collapse: collapse;">
+          <thead>
+            <tr>
+              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Date</th>
+              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Amount (BDT)</th>
+              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Method</th>
+              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Status</th>
+            </tr>
+          </thead>
+          <tbody id="deposit-history-body">
+            <!-- Deposit history rows will be inserted here -->
+          </tbody>
+        </table>
+      </div>
     </div>
     <div class="card" style="margin-top:24px;">
       <h4>Withdraw</h4>
@@ -476,6 +526,23 @@
         <input type="text" id="withdraw-address" placeholder="Your PayPal or bKash Info" required />
         <button type="submit" class="btn-primary">Submit Withdraw Request</button>
       </form>
+      <!-- Withdraw History Table -->
+      <div style="margin-top: 20px;">
+        <h4>Withdraw History</h4>
+        <table style="width: 100%; color: #eee; border-collapse: collapse;">
+          <thead>
+            <tr>
+              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Date</th>
+              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Amount (BDT)</th>
+              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Method</th>
+              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Status</th>
+            </tr>
+          </thead>
+          <tbody id="withdraw-history-body">
+            <!-- Withdraw history rows will be inserted here -->
+          </tbody>
+        </table>
+      </div>
     </div>
   </section>
   <section id="admin-section" class="hidden admin-section">
@@ -523,7 +590,7 @@
 <div id="toast" class="toast">Message</div>
 
 <script>
-  (() => {
+    (() => {
     const userDataKey = 'telegramMiniAppUser';
     const referralBaseURL = 'https://t.me/your_bot?start=';
     const referralBonusPerReferral = 1.5; // BDT coins per referral
@@ -540,12 +607,18 @@
     // State
     let user = null;
     let referrals = []; // Array of user ids who used referral link
-    let bonus = 0;
+    let dailyClaimBonus = 0;
+    let referralBonus = 0;
+    let videoRewards = 0;
+    let ppcRewards = 0;
     let currentInvestment = 0;
     let depositEnabled = true;
     let withdrawEnabled = true;
     let registrationsEnabled = true;
     let rewardsEnabled = true;
+
+    // Define bonus as sum of dailyClaimBonus and referralBonus
+    let bonus = 0;
 
     // Load admin settings
     function loadAdminSettings() {
@@ -662,7 +735,10 @@
         const userData = {
           user,
           referrals,
-          bonus,
+          dailyClaimBonus,
+          referralBonus,
+          videoRewards,
+          ppcRewards,
           currentInvestment,
           lastVideoClaim: parseInt(localStorage.getItem('lastVideoClaim')) || 0,
           lastPpcClaim: parseInt(localStorage.getItem('lastPpcClaim')) || 0,
@@ -710,10 +786,17 @@
           const data = JSON.parse(saved);
           user = data.user || null;
           referrals = data.referrals || [];
-          bonus = data.bonus || 0;
+          dailyClaimBonus = data.dailyClaimBonus || 0;
+          referralBonus = data.referralBonus || 0;
+          videoRewards = data.videoRewards || 0;
+          ppcRewards = data.ppcRewards || 0;
           currentInvestment = data.currentInvestment || 0;
           depositEnabled = data.depositEnabled !== undefined ? data.depositEnabled : true;
           withdrawEnabled = data.withdrawEnabled !== undefined ? data.withdrawEnabled : true;
+
+          // Update bonus after loading user data
+          bonus = dailyClaimBonus + referralBonus;
+
           return true;
         } catch {
           return false;
@@ -873,7 +956,7 @@
         // Add referral if not already
         if (!referrals.includes(referralId)) {
           referrals.push(referralId);
-          bonus += referralBonusPerReferral;
+          referralBonus += referralBonusPerReferral;
           showToast(`Referral bonus added: +${referralBonusPerReferral} BDT`);
         }
       }
@@ -915,12 +998,13 @@
         btn.disabled = true;
         showToast(`Watching Video Ad #${index + 1}...`);
         setTimeout(() => {
-          bonus += videoRewardAmount;
+          videoRewards += videoRewardAmount;
           localStorage.setItem(videoClaimKey, Date.now().toString());
           saveUserData();
           updateRewardButtons();
           showToast(`You earned +${videoRewardAmount} BDT from video ad #${index + 1}!`);
           btn.disabled = false;
+          bonus = dailyClaimBonus + referralBonus;
           bonusEarnedEl.textContent = bonus.toFixed(2);
           updateTotalBalance();
         }, 4000);
@@ -946,12 +1030,13 @@
         btn.disabled = true;
         showToast(`Processing PPC claim #${index + 1}...`);
         setTimeout(() => {
-          bonus += ppcRewardAmount;
+          ppcRewards += ppcRewardAmount;
           localStorage.setItem(ppcClaimKey, Date.now().toString());
           saveUserData();
           updateRewardButtons();
           showToast(`You earned +${ppcRewardAmount} BDT from PPC #${index + 1}!`);
           btn.disabled = false;
+          bonus = dailyClaimBonus + referralBonus;
           bonusEarnedEl.textContent = bonus.toFixed(2);
           updateTotalBalance();
         }, 3000);
@@ -988,7 +1073,7 @@
 
     // Update total balance display
     function updateTotalBalance() {
-      const totalBalance = bonus + currentInvestment;
+      const totalBalance = dailyClaimBonus + referralBonus + videoRewards + ppcRewards;
       totalBalanceEl.textContent = totalBalance.toFixed(2) + ' BDT';
     }
 
@@ -1023,10 +1108,11 @@
         showToast('Daily bonus already claimed. Please wait.');
         return;
       }
-      bonus += dailyBonusAmount;
+      dailyClaimBonus += dailyBonusAmount;
       localStorage.setItem('lastDailyBonusClaim', Date.now().toString());
       saveUserData();
       updateDailyBonusUI();
+      bonus = dailyClaimBonus + referralBonus;
       bonusEarnedEl.textContent = bonus.toFixed(2);
       updateTotalBalance();
       showToast(`You claimed your daily bonus of +${dailyBonusAmount} BDT!`);
@@ -1051,6 +1137,10 @@
         showToast('Select a valid amount');
         return;
       }
+      if (amount > depositBalance) {
+        showToast('Insufficient deposit balance for this investment.');
+        return;
+      }
       
       // Create investment record for admin tracking
       const investment = {
@@ -1070,11 +1160,169 @@
       existingInvestments.push(investment);
       localStorage.setItem('userInvestments', JSON.stringify(existingInvestments));
       
-      currentInvestment += amount;
+      depositBalance -= amount;
       saveUserData();
-      currentInvestmentEl.textContent = currentInvestment.toFixed(2);
+      depositBalanceEl.textContent = depositBalance.toFixed(2);
       updateTotalBalance();
       showToast(`Invested ${amount.toFixed(2)} BDT successfully! Weekly return: ${investment.weeklyReturn.toFixed(2)} BDT`);
+    });
+
+    // Variables for deposit balance and profit
+    let depositBalance = 0;
+    const depositBalanceEl = document.getElementById('deposit-balance');
+    const investmentBalanceEl = document.getElementById('investment-balance');
+    const profitBalanceEl = document.getElementById('profit-balance');
+    const transferDepositBtn = document.getElementById('transfer-deposit-btn');
+
+    // Function to calculate investment profit after 7 days
+    function calculateInvestmentProfit() {
+      const investments = JSON.parse(localStorage.getItem('userInvestments') || '[]');
+      let totalInvestment = 0;
+      let totalProfit = 0;
+      const now = new Date();
+
+      investments.forEach(inv => {
+        if (inv.status === 'active') {
+          totalInvestment += inv.amount;
+          const startDate = new Date(inv.startDate);
+          const daysPassed = Math.floor((now - startDate) / (1000 * 60 * 60 * 24));
+          if (daysPassed >= 7) {
+            // Profit for 1 week (22% of amount)
+            totalProfit += inv.weeklyReturn;
+          }
+        }
+      });
+
+      return { totalInvestment, totalProfit };
+    }
+
+    // Function to update balances and UI
+    function updateBalances() {
+      // Load deposit balance from localStorage or initialize
+      depositBalance = parseFloat(localStorage.getItem('depositBalance')) || 0;
+
+      // Calculate investment profit and balance
+      const { totalInvestment, totalProfit } = calculateInvestmentProfit();
+
+      // Add profit to deposit balance
+      depositBalance += totalProfit;
+
+      // Update UI elements
+      depositBalanceEl.textContent = depositBalance.toFixed(2);
+      investmentBalanceEl.textContent = totalInvestment.toFixed(2);
+      profitBalanceEl.textContent = totalProfit.toFixed(2);
+
+      // Save updated deposit balance
+      localStorage.setItem('depositBalance', depositBalance.toFixed(2));
+    }
+
+    // Auto-refresh balances every 10 seconds
+    setInterval(() => {
+      if (user) {
+        updateBalances();
+        // Enable or disable transfer button based on deposit balance
+        transferDepositBtn.disabled = depositBalance <= 0;
+      }
+    }, 10000);
+
+    // Initial balance update on page load
+    updateBalances();
+
+    // Transfer deposit to main balance button click handler
+    transferDepositBtn.addEventListener('click', () => {
+      if (!user) {
+        showToast('Please login first');
+        return;
+      }
+      if (depositBalance <= 0) {
+        showToast('No deposit balance to transfer.');
+        return;
+      }
+      const transferAmountInput = document.getElementById('transfer-deposit-amount');
+      const amount = parseFloat(transferAmountInput.value);
+      if (isNaN(amount) || amount <= 0) {
+        showToast('Please enter a valid amount to transfer.');
+        return;
+      }
+      if (amount > depositBalance) {
+        showToast('Insufficient deposit balance to transfer that amount.');
+        return;
+      }
+      // Transfer specified amount from deposit balance to bonus
+      // Update all bonus components accordingly
+      dailyClaimBonus += amount; // Add to dailyClaimBonus as main balance component
+      depositBalance -= amount;
+      // Save updated balances
+      localStorage.setItem('depositBalance', depositBalance.toFixed(2));
+      saveUserData();
+      // Update bonus variable to include all components
+      bonus = dailyClaimBonus + referralBonus + videoRewards + ppcRewards;
+      // Save updated user data with new bonus components
+      const userDataStr = localStorage.getItem(userDataKey);
+      if (userDataStr) {
+        try {
+          const userData = JSON.parse(userDataStr);
+          userData.dailyClaimBonus = dailyClaimBonus;
+          localStorage.setItem(userDataKey, JSON.stringify(userData));
+        } catch (e) {
+          console.error('Error saving dailyClaimBonus:', e);
+        }
+      }
+      // Update UI
+      depositBalanceEl.textContent = depositBalance.toFixed(2);
+      bonusEarnedEl.textContent = bonus.toFixed(2);
+      updateTotalBalance();
+      showToast(`Successfully transferred ${amount.toFixed(2)} BDT from deposit to main balance.`);
+      // Disable button if deposit balance is zero
+      transferDepositBtn.disabled = depositBalance <= 0;
+      // Clear input
+      transferAmountInput.value = '';
+    });
+
+    // New transfer main balance to deposit balance button click handler
+    const transferMainBtn = document.getElementById('transfer-main-btn');
+    const transferMainAmountInput = document.getElementById('transfer-main-amount');
+
+    transferMainBtn.addEventListener('click', () => {
+      if (!user) {
+        showToast('Please login first');
+        return;
+      }
+      const amount = parseFloat(transferMainAmountInput.value);
+      if (isNaN(amount) || amount <= 0) {
+        showToast('Please enter a valid amount to transfer.');
+        return;
+      }
+      if (amount > bonus) {
+        showToast('Insufficient main balance to transfer that amount.');
+        return;
+      }
+      // Perform transfer
+      dailyClaimBonus -= amount; // Deduct from dailyClaimBonus as main balance component
+      depositBalance += amount;
+      // Save updated balances
+      localStorage.setItem('depositBalance', depositBalance.toFixed(2));
+      saveUserData();
+      // Update bonus variable to include all components
+      bonus = dailyClaimBonus + referralBonus + videoRewards + ppcRewards;
+      // Save updated user data with new bonus components
+      const userDataStr = localStorage.getItem(userDataKey);
+      if (userDataStr) {
+        try {
+          const userData = JSON.parse(userDataStr);
+          userData.dailyClaimBonus = dailyClaimBonus;
+          localStorage.setItem(userDataKey, JSON.stringify(userData));
+        } catch (e) {
+          console.error('Error saving dailyClaimBonus:', e);
+        }
+      }
+      // Update UI
+      depositBalanceEl.textContent = depositBalance.toFixed(2);
+      bonusEarnedEl.textContent = bonus.toFixed(2);
+      updateTotalBalance();
+      showToast(`Successfully transferred ${amount.toFixed(2)} BDT from main balance to deposit balance.`);
+      // Clear input
+      transferMainAmountInput.value = '';
     });
 
     // Deposit form handling
@@ -1114,6 +1362,7 @@
       
       showToast(`Deposit request sent (${method.toUpperCase()}, ${amount}). Admin will verify soon.`);
       depositForm.reset();
+      renderDepositHistory(); // Update deposit history after new request
     });
     // Withdraw form handling
     withdrawForm.addEventListener('submit', (e) => {
@@ -1155,12 +1404,26 @@
       withdrawals.push(newWithdrawal);
       localStorage.setItem('withdrawals', JSON.stringify(withdrawals));
       
-      bonus -= amount;
+      // Deduct amount from dailyClaimBonus first, then referralBonus if needed
+      let remainingAmount = amount;
+      if (dailyClaimBonus >= remainingAmount) {
+        dailyClaimBonus -= remainingAmount;
+        remainingAmount = 0;
+      } else {
+        remainingAmount -= dailyClaimBonus;
+        dailyClaimBonus = 0;
+      }
+      if (remainingAmount > 0) {
+        referralBonus = Math.max(0, referralBonus - remainingAmount);
+      }
+
       saveUserData();
+      bonus = dailyClaimBonus + referralBonus + videoRewards + ppcRewards;
       bonusEarnedEl.textContent = bonus.toFixed(2);
       updateTotalBalance();
       showToast(`Withdraw request sent (${method.toUpperCase()}, ${amount}). Admin will process soon.`);
       withdrawForm.reset();
+      renderWithdrawHistory(); // Update withdraw history after new request
     });
 
     // Admin section navigation
@@ -1180,26 +1443,111 @@
     // Load admin settings on initialization
     loadAdminSettings();
 
-    // Load video URLs from admin settings
-    function loadVideoUrls() {
-      const videoUrls = JSON.parse(localStorage.getItem('videoAdUrls') || '{}');
-      
-      // Update video iframes with admin-set URLs
-      Object.entries(videoUrls).forEach(([key, url]) => {
-        const number = key.replace('video', '');
-        const iframe = document.getElementById(`video-iframe-${number}`);
-        if (iframe && url) {
-          iframe.src = url;
-        }
-      });
-    }
-
     // Initialization
     if (!loadUserData()) {
       console.log('No saved user data found.');
     }
-    loadVideoUrls(); // Load admin-set video URLs
     renderUI();
+
+    // Render deposit history for current user
+    function renderDepositHistory() {
+      const deposits = JSON.parse(localStorage.getItem('deposits') || '[]');
+      const userDeposits = deposits.filter(d => user && d.userId === user.id);
+      const tbody = document.getElementById('deposit-history-body');
+      tbody.innerHTML = '';
+      userDeposits.sort((a, b) => b.timestamp - a.timestamp);
+      userDeposits.forEach(d => {
+        const tr = document.createElement('tr');
+        const date = new Date(d.timestamp);
+        tr.innerHTML = `
+          <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${date.toLocaleString()}</td>
+          <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${d.amount.toFixed(2)}</td>
+          <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${d.method}</td>
+          <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${d.status}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Render withdraw history for current user
+    function renderWithdrawHistory() {
+      const withdrawals = JSON.parse(localStorage.getItem('withdrawals') || '[]');
+      const userWithdrawals = withdrawals.filter(w => user && w.userId === user.id);
+      const tbody = document.getElementById('withdraw-history-body');
+      tbody.innerHTML = '';
+      userWithdrawals.sort((a, b) => b.timestamp - a.timestamp);
+      userWithdrawals.forEach(w => {
+        const tr = document.createElement('tr');
+        const date = new Date(w.timestamp);
+        tr.innerHTML = `
+          <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${date.toLocaleString()}</td>
+          <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${w.amount.toFixed(2)}</td>
+          <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${w.method}</td>
+          <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${w.status}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Call render history functions on UI render
+    function renderUI() {
+      if (!user) {
+        loginSection.classList.remove('hidden');
+        homeSection.classList.add('hidden');
+        videoAdsSection.classList.add('hidden');
+        ppcSection.classList.add('hidden');
+        investmentSection.classList.add('hidden');
+        depositWithdrawSection.classList.add('hidden');
+        adminSection.classList.add('hidden');
+        navButtons.admin.classList.add('hidden');
+        return;
+      }
+      loginSection.classList.add('hidden');
+      // Show home section and other sections as per nav
+      navButtons.admin.classList.toggle('hidden', !isAdmin());
+
+      // Show the first active content (home)
+      showSection('home');
+
+      // Update user info display
+      userPhotoEl.src = user.photo_url || 'https://cdn.iconscout.com/icon/free/png-256/telegram-17-458475.png';
+      userNameEl.textContent = user.first_name + (user.last_name ? ' ' + user.last_name : '');
+      userIdEl.textContent = "User ID: " + user.id;
+
+      referralLinkEl.textContent = referralBaseURL + user.id;
+      referralCountEl.textContent = referrals.length;
+      bonusEarnedEl.textContent = bonus.toFixed(2);
+      currentInvestmentEl.textContent = currentInvestment.toFixed(2);
+
+      // Total Balance = bonus + currentInvestment for demonstration
+      const totalBalance = bonus + currentInvestment;
+      totalBalanceEl.textContent = totalBalance.toFixed(2) + ' BDT';
+
+      // Set deposit/withdraw enable switches in admin panel
+      toggleDepositEnabled.checked = depositEnabled;
+      toggleWithdrawEnabled.checked = withdrawEnabled;
+
+      // Enable or disable deposit/withdraw forms based on admin control
+      depositMethodSelect.disabled = !depositEnabled;
+      depositAmountInput.disabled = !depositEnabled;
+      depositReferenceInput.disabled = !depositEnabled;
+      depositForm.querySelector('button[type="submit"]').disabled = !depositEnabled;
+
+      withdrawMethodSelect.disabled = !withdrawEnabled;
+      withdrawAmountInput.disabled = !withdrawEnabled;
+      withdrawAddressInput.disabled = !withdrawEnabled;
+      withdrawForm.querySelector('button[type="submit"]').disabled = !withdrawEnabled;
+
+      // Update reward buttons cooldown timers
+      updateRewardButtons();
+
+      // Update daily bonus state UI
+      updateDailyBonusUI();
+
+      // Render deposit and withdraw history
+      renderDepositHistory();
+      renderWithdrawHistory();
+    }
 
   })();
 </script>
