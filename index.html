@@ -30,6 +30,12 @@
     overflow: hidden;
   }
   header {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 420px;
+    max-width: 100%;
     padding: 20px;
     background: #2c2c55;
     text-align: center;
@@ -37,16 +43,25 @@
     font-size: 1.5rem;
     letter-spacing: 1.2px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.8);
+    z-index: 1001;
   }
   main {
     flex-grow: 1;
-    padding: 20px;
+    padding: 80px 20px 20px 20px;
     overflow-y: auto;
   }
   footer {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 420px;
+    max-width: 100%;
     display: flex;
     background: #222242;
     box-shadow: 0 -6px 20px rgba(0,0,0,0.6);
+    border-radius: 16px;
+    z-index: 1000;
   }
   footer button {
     flex-grow: 1;
@@ -163,6 +178,7 @@
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 0 15px rgb(94,82,243, 0.6);
+    max-width: 100%;
   }
   .admin-section {
     background: #421f59;
@@ -262,6 +278,51 @@
     padding: 16px;
     margin-top: 12px;
     box-shadow: 0 0 15px rgb(94,82,243,0.8);
+  }
+
+  /* Smaller font size for investment section for better readability */
+  #investment-section {
+    font-size: 0.75rem;
+  }
+  #investment-section table {
+    font-size: 0.75rem;
+  }
+
+  /* Match Investment History section style to Deposit History section */
+  #investment-history-table {
+    width: 100%;
+    color: #eee;
+    border-collapse: collapse;
+  }
+  #investment-history-table th,
+  #investment-history-table td {
+    padding: 8px;
+    border-bottom: 1px solid #5e52f3;
+    text-align: left;
+  }
+  #investment-history-table thead tr th {
+    border-bottom: 1px solid #5e52f3;
+  }
+  #investment-history-table tbody tr td {
+    border-bottom: 1px solid #5e52f3;
+  }
+  /* Container div for investment history table */
+  #investment-history-container {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #5e52f3;
+    border-radius: 8px;
+    padding: 8px;
+  }
+
+  /* Smaller font size for Deposit and Withdraw History sections */
+  #deposit-withdraw-section h4 {
+    font-size: 0.85rem;
+  }
+  #deposit-withdraw-section table,
+  #deposit-withdraw-section th,
+  #deposit-withdraw-section td {
+    font-size: 0.85rem;
   }
 </style>
 </head>
@@ -428,11 +489,11 @@
       <div class="balance-amount" id="deposit-balance">0.00 BDT</div>
     </div>
     <div class="card" style="margin-bottom: 20px;">
-      <label for="transfer-deposit-amount">Transfer Deposit to Main Balance</label>
+      <label for="transfer-deposit-amount"></label>
       <input type="number" id="transfer-deposit-amount" min="0" step="0.01" placeholder="Enter amount" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: none; outline: none; background: rgba(255 255 255 / 0.1); color: #eee; transition: background-color 0.3s;" />
       <button id="transfer-deposit-btn" class="btn-primary" style="margin-top: 12px;">Transfer Deposit to Main Balance</button>
 
-      <label for="transfer-main-amount" style="margin-top: 20px; display: block;">Transfer Main to Deposit</label>
+      <label for="transfer-main-amount" style="margin-top: 20px; display: block;"></label>
       <input type="number" id="transfer-main-amount" min="0" step="0.01" placeholder="Enter amount" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: none; outline: none; background: rgba(255 255 255 / 0.1); color: #eee; transition: background-color 0.3s;" />
       <button id="transfer-main-btn" class="btn-primary" style="margin-top: 12px;">Transfer Main to Deposit</button>
     </div>
@@ -475,10 +536,30 @@
         </tbody>
       </table>
     </div>
+    <!-- Investment History Section -->
+    <div class="card" style="margin-top: 20px;">
+      <h4>Investment History</h4>
+      <div id="investment-history-container">
+        <table id="investment-history-table" style="width: 100%; color: #eee; border-collapse: collapse;">
+          <thead>
+            <tr>
+              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Date</th>
+              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Amount (BDT)</th>
+              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Weekly Return</th>
+              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Weeks Remaining</th>
+              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Status</th>
+            </tr>
+          </thead>
+          <tbody id="investment-history-body">
+            <!-- Investment history rows will be inserted here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
   </section>
-    <section id="deposit-withdraw-section" class="hidden">
+    <section id="deposit-withdraw-section" class="hidden" style="padding: 20px;">
     <h3 class="section-title">Offline Deposit & Withdraw</h3>
-    <div class="card">
+    <div class="card" style="margin-bottom: 20px;">
       <h4>Deposit</h4>
       <form id="deposit-form">
         <label for="deposit-method">Deposit Method:</label>
@@ -513,7 +594,7 @@
         </div>
       </div>
     </div>
-    <div class="card" style="margin-top:24px;">
+    <div class="card" style="margin-top: 20px;">
       <h4>Withdraw</h4>
       <form id="withdraw-form">
         <label for="withdraw-method">Withdraw Method:</label>
@@ -916,6 +997,10 @@
           return;
         }
         showSection(key);
+        // Ensure active class toggling is correct
+        Object.entries(navButtons).forEach(([k, b]) => {
+          b.classList.toggle('active', k === key);
+        });
       });
     });
 
@@ -1167,7 +1252,39 @@
       depositBalanceEl.textContent = depositBalance.toFixed(2);
       updateTotalBalance();
       showToast(`Invested ${amount.toFixed(2)} BDT successfully! Weekly return: ${investment.weeklyReturn.toFixed(2)} BDT`);
+      
+      // Render updated investment history
+      renderInvestmentHistory();
     });
+
+    // Function to render investment history table
+    function renderInvestmentHistory() {
+      if (!user) return;
+      const investments = JSON.parse(localStorage.getItem('userInvestments') || '[]');
+      const userInvestments = investments.filter(inv => inv.userId === user.id);
+      const tbody = document.getElementById('investment-history-body');
+      tbody.innerHTML = '';
+      userInvestments.sort((a, b) => b.startDate - a.startDate);
+      userInvestments.forEach(inv => {
+        const tr = document.createElement('tr');
+        const date = new Date(inv.startDate);
+        tr.innerHTML = `
+          <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${date.toLocaleString()}</td>
+          <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${inv.amount.toFixed(2)}</td>
+          <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${inv.weeklyReturn.toFixed(2)}</td>
+          <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${inv.weeksRemaining}</td>
+          <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${inv.status}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Call renderInvestmentHistory on UI render
+    const originalRenderUI = renderUI;
+    renderUI = function() {
+      originalRenderUI();
+      renderInvestmentHistory();
+    };
 
     // Variables for deposit balance and profit
     let depositBalance = 0;
