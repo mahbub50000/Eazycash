@@ -494,21 +494,26 @@
         <button type="submit" class="btn-primary">Submit Deposit Request</button>
       </form>
       <!-- Deposit History Table -->
-      <div style="margin-top: 20px;">
+      <div id="deposit-history-section" style="margin-top: 24px;">
         <h4>Deposit History</h4>
-        <table style="width: 100%; color: #eee; border-collapse: collapse;">
+        <table id="deposit-history-table" style="width: 100%; color: #eee; border-collapse: collapse;">
           <thead>
             <tr>
               <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Date</th>
-              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Amount (BDT)</th>
+              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Amount</th>
               <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Method</th>
+          <!-- Removed Reference column as per user request -->
               <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Status</th>
             </tr>
           </thead>
-          <tbody id="deposit-history-body">
-            <!-- Deposit history rows will be inserted here -->
+          <tbody id="deposit-history-tbody">
+            <!-- Deposit rows will be inserted here -->
           </tbody>
         </table>
+        <div style="display: flex; justify-content: space-between; margin-top: 8px;">
+          <button id="deposit-prev-btn" class="btn-primary" disabled>Previous</button>
+          <button id="deposit-next-btn" class="btn-primary" disabled>Next</button>
+        </div>
       </div>
     </div>
     <div class="card" style="margin-top:24px;">
@@ -527,22 +532,7 @@
         <button type="submit" class="btn-primary">Submit Withdraw Request</button>
       </form>
       <!-- Withdraw History Table -->
-      <div style="margin-top: 20px;">
-        <h4>Withdraw History</h4>
-        <table style="width: 100%; color: #eee; border-collapse: collapse;">
-          <thead>
-            <tr>
-              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Date</th>
-              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Amount (BDT)</th>
-              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Method</th>
-              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Status</th>
-            </tr>
-          </thead>
-          <tbody id="withdraw-history-body">
-            <!-- Withdraw history rows will be inserted here -->
-          </tbody>
-        </table>
-      </div>
+      <!-- Removed withdraw history table as per user request -->
     </div>
   </section>
   <section id="admin-section" class="hidden admin-section">
@@ -904,6 +894,11 @@
       Object.entries(navButtons).forEach(([key, btn]) => {
         btn.classList.toggle('active', key === sectionName);
       });
+
+      // If deposit section is shown, render deposit history
+      if (sectionName === 'deposit') {
+        renderDepositHistory();
+      }
     }
 
     // Navigation buttons listeners
@@ -1326,7 +1321,7 @@
     });
 
     // Deposit form handling
-    depositForm.addEventListener('submit', (e) => {
+      depositForm.addEventListener('submit', (e) => {
       e.preventDefault();
       if (!depositEnabled) {
         showToast('Deposits are currently disabled.');
@@ -1352,7 +1347,6 @@
         userName: user.first_name + (user.last_name ? ' ' + user.last_name : ''),
         amount: amount,
         method: method,
-        reference: reference,
         status: 'pending',
         timestamp: Date.now()
       };
@@ -1449,45 +1443,71 @@
     }
     renderUI();
 
-    // Render deposit history for current user
+    // Render deposit history for current user with pagination
+    const depositHistoryTableBody = document.getElementById('deposit-history-tbody');
+    const depositPrevBtn = document.getElementById('deposit-prev-btn');
+    const depositNextBtn = document.getElementById('deposit-next-btn');
+    let depositCurrentPage = 1;
+    const depositRowsPerPage = 3;
+    let depositUserHistory = [];
+
     function renderDepositHistory() {
+      if (!user) return;
+      // Filter deposits for current user
       const deposits = JSON.parse(localStorage.getItem('deposits') || '[]');
-      const userDeposits = deposits.filter(d => user && d.userId === user.id);
-      const tbody = document.getElementById('deposit-history-body');
-      tbody.innerHTML = '';
-      userDeposits.sort((a, b) => b.timestamp - a.timestamp);
-      userDeposits.forEach(d => {
-        const tr = document.createElement('tr');
+      // Debug: log deposits and user id
+      console.log('Deposits:', deposits);
+      console.log('Current user ID:', user.id);
+      depositUserHistory = deposits.filter(d => d.userId === user.id);
+      console.log('Filtered depositUserHistory:', depositUserHistory);
+      const totalPages = Math.ceil(depositUserHistory.length / depositRowsPerPage);
+      if (depositCurrentPage > totalPages) depositCurrentPage = totalPages || 1;
+
+      // Clear table body
+      depositHistoryTableBody.innerHTML = '';
+
+      // Calculate start and end index
+      const startIndex = (depositCurrentPage - 1) * depositRowsPerPage;
+      const endIndex = Math.min(startIndex + depositRowsPerPage, depositUserHistory.length);
+
+      // Render rows for current page
+      for (let i = startIndex; i < endIndex; i++) {
+        const d = depositUserHistory[i];
         const date = new Date(d.timestamp);
-        tr.innerHTML = `
-          <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${date.toLocaleString()}</td>
-          <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${d.amount.toFixed(2)}</td>
+        const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${dateStr}</td>
+          <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${d.amount.toFixed(2)} BDT</td>
           <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${d.method}</td>
           <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${d.status}</td>
         `;
-        tbody.appendChild(tr);
-      });
+        depositHistoryTableBody.appendChild(row);
+      }
+
+      // Update pagination buttons
+      depositPrevBtn.disabled = depositCurrentPage <= 1;
+      depositNextBtn.disabled = depositCurrentPage >= totalPages || totalPages === 0;
     }
 
-    // Render withdraw history for current user
-    function renderWithdrawHistory() {
-      const withdrawals = JSON.parse(localStorage.getItem('withdrawals') || '[]');
-      const userWithdrawals = withdrawals.filter(w => user && w.userId === user.id);
-      const tbody = document.getElementById('withdraw-history-body');
-      tbody.innerHTML = '';
-      userWithdrawals.sort((a, b) => b.timestamp - a.timestamp);
-      userWithdrawals.forEach(w => {
-        const tr = document.createElement('tr');
-        const date = new Date(w.timestamp);
-        tr.innerHTML = `
-          <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${date.toLocaleString()}</td>
-          <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${w.amount.toFixed(2)}</td>
-          <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${w.method}</td>
-          <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${w.status}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
+    depositPrevBtn.addEventListener('click', () => {
+      if (depositCurrentPage > 1) {
+        depositCurrentPage--;
+        renderDepositHistory();
+      }
+    });
+
+    depositNextBtn.addEventListener('click', () => {
+      const totalPages = Math.ceil(depositUserHistory.length / depositRowsPerPage);
+      if (depositCurrentPage < totalPages) {
+        depositCurrentPage++;
+        renderDepositHistory();
+      }
+    });
+
+    // Initialize pagination buttons state
+    depositPrevBtn.disabled = true;
+    depositNextBtn.disabled = true;
 
     // Call render history functions on UI render
     function renderUI() {
@@ -1544,9 +1564,10 @@
       // Update daily bonus state UI
       updateDailyBonusUI();
 
-      // Render deposit and withdraw history
-      renderDepositHistory();
-      renderWithdrawHistory();
+      // Render deposit history when deposit section is shown
+      if (!depositWithdrawSection.classList.contains('hidden')) {
+        renderDepositHistory();
+      }
     }
 
   })();
