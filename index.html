@@ -22,6 +22,7 @@
     flex-grow:1;
     display: flex;
     flex-direction: column;
+    width: 100%;
     max-width: 420px;
     margin: 0 auto;
     background: #1f1f3a;
@@ -30,6 +31,12 @@
     overflow: hidden;
   }
   header {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 420px;
     padding: 20px;
     background: #2c2c55;
     text-align: center;
@@ -37,16 +44,25 @@
     font-size: 1.5rem;
     letter-spacing: 1.2px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.8);
+    z-index: 1001;
   }
   main {
     flex-grow: 1;
-    padding: 20px;
+    padding: 80px 20px 20px 20px;
     overflow-y: auto;
   }
   footer {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 420px;
     display: flex;
     background: #222242;
     box-shadow: 0 -6px 20px rgba(0,0,0,0.6);
+    border-radius: 16px;
+    z-index: 1000;
   }
   footer button {
     flex-grow: 1;
@@ -61,6 +77,19 @@
     align-items: center;
     transition: background 0.3s, color 0.3s;
     position: relative;
+  }
+  @media (max-width: 400px) {
+    header {
+      font-size: 1.2rem;
+      padding: 16px 12px;
+    }
+    main {
+      padding: 70px 12px 12px 12px;
+    }
+    footer button {
+      font-size: 0.8rem;
+      padding: 10px 0;
+    }
   }
   footer button:hover,
   footer button.active {
@@ -265,13 +294,7 @@
     box-shadow: 0 0 15px rgb(94,82,243,0.8);
   }
 
-  /* Smaller font size for investment section for better readability */
-  #investment-section {
-    font-size: 0.75rem;
-  }
-  #investment-section table {
-    font-size: 0.75rem;
-  }
+ 
 
   /* Match Investment History section style to Deposit History section */
   #investment-history-table {
@@ -298,6 +321,21 @@
     border: 1px solid #5e52f3;
     border-radius: 8px;
     padding: 8px;
+  }
+
+  /* Smaller font size for Deposit and Withdraw History sections */
+  #deposit-withdraw-section h4 {
+    font-size: 0.85rem;
+  }
+  #deposit-withdraw-section table,
+  #deposit-withdraw-section th,
+  #deposit-withdraw-section td {
+    font-size: 0.85rem;
+  }
+
+  /* Smaller font size for Investment History heading */
+  #investment-section .card > h4 {
+    font-size: 1rem;
   }
 </style>
 </head>
