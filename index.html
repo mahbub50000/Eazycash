@@ -30,12 +30,6 @@
     overflow: hidden;
   }
   header {
-    position: fixed;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 420px;
-    max-width: 100%;
     padding: 20px;
     background: #2c2c55;
     text-align: center;
@@ -43,11 +37,10 @@
     font-size: 1.5rem;
     letter-spacing: 1.2px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.8);
-    z-index: 1001;
   }
   main {
     flex-grow: 1;
-    padding: 80px 20px 20px 20px;
+    padding: 20px;
     overflow-y: auto;
   }
   footer {
@@ -308,6 +301,8 @@
   }
   /* Container div for investment history table */
   #investment-history-container {
+    max-height: 300px;
+    overflow-y: auto;
     border: 1px solid #5e52f3;
     border-radius: 8px;
     padding: 8px;
