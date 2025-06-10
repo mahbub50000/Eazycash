@@ -23,7 +23,6 @@
     display: flex;
     flex-direction: column;
     max-width: 420px;
-    width: 100%;
     margin: 0 auto;
     background: #1f1f3a;
     border-radius: 16px;
@@ -35,8 +34,8 @@
     top: 0;
     left: 50%;
     transform: translateX(-50%);
-    max-width: 420px;
-    width: 100%;
+    width: 420px;
+    max-width: 100%;
     padding: 20px;
     background: #2c2c55;
     text-align: center;
@@ -56,8 +55,8 @@
     bottom: 10px;
     left: 50%;
     transform: translateX(-50%);
-    max-width: 420px;
-    width: 100%;
+    width: 420px;
+    max-width: 100%;
     display: flex;
     background: #222242;
     box-shadow: 0 -6px 20px rgba(0,0,0,0.6);
@@ -287,72 +286,6 @@
   }
   #investment-section table {
     font-size: 0.75rem;
-  }
-
-  /* Responsive adjustments for mobile */
-  @media (max-width: 480px) {
-    body {
-      font-size: 14px;
-    }
-    header {
-      font-size: 1.2rem;
-      padding: 15px 10px;
-    }
-    footer {
-      padding: 8px 5px;
-      border-radius: 12px;
-    }
-    #app {
-      border-radius: 12px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-    }
-    main {
-      padding: 70px 10px 10px 10px;
-    }
-    .section-title {
-      font-size: 1.1rem;
-      margin-bottom: 12px;
-    }
-    .card {
-      padding: 12px;
-      margin-bottom: 12px;
-    }
-    input[type=number], input[type=text], select {
-      font-size: 1rem;
-      padding: 8px 10px;
-    }
-    .btn-primary {
-      padding: 10px 12px;
-      font-size: 1rem;
-      border-radius: 8px;
-    }
-    #investment-section {
-      font-size: 0.85rem;
-    }
-    #investment-section table {
-      font-size: 0.85rem;
-      display: block;
-      width: 100%;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-    #investment-history-container {
-      max-height: 250px;
-    }
-    #investment-history-table th,
-    #investment-history-table td {
-      white-space: nowrap;
-    }
-    /* Make footer buttons smaller and stacked if needed */
-    footer {
-      flex-wrap: wrap;
-    }
-    footer button {
-      flex: 1 1 45%;
-      margin: 4px 2.5%;
-      font-size: 0.85rem;
-      padding: 8px 0;
-    }
   }
 
   /* Match Investment History section style to Deposit History section */
@@ -1673,3 +1606,70 @@
         `;
         tbody.appendChild(tr);
       });
+    }
+
+    // Call render history functions on UI render
+    function renderUI() {
+      if (!user) {
+        loginSection.classList.remove('hidden');
+        homeSection.classList.add('hidden');
+        videoAdsSection.classList.add('hidden');
+        ppcSection.classList.add('hidden');
+        investmentSection.classList.add('hidden');
+        depositWithdrawSection.classList.add('hidden');
+        adminSection.classList.add('hidden');
+        navButtons.admin.classList.add('hidden');
+        return;
+      }
+      loginSection.classList.add('hidden');
+      // Show home section and other sections as per nav
+      navButtons.admin.classList.toggle('hidden', !isAdmin());
+
+      // Show the first active content (home)
+      showSection('home');
+
+      // Update user info display
+      userPhotoEl.src = user.photo_url || 'https://cdn.iconscout.com/icon/free/png-256/telegram-17-458475.png';
+      userNameEl.textContent = user.first_name + (user.last_name ? ' ' + user.last_name : '');
+      userIdEl.textContent = "User ID: " + user.id;
+
+      referralLinkEl.textContent = referralBaseURL + user.id;
+      referralCountEl.textContent = referrals.length;
+      bonusEarnedEl.textContent = bonus.toFixed(2);
+      currentInvestmentEl.textContent = currentInvestment.toFixed(2);
+
+      // Total Balance = bonus + currentInvestment for demonstration
+      const totalBalance = bonus + currentInvestment;
+      totalBalanceEl.textContent = totalBalance.toFixed(2) + ' BDT';
+
+      // Set deposit/withdraw enable switches in admin panel
+      toggleDepositEnabled.checked = depositEnabled;
+      toggleWithdrawEnabled.checked = withdrawEnabled;
+
+      // Enable or disable deposit/withdraw forms based on admin control
+      depositMethodSelect.disabled = !depositEnabled;
+      depositAmountInput.disabled = !depositEnabled;
+      depositReferenceInput.disabled = !depositEnabled;
+      depositForm.querySelector('button[type="submit"]').disabled = !depositEnabled;
+
+      withdrawMethodSelect.disabled = !withdrawEnabled;
+      withdrawAmountInput.disabled = !withdrawEnabled;
+      withdrawAddressInput.disabled = !withdrawEnabled;
+      withdrawForm.querySelector('button[type="submit"]').disabled = !withdrawEnabled;
+
+      // Update reward buttons cooldown timers
+      updateRewardButtons();
+
+      // Update daily bonus state UI
+      updateDailyBonusUI();
+
+      // Render deposit and withdraw history
+      renderDepositHistory();
+      renderWithdrawHistory();
+    }
+
+  })();
+</script>
+</body>
+</html>
+
