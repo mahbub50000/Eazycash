@@ -12,8 +12,8 @@
   }
   body {
     margin:0; font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #667eea,#764ba2);
-    color: #f0f0f0;
+    background: #fff;
+    color: #333;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -25,9 +25,9 @@
     width: 100%;
     max-width: 420px;
     margin: 0 auto;
-    background: #1f1f3a;
+    background: #fff9e6;
     border-radius: 16px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+    box-shadow: 0 10px 40px rgba(255,215,0,0.3);
     overflow: hidden;
   }
   header {
@@ -38,13 +38,14 @@
     width: 100%;
     max-width: 420px;
     padding: 20px;
-    background: #2c2c55;
+    background: #ffeb3b;
     text-align: center;
     font-weight: 600;
     font-size: 1.5rem;
     letter-spacing: 1.2px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.8);
+    box-shadow: 0 4px 10px rgba(255,235,59,0.8);
     z-index: 1001;
+    color: #333;
   }
   main {
     flex-grow: 1;
@@ -59,8 +60,8 @@
     width: 100%;
     max-width: 420px;
     display: flex;
-    background: #222242;
-    box-shadow: 0 -6px 20px rgba(0,0,0,0.6);
+    background: #fff9e6;
+    box-shadow: 0 -6px 20px rgba(255,215,0,0.3);
     border-radius: 16px;
     z-index: 1000;
   }
@@ -69,7 +70,7 @@
     padding: 6px 0;
     background: none;
     border: none;
-    color: #bbb;
+    color: #666;
     font-size: 0.9rem;
     cursor: pointer;
     display: flex;
@@ -93,8 +94,8 @@
   }
   footer button:hover,
   footer button.active {
-    color: #fff;
-    background: #5e52f3;
+    color: #333;
+    background: #fff176;
   }
   footer button svg {
     width: 24px; height: 24px;
@@ -112,64 +113,90 @@
     font-weight: 600;
     font-size: 1.3rem;
     margin-bottom: 16px;
-    border-bottom: 2px solid #5e52f3;
+    border-bottom: 2px solid #ffeb3b;
     padding-bottom: 6px;
+    color: #333;
   }
   .card {
-    background: #2c2c55;
+    background: #fffde7;
     border-radius: 12px;
     padding: 16px;
     margin-bottom: 16px;
-    box-shadow: inset 0 0 20px rgb(94,82,243, 0.6);
+    box-shadow: inset 0 0 20px rgb(255,235,59, 0.6);
+  }
+  
+  /* Set width for deposit and withdraw cards */
+  #deposit-withdraw-section .card {
+    width: 100%;
+    max-width: 380px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+    background: #fffde7;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: inset 0 0 20px rgb(255,235,59, 0.6);
+  }
+  
+  /* Keep form elements and text left-aligned inside cards */
+  #deposit-withdraw-section .card form,
+  #deposit-withdraw-section .card h4,
+  #deposit-withdraw-section .card table {
+    text-align: left;
+    color: #333;
   }
   .referral-link {
-    background: #3d3d7a;
+    background: #fff9e6;
     border-radius: 8px;
     padding: 10px;
     font-family: monospace;
     user-select: all;
+    color: #333;
   }
   .copy-button {
     margin-top: 8px;
     padding: 8px 14px;
-    background: #5e52f3;
+    background: #ffeb3b;
     border: none;
     border-radius: 6px;
-    color: #fff;
+    color: #333;
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.3s;
   }
   .copy-button:hover {
-    background-color: #483acb;
+    background-color: #fbc02d;
   }
   input[type=number], input[type=text], select {
     width: 100%;
     padding: 10px 12px;
     font-size: 1rem;
     border-radius: 8px;
-    border: none;
+    border: 1px solid #ffeb3b;
     outline: none;
     margin-top: 8px;
-    background: rgba(255 255 255 / 0.1);
-    color: #eee;
+    background: #fff;
+    color: #333;
     transition: background-color 0.3s;
   }
   /* Change background color for deposit/withdraw method select */
   #deposit-method,
   #withdraw-method {
-    background-color: #4a3b8f !important;
+    background-color: #fbc02d !important;
   }
   input[type=number]:focus, input[type=text]:focus, select:focus {
-    background: rgba(255 255 255 / 0.20);
+    background: #fffde7;
+    border-color: #fbc02d;
   }
   label {
     margin-top: 12px;
     font-weight: 600;
+    color: #333;
   }
   .btn-primary {
-    background: #8a64f5;
-    color:#fff;
+    background: #ffeb3b;
+    color:#333;
     border: none;
     border-radius: 10px;
     padding: 12px 16px;
@@ -180,22 +207,142 @@
     transition: background-color 0.3s;
   }
   .btn-primary:disabled {
-    background: #54438e;
+    background: #fdd835;
     cursor: not-allowed;
   }
   .btn-primary:hover:not(:disabled) {
-    background: #6f45e7;
+    background: #fbc02d;
   }
-  .video-wrapper {
-    aspect-ratio: 16 / 9;
-    margin-bottom: 16px;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 0 15px rgb(94,82,243, 0.6);
-    max-width: 100%;
+  /* Spin Wheel Styles */
+  .spin-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .spin-wheel {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: #fff9e6;
+    margin: 20px auto;
+    transition: transform 3s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+    box-shadow: 0 0 30px rgba(251,192,45,0.8), inset 0 0 40px rgba(255,235,59,0.4);
+    border: 8px solid #fbc02d;
+    transform-origin: center;
+  }
+
+  .wheel-segment {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    transform-origin: 100% 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #333;
+    padding-top: 20px;
+    clip-path: polygon(100% 100%, 0 100%, 100% 0);
+    background: linear-gradient(45deg, #ffeb3b, #fff176);
+    border: 2px solid #fbc02d;
+  }
+
+  .wheel-segment:nth-child(2n) {
+    background: linear-gradient(45deg, #fdd835, #ffeb3b);
+  }
+  
+  .wheel-segment:nth-child(1) { transform: rotate(0deg); }
+  .wheel-segment:nth-child(2) { transform: rotate(36deg); }
+  .wheel-segment:nth-child(3) { transform: rotate(72deg); }
+  .wheel-segment:nth-child(4) { transform: rotate(108deg); }
+  .wheel-segment:nth-child(5) { transform: rotate(144deg); }
+  .wheel-segment:nth-child(6) { transform: rotate(180deg); }
+  .wheel-segment:nth-child(7) { transform: rotate(216deg); }
+  .wheel-segment:nth-child(8) { transform: rotate(252deg); }
+  .wheel-segment:nth-child(9) { transform: rotate(288deg); }
+  .wheel-segment:nth-child(10) { transform: rotate(324deg); }
+  
+  .wheel-pointer {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-bottom: 40px solid #f44336;
+    z-index: 15;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+  }
+  
+  .wheel-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(45deg, #fbc02d, #ffeb3b);
+    border-radius: 50%;
+    border: 4px solid #f57f17;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: #333;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+  
+  .spin-info {
+    text-align: center;
+    margin: 20px 0;
+    padding: 15px;
+    background: rgba(255,235,59,0.1);
+    border-radius: 8px;
+  }
+  
+  .spin-info div {
+    margin: 8px 0;
+    color: #333;
+  }
+  
+  .spin-results {
+    background: rgba(255,235,59,0.1);
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+  }
+  
+  .spin-results h4 {
+    margin: 0 0 10px 0;
+    color: #fbc02d;
+  }
+  
+  .results-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 8px;
+    margin-top: 10px;
+  }
+  
+  .result-item {
+    background: #ffeb3b;
+    color: #333;
+    padding: 8px;
+    border-radius: 6px;
+    font-weight: 600;
+    text-align: center;
+    border: 1px solid #fbc02d;
   }
   .admin-section {
-    background: #421f59;
+    background: #fff9e6;
     padding: 14px;
     border-radius: 12px;
   }
@@ -204,6 +351,7 @@
     align-items: center;
     gap: 12px;
     font-weight: 600;
+    color: #333;
   }
   .admin-controls input[type=checkbox] {
     width: 20px;
@@ -215,11 +363,11 @@
     bottom: 80px;
     left: 50%;
     transform: translateX(-50%);
-    background: #4444cc;
-    color: white;
+    background: #fbc02d;
+    color: #333;
     padding: 12px 24px;
     border-radius: 30px;
-    box-shadow: 0 4px 20px rgb(100 80 255 / 0.9);
+    box-shadow: 0 4px 20px rgba(251,192,45,0.9);
     font-weight: 600;
     opacity: 0;
     pointer-events: none;
@@ -238,21 +386,22 @@
     border-radius: 50%;
     width: 88px;
     height: 88px;
-    border: 3px solid #5e52f3;
+    border: 3px solid #ffeb3b;
     margin-bottom: 12px;
   }
   .user-info .username {
     font-weight: 700;
     font-size: 1.2rem;
     margin-bottom: 4px;
+    color: #333;
   }
   /* Total balance frame style */
   .total-balance-card {
-    background: linear-gradient(135deg, #7b53ff, #5e52f3);
+    background: linear-gradient(135deg, #ffeb3b, #fbc02d);
     border-radius: 14px;
     padding: 16px;
     margin-bottom: 18px;
-    box-shadow: 0 0 20px #957fff77;
+    box-shadow: 0 0 20px #fdd83577;
     text-align: center;
   }
   .total-balance-card .balance-label {
@@ -260,82 +409,101 @@
     font-weight: 600;
     opacity: 0.85;
     margin-bottom: 6px;
+    color: #333;
   }
   .total-balance-card .balance-amount {
     font-size: 2.2rem;
     font-weight: 800;
+    color: #333;
   }
   /* Daily bonus UI */
   .daily-bonus {
-    background: #3a2a6a;
+    background: #fff9e6;
     border-radius: 14px;
     padding: 14px 18px;
     margin-bottom: 24px;
     text-align: center;
-    box-shadow: 0 0 12px #6b52e6aa;
+    box-shadow: 0 0 12px #fbc02daa;
   }
   .daily-bonus .bonus-amount {
     font-size: 1.5rem;
     font-weight: 700;
     margin-bottom: 8px;
-    color: #b8a1ff;
+    color: #fbc02d;
   }
   .daily-bonus .bonus-timer {
     font-size: 0.95rem;
     margin-bottom: 12px;
     opacity: 0.9;
+    color: #333;
   }
   /* Referral card UI */
   .referral-card {
-    background: #3a3a7a;
+    background: #fff9e6;
     border-radius: 14px;
     padding: 16px;
     margin-top: 12px;
-    box-shadow: 0 0 15px rgb(94,82,243,0.8);
+    box-shadow: 0 0 15px rgb(255,235,59,0.8);
   }
 
- 
+  /* Shape container for referral title */
+  .referral-title-shape {
+    display: inline-block;
+    background: linear-gradient(135deg, #ffeb3b, #fbc02d);
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-weight: bold;
+    font-size: 1.3rem;
+    color: #333;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 15px rgba(255,235,59,0.4);
+    text-align: center;
+    border: none;
+  }
 
   /* Match Investment History section style to Deposit History section */
   #investment-history-table {
     width: 100%;
-    color: #eee;
+    color: #333;
     border-collapse: collapse;
   }
   #investment-history-table th,
   #investment-history-table td {
     padding: 8px;
-    border-bottom: 1px solid #5e52f3;
+    border-bottom: 1px solid #ffeb3b;
     text-align: left;
   }
   #investment-history-table thead tr th {
-    border-bottom: 1px solid #5e52f3;
+    border-bottom: 1px solid #ffeb3b;
   }
   #investment-history-table tbody tr td {
-    border-bottom: 1px solid #5e52f3;
+    border-bottom: 1px solid #ffeb3b;
   }
   /* Container div for investment history table */
   #investment-history-container {
     max-height: 300px;
     overflow-y: auto;
-    border: 1px solid #5e52f3;
+    border: 1px solid #ffeb3b;
     border-radius: 8px;
     padding: 8px;
   }
 
-  /* Smaller font size for Deposit and Withdraw History sections */
+  /* Font size for Deposit and Withdraw History sections */
   #deposit-withdraw-section h4 {
-    font-size: 0.85rem;
+    font-size: 1rem;
+    color: #333;
   }
   #deposit-withdraw-section table,
   #deposit-withdraw-section th,
   #deposit-withdraw-section td {
-    font-size: 0.85rem;
+    font-size: 1rem;
+    color: #333;
   }
 
   /* Smaller font size for Investment History heading */
   #investment-section .card > h4 {
     font-size: 1rem;
+    color: #333;
   }
 </style>
 </head>
@@ -376,7 +544,9 @@
     
     <!-- Referral Card UI -->
     <div class="referral-card">
-      <h3 class="section-title">Referral & Bonus System</h3>
+      <div style="text-align: center; margin-bottom: 16px;">
+        <span class="referral-title-shape">Referral & Bonus System</span>
+      </div>
       <div>Your referral link:</div>
       <div class="referral-link" id="referral-link"></div>
       <button class="copy-button" id="copy-referral">Copy Referral Link</button>
@@ -389,112 +559,68 @@
       Eazycash@2025
     </div>
   </section>
-  <section id="video-ads-section" class="hidden">
-    <h3 class="section-title">Video Ads Reward (Claim every hour)</h3>
+  <section id="spin-section" class="hidden">
+    <h3 class="section-title">Spin Rewards (10 Spins every hour)</h3>
     <div class="card">
-      <h4>Video Ad #1</h4>
-      <div class="video-wrapper">
-        <iframe
-          id="video-iframe-1"
-          src="https://www.youtube.com/embed/dQw4w9WgXcQ?enablejsapi=1&controls=1"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-          title="Reward Video 1"
-        ></iframe>
+      <div class="spin-container">
+        <div class="spin-wheel" id="spin-wheel">
+          <div class="wheel-segment" data-value="0.01">0.01</div>
+          <div class="wheel-segment" data-value="0.05">0.05</div>
+          <div class="wheel-segment" data-value="0.10">0.10</div>
+          <div class="wheel-segment" data-value="0.20">0.20</div>
+          <div class="wheel-segment" data-value="0.25">0.25</div>
+          <div class="wheel-segment" data-value="0.30">0.30</div>
+          <div class="wheel-segment" data-value="0.35">0.35</div>
+          <div class="wheel-segment" data-value="0.40">0.40</div>
+          <div class="wheel-segment" data-value="0.45">0.45</div>
+          <div class="wheel-segment" data-value="0.50">0.50</div>
+          <div class="wheel-center">SPIN</div>
+        </div>
+        <div class="wheel-pointer"></div>
       </div>
-      <button id="claim-video-reward-1" class="btn-primary">Claim Video Ad Reward #1</button>
-      <div id="video-reward-timer-1" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;"></div>
-    </div>
-    <div class="card">
-      <h4>Video Ad #2</h4>
-      <div class="video-wrapper">
-        <iframe
-          id="video-iframe-2"
-          src="https://www.youtube.com/embed/dQw4w9WgXcQ?enablejsapi=1&controls=1"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-          title="Reward Video 2"
-        ></iframe>
+      
+      <div class="spin-info">
+        <div class="spins-remaining">
+          <strong>Spins Remaining: <span id="spins-remaining">10</span></strong>
+        </div>
+        <div class="total-rewards">
+          <strong>Total Rewards This Session: <span id="session-rewards">0</span> BDT</strong>
+        </div>
       </div>
-      <button id="claim-video-reward-2" class="btn-primary">Claim Video Ad Reward #2</button>
-      <div id="video-reward-timer-2" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;"></div>
-    </div>
-    <div class="card">
-      <h4>Video Ad #3</h4>
-      <div class="video-wrapper">
-        <iframe
-          id="video-iframe-3"
-          src="https://www.youtube.com/embed/dQw4w9WgXcQ?enablejsapi=1&controls=1"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-          title="Reward Video 3"
-        ></iframe>
+      
+      <button id="spin-button" class="btn-primary">Spin the Wheel!</button>
+      <div id="spin-timer" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;"></div>
+      
+      <div class="spin-results" id="spin-results" style="margin-top: 16px; display: none;">
+        <h4>Spin Results:</h4>
+        <div id="results-list"></div>
       </div>
-      <button id="claim-video-reward-3" class="btn-primary">Claim Video Ad Reward #3</button>
-      <div id="video-reward-timer-3" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;"></div>
-    </div>
-    <div class="card">
-      <h4>Video Ad #4</h4>
-      <div class="video-wrapper">
-        <iframe
-          id="video-iframe-4"
-          src="https://www.youtube.com/embed/dQw4w9WgXcQ?enablejsapi=1&controls=1"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-          title="Reward Video 4"
-        ></iframe>
-      </div>
-      <button id="claim-video-reward-4" class="btn-primary">Claim Video Ad Reward #4</button>
-      <div id="video-reward-timer-4" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;"></div>
-    </div>
-    <div class="card">
-      <h4>Video Ad #5</h4>
-      <div class="video-wrapper">
-        <iframe
-          id="video-iframe-5"
-          src="https://www.youtube.com/embed/dQw4w9WgXcQ?enablejsapi=1&controls=1"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-          title="Reward Video 5"
-        ></iframe>
-      </div>
-      <button id="claim-video-reward-5" class="btn-primary">Claim Video Ad Reward #5</button>
-      <div id="video-reward-timer-5" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;"></div>
     </div>
     <div style="text-align:center; margin-top: 20px; font-weight: 600; font-size: 1.1rem; color: #ccc;">
       Eazycash@2025
     </div>
-    
   </section>
   <section id="ppc-section" class="hidden">
-    <h3 class="section-title">Pay Per Click Rewards (Claim every hour)</h3>
+    <div style="text-align: center; margin-bottom: 16px;">
+      <span class="referral-title-shape">Pay Per Click Rewards (Claim every hour)</span>
+    </div>
     <div class="card">
-      <h4>PPC Reward #1</h4>
       <button id="claim-ppc-reward-1" class="btn-primary">Claim PPC Reward #1</button>
       <div id="ppc-reward-timer-1" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;"></div>
     </div>
     <div class="card">
-      <h4>PPC Reward #2</h4>
       <button id="claim-ppc-reward-2" class="btn-primary">Claim PPC Reward #2</button>
       <div id="ppc-reward-timer-2" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;"></div>
     </div>
     <div class="card">
-      <h4>PPC Reward #3</h4>
       <button id="claim-ppc-reward-3" class="btn-primary">Claim PPC Reward #3</button>
       <div id="ppc-reward-timer-3" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;"></div>
     </div>
     <div class="card">
-      <h4>PPC Reward #4</h4>
       <button id="claim-ppc-reward-4" class="btn-primary">Claim PPC Reward #4</button>
       <div id="ppc-reward-timer-4" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;"></div>
     </div>
     <div class="card">
-      <h4>PPC Reward #5</h4>
       <button id="claim-ppc-reward-5" class="btn-primary">Claim PPC Reward #5</button>
       <div id="ppc-reward-timer-5" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;"></div>
     </div>
@@ -533,27 +659,26 @@
       <!-- <div style="margin-top: 12px;">
         <strong>Your Current Investment:</strong> <span id="current-investment">0</span> BDT
       </div> -->
-      <div style="margin-top: 16px; padding: 12px; background: rgba(94,82,243,0.1); border-radius: 8px; font-size: 0.9rem;">
+        <div style="margin-top: 16px; padding: 12px; background: rgba(255,235,59,0.1); border-radius: 8px; font-size: 0.9rem;">
         <strong>Investment Note:</strong><br>
-        • Weekly Return: 22% of invested amount<br>
-        • Investment Period: 7 weeks<br>
+        • Investment Period: 7 days<br>
         • Example: Invest 100 BDT → Get 22 BDT weekly for 7 weeks (Total return: 154 BDT)
       </div>
     </div>
     <!-- Investment Balance and Profit Table -->
     <div class="card" style="margin-top: 20px;">
       <h4>Investment Summary</h4>
-      <table style="width: 100%; color: #eee; border-collapse: collapse;">
+      <table style="width: 100%; color: #333; border-collapse: collapse;">
         <thead>
           <tr>
-            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Investment Balance</th>
-            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Profit Balance</th>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ffeb3b;">Investment Balance</th>
+            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ffeb3b;">Profit Balance</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td id="investment-balance" style="padding: 8px; border-bottom: 1px solid #5e52f3;">0.00 BDT</td>
-            <td id="profit-balance" style="padding: 8px; border-bottom: 1px solid #5e52f3;">0.00 BDT</td>
+            <td id="investment-balance" style="padding: 8px; border-bottom: 1px solid #ffeb3b;">0.00 BDT</td>
+            <td id="profit-balance" style="padding: 8px; border-bottom: 1px solid #ffeb3b;">0.00 BDT</td>
           </tr>
         </tbody>
       </table>
@@ -562,14 +687,13 @@
     <div class="card" style="margin-top: 20px;">
       <h4>Investment History</h4>
       <div id="investment-history-container">
-        <table id="investment-history-table" style="width: 100%; color: #eee; border-collapse: collapse;">
+        <table id="investment-history-table" style="width: 100%; color: #333; border-collapse: collapse;">
           <thead>
             <tr>
-              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Date</th>
-              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Amount (BDT)</th>
-              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Weekly Return</th>
-              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Weeks Remaining</th>
-              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Status</th>
+          <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ffeb3b; color: #333;">Date</th>
+          <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ffeb3b; color: #333;">Amount (BDT)</th>
+              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ffeb3b; color: #333;">Days Remaining</th>
+          <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ffeb3b; color: #333;">Status</th>
             </tr>
           </thead>
           <tbody id="investment-history-body">
@@ -584,9 +708,12 @@
     
    </section>
     <section id="deposit-withdraw-section" class="hidden" style="padding: 20px;">
-    <h3 class="section-title">Offline Deposit & Withdraw</h3>
+    
+    <!-- Separate Deposit Card -->
     <div class="card" style="margin-bottom: 20px;">
-      <h4>Deposit</h4>
+      <div style="text-align: center; margin-bottom: 16px;">
+        <h4 style="display: inline-block; background: linear-gradient(135deg, #ffeb3b, #fbc02d); padding: 12px 24px; border-radius: 25px; font-weight: bold; font-size: 1.4rem; color: #333; margin: 0; box-shadow: 0 4px 15px rgba(255,235,59,0.4);">Deposit</h4>
+      </div>
       <form id="deposit-form">
         <label for="deposit-method">Deposit Method:</label>
         <select id="deposit-method" required>
@@ -603,25 +730,27 @@
       <!-- Deposit History Table -->
       <div style="margin-top: 20px;">
         <h4>Deposit History</h4>
-        <div style="max-height: 300px; overflow-y: auto; border: 1px solid #5e52f3; border-radius: 8px; padding: 8px;">
-          <table style="width: 100%; color: #eee; border-collapse: collapse;">
-            <thead>
-              <tr>
-                <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Date</th>
-                <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Amount (BDT)</th>
-                <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Method</th>
-                <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Status</th>
-              </tr>
-            </thead>
-            <tbody id="deposit-history-body">
-              <!-- Deposit history rows will be inserted here -->
-            </tbody>
-          </table>
+        <div style="max-height: 300px; overflow-y: auto; border: 1px solid #ffeb3b; border-radius: 8px; padding: 8px;">
+        <table style="width: 100%; color: #333; border-collapse: collapse;">
+          <thead>
+            <tr>
+              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ffeb3b;">Date</th>
+              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ffeb3b;">Amount (BDT)</th>
+              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ffeb3b;">Method</th>
+              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ffeb3b;">Status</th>
+            </tr>
+          </thead>
+          <tbody id="deposit-history-body">
+            <!-- Deposit history rows will be inserted here -->
+          </tbody>
+        </table>
         </div>
       </div>
     </div>
     <div class="card" style="margin-top: 20px;">
-      <h4>Withdraw</h4>
+      <div style="text-align: center; margin-bottom: 16px;">
+        <h4 style="display: inline-block; background: linear-gradient(135deg, #ffeb3b, #fbc02d); padding: 12px 24px; border-radius: 25px; font-weight: bold; font-size: 1.4rem; color: #333; margin: 0; box-shadow: 0 4px 15px rgba(255,235,59,0.4);">Withdraw</h4>
+      </div>
       <form id="withdraw-form">
         <label for="withdraw-method">Withdraw Method:</label>
         <select id="withdraw-method" required>
@@ -636,15 +765,15 @@
         <button type="submit" class="btn-primary">Submit Withdraw Request</button>
       </form>
       <!-- Withdraw History Table -->
-      <div style="margin-top: 20px; max-height: 300px; overflow-y: auto; border: 1px solid #5e52f3; border-radius: 8px; padding: 8px;">
+      <div style="margin-top: 20px; max-height: 300px; overflow-y: auto; border: 1px solid #ffeb3b; border-radius: 8px; padding: 8px;">
         <h4>Withdraw History</h4>
-        <table style="width: 100%; color: #eee; border-collapse: collapse;">
+        <table style="width: 100%; color: #333; border-collapse: collapse;">
           <thead>
             <tr>
-              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Date</th>
-              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Amount (BDT)</th>
-              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Method</th>
-              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #5e52f3;">Status</th>
+              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ffeb3b;">Date</th>
+              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ffeb3b;">Amount (BDT)</th>
+              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ffeb3b;">Method</th>
+              <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ffeb3b;">Status</th>
             </tr>
           </thead>
           <tbody id="withdraw-history-body">
@@ -674,9 +803,9 @@
     <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
     Home
   </button>
-  <button id="nav-video" aria-label="Ads" title="Ads">
-    <svg viewBox="0 0 24 24"><path d="M10 16.5l6-4.5-6-4.5v9z"/></svg>
-    Ads
+  <button id="nav-spin" aria-label="Spin" title="Spin">
+    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+    Spin
   </button>
   <button id="nav-ppc" aria-label="PPC Rewards" title="PPC Rewards">
     <svg viewBox="0 0 24 24"><path d="M13 17h-2v-2h2v2zm0-6h-2v-2h2v2zm4 4h-2v-2h2v2zm-8 0H7v-2h2v2zm8-4h-2V9h2v2zm-4 8c3.31 0 6-2.69 6-6h-2a4 4 0 01-4 4v2zm-6-6a6 6 0 0111.9-1h-2A4 4 0 009 13v2H7v-2z"/></svg>
@@ -724,7 +853,7 @@
     let referrals = []; // Array of user ids who used referral link
     let dailyClaimBonus = 0;
     let referralBonus = 0;
-    let videoRewards = 0;
+    let spinRewards = 0;
     let ppcRewards = 0;
     let currentInvestment = 0;
     let depositEnabled = true;
@@ -754,7 +883,7 @@
     // Elements
     const loginSection = document.getElementById('login-section');
     const homeSection = document.getElementById('home-section');
-    const videoAdsSection = document.getElementById('video-ads-section');
+    const spinSection = document.getElementById('spin-section');
     const ppcSection = document.getElementById('ppc-section');
     const investmentSection = document.getElementById('investment-section');
     const depositWithdrawSection = document.getElementById('deposit-withdraw-section');
@@ -762,7 +891,7 @@
 
     const navButtons = {
       home: document.getElementById('nav-home'),
-      video: document.getElementById('nav-video'),
+      spin: document.getElementById('nav-spin'),
       ppc: document.getElementById('nav-ppc'),
       investment: document.getElementById('nav-investment'),
       deposit: document.getElementById('nav-deposit'),
@@ -779,20 +908,19 @@
 
     const copyReferralBtn = document.getElementById('copy-referral');
 
-    const claimVideoRewardBtns = [
-      document.getElementById('claim-video-reward-1'),
-      document.getElementById('claim-video-reward-2'),
-      document.getElementById('claim-video-reward-3'),
-      document.getElementById('claim-video-reward-4'),
-      document.getElementById('claim-video-reward-5')
-    ];
-    const videoRewardTimers = [
-      document.getElementById('video-reward-timer-1'),
-      document.getElementById('video-reward-timer-2'),
-      document.getElementById('video-reward-timer-3'),
-      document.getElementById('video-reward-timer-4'),
-      document.getElementById('video-reward-timer-5')
-    ];
+    // Spin wheel elements
+    const spinWheel = document.getElementById('spin-wheel');
+    const spinButton = document.getElementById('spin-button');
+    const spinTimer = document.getElementById('spin-timer');
+    const spinsRemainingEl = document.getElementById('spins-remaining');
+    const sessionRewardsEl = document.getElementById('session-rewards');
+    const spinResults = document.getElementById('spin-results');
+    const resultsList = document.getElementById('results-list');
+    
+    // Spin wheel variables
+    let spinsRemaining = 10;
+    let sessionRewards = 0;
+    let isSpinning = false;
 
     const claimPpcRewardBtns = [
       document.getElementById('claim-ppc-reward-1'),
@@ -852,10 +980,10 @@
           referrals,
           dailyClaimBonus,
           referralBonus,
-          videoRewards,
+          spinRewards,
           ppcRewards,
           currentInvestment,
-          lastVideoClaim: parseInt(localStorage.getItem('lastVideoClaim')) || 0,
+          lastSpinClaim: parseInt(localStorage.getItem('lastSpinClaim')) || 0,
           lastPpcClaim: parseInt(localStorage.getItem('lastPpcClaim')) || 0,
           depositEnabled,
           withdrawEnabled,
@@ -903,7 +1031,7 @@
           referrals = data.referrals || [];
           dailyClaimBonus = data.dailyClaimBonus || 0;
           referralBonus = data.referralBonus || 0;
-          videoRewards = data.videoRewards || 0;
+          spinRewards = data.spinRewards || 0;
           ppcRewards = data.ppcRewards || 0;
           currentInvestment = data.currentInvestment || 0;
           depositEnabled = data.depositEnabled !== undefined ? data.depositEnabled : true;
@@ -951,7 +1079,7 @@
       if (!user) {
         loginSection.classList.remove('hidden');
         homeSection.classList.add('hidden');
-        videoAdsSection.classList.add('hidden');
+        spinSection.classList.add('hidden');
         ppcSection.classList.add('hidden');
         investmentSection.classList.add('hidden');
         depositWithdrawSection.classList.add('hidden');
@@ -1006,7 +1134,7 @@
     function showSection(sectionName) {
       const sections = {
         home: homeSection,
-        video: videoAdsSection,
+        spin: spinSection,
         ppc: ppcSection,
         investment: investmentSection,
         deposit: depositWithdrawSection,
@@ -1097,38 +1225,96 @@
       return diff > 0 ? diff : 0;
     }
 
-    // Claim video ad reward handlers for all 5 buttons
-    claimVideoRewardBtns.forEach((btn, index) => {
-      btn.addEventListener('click', () => {
-        if (!user) {
-          showToast('Please login first');
-          return;
+    // Spin wheel functionality
+    function spinTheWheel() {
+      if (isSpinning) return;
+      
+      if (!user) {
+        showToast('Please login first');
+        return;
+      }
+      
+      if (!rewardsEnabled) {
+        showToast('Rewards are currently disabled by admin.');
+        return;
+      }
+      
+      if (!canClaim('lastSpinClaim', rewardCooldown)) {
+        showToast('Please wait for the cooldown to finish.');
+        return;
+      }
+      
+      if (spinsRemaining <= 0) {
+        showToast('No spins remaining. Please wait for the next hour.');
+        return;
+      }
+      
+      isSpinning = true;
+      spinButton.disabled = true;
+      
+      // Clear previous results if all 10 spins were used
+      if (spinsRemaining === 10) {
+        resultsList.innerHTML = '';
+        sessionRewards = 0;
+        sessionRewardsEl.textContent = '0';
+        spinResults.style.display = 'block';
+      }
+      
+      // Random rotation between 1440 and 2160 degrees (4-6 full spins) plus segment
+      const extraSpins = Math.floor(Math.random() * 2 + 4) * 360;
+      const segmentCount = 10;
+      const segmentAngle = Math.floor(Math.random() * segmentCount) * (360 / segmentCount);
+      const totalRotation = extraSpins + segmentAngle;
+      
+      // Reset any previous rotation first
+      spinWheel.style.transition = 'none';
+      spinWheel.style.transform = 'rotate(0deg)';
+      // Force reflow
+      spinWheel.offsetHeight;
+      // Add smooth transition back and spin
+      spinWheel.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
+      spinWheel.style.transform = `rotate(-${totalRotation}deg)`;
+      
+      setTimeout(() => {
+        // Calculate reward based on segment landed on
+        const segmentIndex = Math.floor(segmentAngle / (360 / segmentCount));
+        const rewards = [0.01, 0.05, 0.10, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50];
+        const reward = rewards[segmentIndex];
+        
+        // Add result to list
+        const resultItem = document.createElement('div');
+        resultItem.className = 'result-item';
+        resultItem.textContent = `${reward.toFixed(2)} BDT`;
+        resultsList.appendChild(resultItem);
+        
+        // Update session rewards
+        sessionRewards += reward;
+        sessionRewardsEl.textContent = sessionRewards.toFixed(2);
+        
+        // Update total rewards
+        spinRewards += reward;
+        saveUserData();
+        
+        // Update spins remaining
+        spinsRemaining--;
+        spinsRemainingEl.textContent = spinsRemaining;
+        
+        if (spinsRemaining === 0) {
+          // All spins used, start cooldown
+          localStorage.setItem('lastSpinClaim', Date.now().toString());
+          showToast(`Session complete! Total rewards: ${sessionRewards.toFixed(2)} BDT`);
+        } else {
+          showToast(`You won ${reward.toFixed(2)} BDT! ${spinsRemaining} spins remaining`);
         }
-        if (!rewardsEnabled) {
-          showToast('Rewards are currently disabled by admin.');
-          return;
-        }
-        const videoClaimKey = `lastVideoClaim${index + 1}`;
-        if (!canClaim(videoClaimKey, rewardCooldown)) {
-          showToast(`Video reward #${index + 1} already claimed. Please wait.`);
-          return;
-        }
-        // Simulate watching ad completion
-        btn.disabled = true;
-        showToast(`Watching Video Ad #${index + 1}...`);
-        setTimeout(() => {
-          videoRewards += videoRewardAmount;
-          localStorage.setItem(videoClaimKey, Date.now().toString());
-          saveUserData();
-          updateRewardButtons();
-          showToast(`You earned +${videoRewardAmount} BDT from video ad #${index + 1}!`);
-          btn.disabled = false;
-          bonus = dailyClaimBonus + referralBonus;
-          bonusEarnedEl.textContent = bonus.toFixed(2);
-          updateTotalBalance();
-        }, 4000);
-      });
-    });
+        
+        isSpinning = false;
+        spinButton.disabled = false;
+        updateTotalBalance();
+      }, 3000);
+    }
+    
+    // Add spin button event listener
+    spinButton.addEventListener('click', spinTheWheel);
 
     // Claim PPC reward handlers for all 5 buttons
     claimPpcRewardBtns.forEach((btn, index) => {
@@ -1164,18 +1350,24 @@
 
     // Update cooldown timers for reward buttons
     function updateRewardButtons() {
-      // Video ad rewards - handle all 5 buttons
-      claimVideoRewardBtns.forEach((btn, index) => {
-        const videoClaimKey = `lastVideoClaim${index + 1}`;
-        if (canClaim(videoClaimKey, rewardCooldown)) {
-          videoRewardTimers[index].textContent = 'Ready to claim';
-          btn.disabled = false;
-        } else {
-          const timeLeft = timeToNextClaim(videoClaimKey, rewardCooldown);
-          videoRewardTimers[index].textContent = 'Next claim in: ' + formatTimeLeft(timeLeft);
-          btn.disabled = true;
+      // Spin wheel timer
+      if (canClaim('lastSpinClaim', rewardCooldown)) {
+        spinTimer.textContent = 'Ready to spin!';
+        spinButton.disabled = false;
+        // Reset spins when cooldown expires
+        if (spinsRemaining === 0) {
+          spinsRemaining = 10;
+          spinsRemainingEl.textContent = spinsRemaining;
+          sessionRewards = 0;
+          sessionRewardsEl.textContent = sessionRewards;
+          spinResults.style.display = 'none';
         }
-      });
+      } else {
+        const timeLeft = timeToNextClaim('lastSpinClaim', rewardCooldown);
+        spinTimer.textContent = 'Next spin session in: ' + formatTimeLeft(timeLeft);
+        spinButton.disabled = spinsRemaining === 0;
+      }
+      
       // PPC rewards - handle all 5 buttons
       claimPpcRewardBtns.forEach((btn, index) => {
         const ppcClaimKey = `lastPpcClaim${index + 1}`;
@@ -1192,7 +1384,7 @@
 
     // Update total balance display
     function updateTotalBalance() {
-      const totalBalance = dailyClaimBonus + referralBonus + videoRewards + ppcRewards;
+      const totalBalance = dailyClaimBonus + referralBonus + spinRewards + ppcRewards;
       totalBalanceEl.textContent = totalBalance.toFixed(2) + ' BDT';
     }
 
@@ -1268,10 +1460,8 @@
         userName: user.first_name + (user.last_name ? ' ' + user.last_name : ''),
         amount: amount,
         startDate: new Date(),
-        weeklyReturn: amount * 0.22, // 22% weekly return
-        totalReturns: 0,
-        status: 'active',
-        weeksRemaining: 7 // 7 weeks investment period
+        profitPercent: 0.22, // 22% profit after one week
+        status: 'active'
       };
       
       // Save investment to localStorage for admin panel
@@ -1283,7 +1473,7 @@
       saveUserData();
       depositBalanceEl.textContent = depositBalance.toFixed(2);
       updateTotalBalance();
-      showToast(`Invested ${amount.toFixed(2)} BDT successfully! Weekly return: ${investment.weeklyReturn.toFixed(2)} BDT`);
+      showToast(`Invested ${amount.toFixed(2)} BDT successfully! Profit after one week: ${(amount * investment.profitPercent).toFixed(2)} BDT`);
       
       // Render updated investment history
       renderInvestmentHistory();
@@ -1296,19 +1486,23 @@
       const userInvestments = investments.filter(inv => inv.userId === user.id);
       const tbody = document.getElementById('investment-history-body');
       tbody.innerHTML = '';
-      userInvestments.sort((a, b) => b.startDate - a.startDate);
-      userInvestments.forEach(inv => {
-        const tr = document.createElement('tr');
-        const date = new Date(inv.startDate);
-        tr.innerHTML = `
-          <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${date.toLocaleString()}</td>
-          <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${inv.amount.toFixed(2)}</td>
-          <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${inv.weeklyReturn.toFixed(2)}</td>
-          <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${inv.weeksRemaining}</td>
-          <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${inv.status}</td>
-        `;
-        tbody.appendChild(tr);
-      });
+      userInvestments.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+        userInvestments.forEach(inv => {
+          const date = new Date(inv.startDate);
+          const statusText = inv.status === 'active' ? 'Active' : 'Completed';
+          const now = new Date();
+          const investmentPeriodDays = 7; // 7 days
+          const daysPassed = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+          const daysRemaining = Math.max(investmentPeriodDays - daysPassed, 0);
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td style="padding: 8px; border-bottom: 1px solid #ffeb3b; color: #333;">${date.toLocaleString()}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ffeb3b; color: #333;">${inv.amount.toFixed(2)}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ffeb3b; color: #333;">${daysRemaining} days</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ffeb3b; color: #333;">${statusText}</td>
+          `;
+          tbody.appendChild(tr);
+        });
     }
 
     // Call renderInvestmentHistory on UI render
@@ -1316,6 +1510,7 @@
     renderUI = function() {
       originalRenderUI();
       renderInvestmentHistory();
+      updateBalances();
     };
 
     // Variables for deposit balance and profit
@@ -1325,7 +1520,7 @@
     const profitBalanceEl = document.getElementById('profit-balance');
     const transferDepositBtn = document.getElementById('transfer-deposit-btn');
 
-    // Function to calculate investment profit after 7 days
+    // Function to calculate investment profit based on weeks passed
     function calculateInvestmentProfit() {
       const investments = JSON.parse(localStorage.getItem('userInvestments') || '[]');
       let totalInvestment = 0;
@@ -1338,11 +1533,25 @@
           const startDate = new Date(inv.startDate);
           const daysPassed = Math.floor((now - startDate) / (1000 * 60 * 60 * 24));
           if (daysPassed >= 7) {
-            // Profit for 1 week (22% of amount)
-            totalProfit += inv.weeklyReturn;
+            // One week passed, calculate profit and mark completed
+            const profit = inv.amount * (inv.profitPercent || 0);
+            totalProfit += profit;
+            inv.status = 'completed';
+
+            // Add invested amount + profit to main balance (dailyClaimBonus)
+            dailyClaimBonus += inv.amount + profit;
+            // Deduct invested amount from depositBalance if not already deducted
+            // (Assuming depositBalance was already deducted on investment)
+          } else {
+            // Investment still active, count amount but no profit yet
+            totalInvestment += inv.amount;
           }
         }
       });
+
+      // Save updated investments back to localStorage
+      localStorage.setItem('userInvestments', JSON.stringify(investments));
+      saveUserData();
 
       return { totalInvestment, totalProfit };
     }
@@ -1354,9 +1563,6 @@
 
       // Calculate investment profit and balance
       const { totalInvestment, totalProfit } = calculateInvestmentProfit();
-
-      // Add profit to deposit balance
-      depositBalance += totalProfit;
 
       // Update UI elements
       depositBalanceEl.textContent = depositBalance.toFixed(2);
@@ -1611,10 +1817,10 @@
         const tr = document.createElement('tr');
         const date = new Date(d.timestamp);
         tr.innerHTML = `
-          <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${date.toLocaleString()}</td>
-          <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${d.amount.toFixed(2)}</td>
-          <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${d.method}</td>
-          <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${d.status}</td>
+          <td style="padding: 8px; border-bottom: 1px solid #ffeb3b; color: #333;">${date.toLocaleString()}</td>
+          <td style="padding: 8px; border-bottom: 1px solid #ffeb3b; color: #333;">${d.amount.toFixed(2)}</td>
+          <td style="padding: 8px; border-bottom: 1px solid #ffeb3b; color: #333;">${d.method}</td>
+          <td style="padding: 8px; border-bottom: 1px solid #ffeb3b; color: #333;">${d.status}</td>
         `;
         tbody.appendChild(tr);
       });
@@ -1631,10 +1837,10 @@
         const tr = document.createElement('tr');
         const date = new Date(w.timestamp);
         tr.innerHTML = `
-          <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${date.toLocaleString()}</td>
-          <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${w.amount.toFixed(2)}</td>
-          <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${w.method}</td>
-          <td style="padding: 8px; border-bottom: 1px solid #5e52f3;">${w.status}</td>
+          <td style="padding: 8px; border-bottom: 1px solid #ffeb3b; color: #333;">${date.toLocaleString()}</td>
+          <td style="padding: 8px; border-bottom: 1px solid #ffeb3b; color: #333;">${w.amount.toFixed(2)}</td>
+          <td style="padding: 8px; border-bottom: 1px solid #ffeb3b; color: #333;">${w.method}</td>
+          <td style="padding: 8px; border-bottom: 1px solid #ffeb3b; color: #333;">${w.status}</td>
         `;
         tbody.appendChild(tr);
       });
@@ -1645,7 +1851,7 @@
       if (!user) {
         loginSection.classList.remove('hidden');
         homeSection.classList.add('hidden');
-        videoAdsSection.classList.add('hidden');
+        spinSection.classList.add('hidden');
         ppcSection.classList.add('hidden');
         investmentSection.classList.add('hidden');
         depositWithdrawSection.classList.add('hidden');
