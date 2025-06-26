@@ -14,8 +14,8 @@
   body {
     margin: 0;
     font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: #f0f0f0;
+    background: #fff;
+    color: #333;
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -23,9 +23,9 @@
   }
   
   .admin-container {
-    background: #1f1f3a;
+    background: #fff9e6;
     border-radius: 16px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+    box-shadow: 0 10px 40px rgba(255,215,0,0.3);
     overflow: hidden;
     width: 100%;
     max-width: 1200px;
@@ -33,10 +33,10 @@
   }
   
   .admin-header {
-    background: #2c2c55;
+    background: #ffeb3b;
     padding: 20px;
     text-align: center;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.8);
+    box-shadow: 0 4px 10px rgba(255,235,59,0.8);
   }
   
   .admin-header h1 {
@@ -44,6 +44,7 @@
     font-size: 1.8rem;
     font-weight: 700;
     letter-spacing: 1.2px;
+    color: #333;
   }
   
   .admin-content {
@@ -57,10 +58,10 @@
   }
   
   .login-form {
-    background: #2c2c55;
+    background: #fffde7;
     padding: 30px;
     border-radius: 12px;
-    box-shadow: 0 0 20px rgba(94,82,243,0.6);
+    box-shadow: 0 0 20px rgba(255,235,59,0.6);
   }
   
   .form-group {
@@ -72,7 +73,7 @@
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
-    color: #e0e0e0;
+    color: #666;
   }
   
   .form-group input {
@@ -80,22 +81,23 @@
     padding: 12px 16px;
     font-size: 1rem;
     border-radius: 8px;
-    border: none;
+    border: 1px solid #ffeb3b;
     outline: none;
-    background: rgba(255,255,255,0.1);
-    color: #eee;
-    transition: background-color 0.3s;
+    background: #fff;
+    color: #333;
+    transition: background-color 0.3s, border-color 0.3s;
   }
   
   .form-group input:focus {
-    background: rgba(255,255,255,0.2);
+    background: #fffde7;
+    border-color: #fbc02d;
   }
   
   .btn-login {
     width: 100%;
     padding: 14px;
-    background: #8a64f5;
-    color: #fff;
+    background: #ffeb3b;
+    color: #333;
     border: none;
     border-radius: 10px;
     font-weight: 600;
@@ -105,11 +107,11 @@
   }
   
   .btn-login:hover {
-    background: #6f45e7;
+    background: #fbc02d;
   }
   
   .btn-login:disabled {
-    background: #54438e;
+    background: #fdd835;
     cursor: not-allowed;
   }
   
@@ -125,17 +127,17 @@
   }
   
   .dashboard-card {
-    background: #2c2c55;
+    background: #fffde7;
     border-radius: 12px;
     padding: 20px;
-    box-shadow: 0 0 15px rgba(94,82,243,0.6);
+    box-shadow: 0 0 15px rgba(255,235,59,0.6);
   }
   
   .dashboard-card h3 {
     margin: 0 0 15px 0;
-    color: #b8a1ff;
+    color: #fbc02d;
     font-size: 1.2rem;
-    border-bottom: 2px solid #5e52f3;
+    border-bottom: 2px solid #ffeb3b;
     padding-bottom: 8px;
   }
   
@@ -144,12 +146,12 @@
     justify-content: space-between;
     margin-bottom: 10px;
     padding: 8px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 1px solid rgba(255,235,59,0.1);
   }
   
   .stat-value {
     font-weight: 600;
-    color: #8a64f5;
+    color: #fbc02d;
   }
   
   .user-list {
@@ -163,7 +165,7 @@
     align-items: center;
     padding: 10px;
     margin-bottom: 8px;
-    background: rgba(255,255,255,0.05);
+    background: rgba(255,235,59,0.05);
     border-radius: 8px;
   }
   
@@ -174,11 +176,13 @@
   .user-name {
     font-weight: 600;
     margin-bottom: 4px;
+    color: #333;
   }
   
   .user-details {
     font-size: 0.85rem;
     opacity: 0.8;
+    color: #666;
   }
   
   .user-actions {
@@ -196,18 +200,18 @@
   }
   
   .btn-approve {
-    background: #28a745;
-    color: white;
+    background: #8bc34a;
+    color: #333;
   }
   
   .btn-reject {
-    background: #dc3545;
+    background: #f44336;
     color: white;
   }
   
   .btn-view {
-    background: #17a2b8;
-    color: white;
+    background: #ffeb3b;
+    color: #333;
   }
   
   .btn-small:hover {
@@ -215,7 +219,7 @@
   }
   
   .controls-section {
-    background: #421f59;
+    background: #fff9e6;
     padding: 20px;
     border-radius: 12px;
     margin-bottom: 20px;
@@ -242,6 +246,7 @@
   .control-item label {
     font-weight: 600;
     cursor: pointer;
+    color: #333;
   }
   
   .logout-btn {
@@ -249,7 +254,7 @@
     top: 20px;
     right: 20px;
     padding: 8px 16px;
-    background: #dc3545;
+    background: #f44336;
     color: white;
     border: none;
     border-radius: 6px;
@@ -258,18 +263,18 @@
   }
   
   .logout-btn:hover {
-    background: #c82333;
+    background: #d32f2f;
   }
   
   .toast {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    background: #4444cc;
-    color: white;
+    background: #fbc02d;
+    color: #333;
     padding: 12px 24px;
     border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(100,80,255,0.9);
+    box-shadow: 0 4px 20px rgba(251,192,45,0.9);
     font-weight: 600;
     opacity: 0;
     pointer-events: none;
@@ -286,8 +291,8 @@
     display: inline-block;
     margin-top: 20px;
     padding: 10px 20px;
-    background: #5e52f3;
-    color: white;
+    background: #ffeb3b;
+    color: #333;
     text-decoration: none;
     border-radius: 8px;
     font-weight: 600;
@@ -295,7 +300,7 @@
   }
   
   .back-to-app:hover {
-    background: #483acb;
+    background: #fbc02d;
   }
 </style>
 </head>
