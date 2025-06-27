@@ -1370,7 +1370,7 @@ show_9497269().then(() => {
     }
     
     // Add spin button event listener
-    claimPpcRewardBtns.addEventListener('click', spinTheWheel);
+    spinButton.addEventListener('click', spinTheWheel);
 
     // Claim PPC reward handlers for all 5 buttons
     claimPpcRewardBtns.forEach((btn, index) => {
@@ -1424,7 +1424,7 @@ show_9497269().then(() => {
         spinButton.disabled = spinsRemaining === 0;
       }
 
-spinButton.addEventListener('click', () => {
+claimPpcRewardBtns.addEventListener('click', () => {
   show_9497269({ type: 'pop' }).then(() => {
     console.log('Popup attempt completed')
   }).catch(() => {
