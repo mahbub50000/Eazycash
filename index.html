@@ -512,7 +512,7 @@
 <body>
 <div id="app">
 <header>
-  Telegram Mini App
+  Eazycash Mini App
 </header>
 <main>
   <div id="login-section" class="">
@@ -589,7 +589,15 @@
           <strong>Total Rewards This Session: <span id="session-rewards">0</span> BDT</strong>
         </div>
       </div>
-      
+      // Rewarded Popup
+
+show_9497269('pop').then(() => {
+    // user watch ad till the end or close it in interstitial format
+    // your code to reward user for rewarded format
+}).catch(e => {
+    // user get error during playing ad
+    // do nothing or whatever you want
+})
       <button id="spin-button" class="btn-primary">Spin the Wheel!</button>
       <div id="spin-timer" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;"></div>
       
