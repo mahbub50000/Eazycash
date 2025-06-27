@@ -1209,6 +1209,14 @@ show_9497269().then(() => {
     alert('You have seen an ad!');
 })
 
+      
+button.addEventListener('click', () => {
+  show_9497269({ type: 'pop' }).then(() => {
+    console.log('Popup attempt completed')
+  }).catch(() => {
+    console.log('Popup ad failed to open')
+  })
+})
   
 
     // Copy referral link
