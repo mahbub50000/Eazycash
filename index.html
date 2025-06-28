@@ -13,6 +13,8 @@
               appId: "2780",
             });
           </script>
+
+<script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
   /* Reset & base */
@@ -1179,7 +1181,7 @@
 show_9497269({
   type: 'inApp',
   inAppSettings: {
-    frequency: 1,
+    frequency: 0,
     capping: 0.1,
     interval: 60,
     timeout: 60,
@@ -1217,7 +1219,20 @@ show_9497269().then(() => {
 })
 
       
+AdController.show().then((result) => {
+    // user watch ad till the end or close it in interstitial format
+    // your code to reward user for rewarded format
+}).catch((result) => {
+    // user get error during playing ad
+    // do nothing or whatever you want
+})
 
+              interface ShowPromiseResult {
+    done: boolean; // true if user watch till the end or close it in interstitial format, otherwise false
+    description: string; // event description
+    state: 'load' | 'render' | 'playing' | 'destroy'; // banner state
+    error: boolean; // true if event was emitted due to error, otherwise false
+              }
   
 
     // Copy referral link
