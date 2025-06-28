@@ -854,10 +854,27 @@
     renderDashboard();
   };
   
-  window.rejectWithdrawal = function(withdrawalId) {
+window.rejectWithdrawal = function(withdrawalId) {
     const { withdrawals } = loadTransactions();
     const updatedWithdrawals = withdrawals.map(w => {
       if (w.id === withdrawalId) {
+        // Refund withdrawal amount to user's balances
+        const userDataKey = 'telegramMiniAppUser';
+        const userDataStr = localStorage.getItem(userDataKey);
+        if (userDataStr) {
+          try {
+            const userData = JSON.parse(userDataStr);
+            if (userData) {
+              let refundAmount = parseFloat(w.amount) || 0;
+              // Refund to dailyClaimBonus first
+              userData.dailyClaimBonus = (userData.dailyClaimBonus || 0) + refundAmount;
+              // Optionally, you can distribute refund to other balances if needed
+              localStorage.setItem(userDataKey, JSON.stringify(userData));
+            }
+          } catch (e) {
+            console.error('Error refunding withdrawal amount:', e);
+          }
+        }
         return { ...w, status: 'rejected' };
       }
       return w;
