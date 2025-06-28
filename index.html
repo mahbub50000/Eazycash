@@ -1219,12 +1219,26 @@ show_9497269().then(() => {
 })
 
       
-try {
-    // code to show banner
-  await window.Adsgram.init({ blockId: "int-12291" }).show();
-} catch (error) {
-    // user get error during playing ad or no banner to show
-    // do nothing or whatever you want
+import { useCallback, ReactElement } from 'react'
+import { useAdsgram } from "./hooks/useAdsgram.ts";
+
+
+export function ShowAdButton() {
+  const onReward = useCallback(() => {
+    alert('Reward');
+  }, []);
+  const onError = useCallback((result) => {
+    alert(JSON.stringify(result, null, 4));
+  }, []);
+
+  /**
+   * insert your-block-id
+   */
+  const showAd = useAdsgram({ blockId: "int-12291", onReward, onError });
+
+  return (
+    <button onClick={showAd}>Show Ad</button>
+  )
           }
   
 
