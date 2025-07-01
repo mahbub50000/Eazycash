@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Telegram Mini App - Rewards & Investment</title>
 <script src='//libtl.com/sdk.js' data-zone='9497269' data-sdk='show_9497269'></script>
+<script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
   /* Reset & base */
@@ -1300,6 +1301,15 @@ show_9497269().then(() => {
     alert('You have seen an ad!');
 })
 
+const AdController = window.Adsgram.init({ blockId: "12351" });
+
+AdController.show().then((result) => {
+    // user watch ad till the end or close it in interstitial format
+    // your code to reward user for rewarded format
+}).catch((result) => {
+    // user get error during playing ad
+    // do nothing or whatever you want
+})
 
     // Spin wheel functionality
     function spinTheWheel() {
@@ -1408,19 +1418,27 @@ show_9497269().then(() => {
           showToast(`PPC reward #${index + 1} already claimed. Please wait.`);
           return;
         }
-        btn.disabled = true;
-        showToast(`Processing PPC claim #${index + 1}...`);
-        setTimeout(() => {
-          ppcRewards += ppcRewardAmount;
-          localStorage.setItem(ppcClaimKey, Date.now().toString());
-          saveUserData();
-          updateRewardButtons();
-          showToast(`You earned +${ppcRewardAmount} BDT from PPC #${index + 1}!`);
-          btn.disabled = false;
-          bonus = dailyClaimBonus + referralBonus;
-          bonusEarnedEl.textContent = bonus.toFixed(2);
-          updateTotalBalance();
-        }, 3000);
+        // Rewarded Popup
+        show_9497269('pop').then(() => {
+          // user watch ad till the end or close it in interstitial format
+          // your code to reward user for rewarded format
+          btn.disabled = true;
+          showToast(`Processing PPC claim #${index + 1}...`);
+          setTimeout(() => {
+            ppcRewards += ppcRewardAmount;
+            localStorage.setItem(ppcClaimKey, Date.now().toString());
+            saveUserData();
+            updateRewardButtons();
+            showToast(`You earned +${ppcRewardAmount} BDT from PPC #${index + 1}!`);
+            btn.disabled = false;
+            bonus = dailyClaimBonus + referralBonus;
+            bonusEarnedEl.textContent = bonus.toFixed(2);
+            updateTotalBalance();
+          }, 3000);
+        }).catch(e => {
+          // user get error during playing ad
+          // do nothing or whatever you want
+        });
       });
     });
 
