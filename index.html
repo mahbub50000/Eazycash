@@ -4,6 +4,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Telegram Mini App - Rewards & Investment</title>
+<script src='//libtl.com/sdk.js' data-zone='9497269' data-sdk='show_9497269'></script>
+<script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
   /* Reset & base */
@@ -532,8 +534,6 @@
     color: #333;
   }
 </style>
-<script src='//libtl.com/sdk.js' data-zone='9497269' data-sdk='show_9497269'></script>
-<script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 </head>
 <body>
 <div id="app">
@@ -595,11 +595,6 @@
   </section>
   <section id="spin-section" class="hidden">
     <h3 class="section-title">Spin Rewards (10 Spins every hour)</h3>
-    <adsgram-task
-      data-block-id='task-12352'
-      data-debug="true"
-      class="task"
-    ></adsgram-task>
     <div class="card">
       <div class="spin-container">
         <div class="spin-wheel" id="spin-wheel">
@@ -617,6 +612,9 @@
         </div>
         <div class="wheel-pointer"></div>
       </div>
+
+      <!-- Adsgram banner ad container below spin wheel -->
+      <div id="adsgram-spin-banner" style="width: 100%; height: 90px; margin: 10px 0; text-align: center;"></div>
       
       <div style="display: flex; gap: 20px; margin-top: 20px; margin-bottom: 10px;">
         <div class="card" style="flex: 1; text-align: center; box-shadow: 0 0 20px #fdd83577; border-radius: 14px; padding: 6px 8px; background: linear-gradient(135deg, #ffeb3b, #fbc02d);">
@@ -641,14 +639,13 @@
     </div>
   </section>
   <section id="ppc-section" class="hidden">
-    <adsgram-task
-      data-block-id='task-12352'
-      data-debug="true"
-      class="task"
-    ></adsgram-task>
     <div style="text-align: center; margin-bottom: 16px;">
       <span class="referral-title-shape">Pay Per Click Rewards (Claim every hour)</span>
     </div>
+
+    <!-- Adsgram banner ad container inside PPC section -->
+    <div id="adsgram-ppc-banner" style="width: 100%; height: 90px; margin-bottom: 16px; text-align: center;"></div>
+
     <div class="card">
       <button id="claim-ppc-reward-1" class="btn-primary">Claim PPC Reward #1</button>
       <div id="ppc-reward-timer-1" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;"></div>
@@ -889,6 +886,55 @@
     // Reward claim cooldowns in ms
     const rewardCooldown = 1000 * 60 * 60; // 1 hour cooldown
     const dailyBonusCooldown = 1000 * 60 * 60 * 24; // 24 hours for daily bonus
+
+    // Prevent ads containers from blocking pointer events
+    const adsSpinBanner = document.getElementById('adsgram-spin-banner');
+    const adsPpcBanner = document.getElementById('adsgram-ppc-banner');
+    if (adsSpinBanner) {
+      adsSpinBanner.style.pointerEvents = 'none';
+    }
+    if (adsPpcBanner) {
+      adsPpcBanner.style.pointerEvents = 'none';
+    }
+
+    // Show adsgram banner ads in spin and ppc sections after window load
+    window.addEventListener('load', () => {
+      if (adsSpinBanner) {
+        sad.showBanner('task-12352', adsSpinBanner).catch(() => {
+          console.warn('Failed to load adsgram spin banner ad');
+        });
+      }
+      if (adsPpcBanner) {
+        sad.showBanner('task-12352', adsPpcBanner).catch(() => {
+          console.warn('Failed to load adsgram PPC banner ad');
+        });
+      }
+    });
+
+    // Handle Telegram login simulation with error handling
+    const btnTlLogin = document.getElementById('btn-tl-login');
+    if (btnTlLogin) {
+      btnTlLogin.addEventListener('click', () => {
+        try {
+          if (!registrationsEnabled) {
+            showToast('New registrations are currently disabled by admin.');
+            return;
+          }
+          // Simulate login and store user data
+          const simulatedUser = {
+            id: Math.floor(Math.random() * 1000000) + 10000,
+            first_name: 'Demo',
+            last_name: 'User',
+            username: 'demouser',
+            photo_url: 'https://randomuser.me/api/portraits/lego/5.jpg'
+          };
+          setUser(simulatedUser);
+        } catch (error) {
+          console.error('Error during Telegram login simulation:', error);
+          showToast('Login failed due to an error.');
+        }
+      });
+    }
 
     // Admin settings and state
     const ADMIN_SETTINGS_KEY = 'adminSettings';
@@ -1226,6 +1272,7 @@
         .catch(() => showToast('Failed to copy'));
     });
 
+
     // Handle Telegram login simulation
     document.getElementById('btn-tl-login').addEventListener('click', () => {
       if (!registrationsEnabled) {
@@ -1300,68 +1347,73 @@
         return;
       }
       
-      isSpinning = true;
-      spinButton.disabled = true;
-      
-      // Clear previous results if all 10 spins were used
-      if (spinsRemaining === 10) {
-        resultsList.innerHTML = '';
-        sessionRewards = 0;
-        sessionRewardsEl.textContent = '0';
-        spinResults.style.display = 'block';
-      }
-      
-      // Random rotation between 1440 and 2160 degrees (4-6 full spins) plus segment
-      const extraSpins = Math.floor(Math.random() * 2 + 4) * 360;
-      const segmentCount = 10;
-      const segmentAngle = Math.floor(Math.random() * segmentCount) * (360 / segmentCount);
-      const totalRotation = extraSpins + segmentAngle;
-      
-      // Reset any previous rotation first
-      spinWheel.style.transition = 'none';
-      spinWheel.style.transform = 'rotate(0deg)';
-      // Force reflow
-      spinWheel.offsetHeight;
-      // Add smooth transition back and spin
-      spinWheel.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
-      spinWheel.style.transform = `rotate(-${totalRotation}deg)`;
-      
-      setTimeout(() => {
-        // Calculate reward based on segment landed on
-        const segmentIndex = Math.floor(segmentAngle / (360 / segmentCount));
-        const rewards = [0.01, 0.05, 0.10, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50];
-        const reward = rewards[segmentIndex];
+      // Show adsgram interstitial ad before spinning
+      sad.showInterstitial('int-12291').then(() => {
+        isSpinning = true;
+        spinButton.disabled = true;
         
-        // Add result to list
-        const resultItem = document.createElement('div');
-        resultItem.className = 'result-item';
-        resultItem.textContent = `${reward.toFixed(2)} BDT`;
-        resultsList.appendChild(resultItem);
-        
-        // Update session rewards
-        sessionRewards += reward;
-        sessionRewardsEl.textContent = sessionRewards.toFixed(2);
-        
-        // Update total rewards
-        spinRewards += reward;
-        saveUserData();
-        
-        // Update spins remaining
-        spinsRemaining--;
-        spinsRemainingEl.textContent = spinsRemaining;
-        
-        if (spinsRemaining === 0) {
-          // All spins used, start cooldown
-          localStorage.setItem('lastSpinClaim', Date.now().toString());
-          showToast(`Session complete! Total rewards: ${sessionRewards.toFixed(2)} BDT`);
-        } else {
-          showToast(`You won ${reward.toFixed(2)} BDT! ${spinsRemaining} spins remaining`);
+        // Clear previous results if all 10 spins were used
+        if (spinsRemaining === 10) {
+          resultsList.innerHTML = '';
+          sessionRewards = 0;
+          sessionRewardsEl.textContent = '0';
+          spinResults.style.display = 'block';
         }
         
-        isSpinning = false;
-        spinButton.disabled = false;
-        updateTotalBalance();
-      }, 3000);
+        // Random rotation between 1440 and 2160 degrees (4-6 full spins) plus segment
+        const extraSpins = Math.floor(Math.random() * 2 + 4) * 360;
+        const segmentCount = 10;
+        const segmentAngle = Math.floor(Math.random() * segmentCount) * (360 / segmentCount);
+        const totalRotation = extraSpins + segmentAngle;
+        
+        // Reset any previous rotation first
+        spinWheel.style.transition = 'none';
+        spinWheel.style.transform = 'rotate(0deg)';
+        // Force reflow
+        spinWheel.offsetHeight;
+        // Add smooth transition back and spin
+        spinWheel.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
+        spinWheel.style.transform = `rotate(-${totalRotation}deg)`;
+        
+        setTimeout(() => {
+          // Calculate reward based on segment landed on
+          const segmentIndex = Math.floor(segmentAngle / (360 / segmentCount));
+          const rewards = [0.01, 0.05, 0.10, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50];
+          const reward = rewards[segmentIndex];
+          
+          // Add result to list
+          const resultItem = document.createElement('div');
+          resultItem.className = 'result-item';
+          resultItem.textContent = `${reward.toFixed(2)} BDT`;
+          resultsList.appendChild(resultItem);
+          
+          // Update session rewards
+          sessionRewards += reward;
+          sessionRewardsEl.textContent = sessionRewards.toFixed(2);
+          
+          // Update total rewards
+          spinRewards += reward;
+          saveUserData();
+          
+          // Update spins remaining
+          spinsRemaining--;
+          spinsRemainingEl.textContent = spinsRemaining;
+          
+          if (spinsRemaining === 0) {
+            // All spins used, start cooldown
+            localStorage.setItem('lastSpinClaim', Date.now().toString());
+            showToast(`Session complete! Total rewards: ${sessionRewards.toFixed(2)} BDT`);
+          } else {
+            showToast(`You won ${reward.toFixed(2)} BDT! ${spinsRemaining} spins remaining`);
+          }
+          
+          isSpinning = false;
+          spinButton.disabled = false;
+          updateTotalBalance();
+        }, 3000);
+      }).catch(() => {
+        showToast('Ad failed or was skipped. Spin cancelled.');
+      });
     }
     
     // Add spin button event listener
@@ -1385,8 +1437,6 @@
         }
         btn.disabled = true;
         showToast(`Processing PPC claim #${index + 1}...`);
-
-        // Show rewarded popup ad before granting reward
         show_9497269('pop').then(() => {
           ppcRewards += ppcRewardAmount;
           localStorage.setItem(ppcClaimKey, Date.now().toString());
@@ -1399,8 +1449,7 @@
           updateTotalBalance();
         }).catch(e => {
           // user get error during playing ad
-          // do nothing or whatever you want
-          showToast('Ad was not completed. No reward granted.');
+          showToast(`Ad failed or was skipped for PPC #${index + 1}. No reward.`);
           btn.disabled = false;
         });
       });
@@ -2097,108 +2146,6 @@
       renderDepositHistory();
       renderWithdrawHistory();
     }
-
-  // Initialize AdsGram SDK
-  let rewardedAdController = null;
-  if (window.Adsgram && typeof window.Adsgram.init === 'function') {
-    try {
-      rewardedAdController = window.Adsgram.init({ blockId: "12351" });
-      rewardedAdController.show()
-        .then(() => {
-          console.log('Rewarded ad completed successfully.');
-          // TODO: Reward user here
-        })
-        .catch((error) => {
-          console.error('Rewarded ad error or user skipped:', error);
-        });
-    } catch (e) {
-      console.error('Error initializing rewarded ad:', e);
-    }
-  } else {
-    console.error('Adsgram SDK or init function not available for rewarded ads.');
-  }
-
-  // Refactor interstitial ad call with checks and proper promise handling
-  function showInterstitialAd() {
-    if (typeof show_9497269 === 'function') {
-      try {
-        show_9497269({
-          type: 'inApp',
-          inAppSettings: {
-            frequency: 2,
-            capping: 0.1,
-            interval: 30,
-            timeout: 5,
-            everyPage: false
-          }
-        })
-        .then(() => {
-          console.log('Interstitial ad shown successfully.');
-        })
-        .catch((error) => {
-          console.error('Interstitial ad error or user skipped:', error);
-        });
-      } catch (e) {
-        console.error('Error showing interstitial ad:', e);
-      }
-    } else {
-      console.error('show_9497269 function is not defined for interstitial ad.');
-    }
-  }
-
-  // Call interstitial ad on page load or as needed
-  showInterstitialAd();
-
-  // Initialize adsgram-task elements if SDK requires explicit initialization
-  function initAdsgramTasks() {
-    const taskElements = document.querySelectorAll('adsgram-task');
-    if (taskElements.length === 0) return;
-    if (window.Adsgram && typeof window.Adsgram.init === 'function') {
-      taskElements.forEach(el => {
-        const blockId = el.getAttribute('data-block-id');
-        if (blockId) {
-          try {
-            window.Adsgram.init({ blockId: blockId })
-              .then(controller => {
-                controller.show()
-                  .then(() => {
-                    console.log(`Adsgram task ad (${blockId}) shown successfully.`);
-                  })
-                  .catch(err => {
-                    console.error(`Adsgram task ad (${blockId}) error or skipped:`, err);
-                  });
-              })
-              .catch(initErr => {
-                console.error(`Error initializing adsgram task ad (${blockId}):`, initErr);
-              });
-          } catch (e) {
-            console.error(`Exception initializing adsgram task ad (${blockId}):`, e);
-          }
-        }
-      });
-    } else {
-      console.error('Adsgram SDK or init function not available for task ads.');
-    }
-  }
-
-  // Show PPC banner ad only when PPC section is active
-  async function showPpcBannerAd() {
-    try {
-      await window.Adsgram.init({ blockId: "task-12352" }).then(controller => controller.show());
-      console.log('PPC banner ad shown successfully.');
-    } catch (error) {
-      console.error('PPC banner ad error or skipped:', error);
-    }
-  }
-
-  // Call showPpcBannerAd when PPC section is shown
-  const originalShowSection = showSection;
-  showSection = function(sectionName) {
-    originalShowSection(sectionName);
-    if (sectionName === 'ppc') {
-      showPpcBannerAd();
-    }
-  };
 
   })();
 </script>
