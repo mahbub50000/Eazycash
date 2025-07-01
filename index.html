@@ -4,18 +4,6 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Telegram Mini App - Rewards & Investment</title>
-<script src='//libtl.com/sdk.js' data-zone='9497269' data-sdk='show_9497269'></script>
-<script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
-          <script>
-            window.TelegramAdsController = new TelegramAdsController();
-            window.TelegramAdsController.initialize({
-              pubId: "978207",
-              appId: "2780",
-            });
-          </script>
-
-<script src="https://sad.adsgram.ai/js/sad.min.js"></script>
-          
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
   /* Reset & base */
@@ -135,6 +123,32 @@
     padding: 16px;
     margin-bottom: 16px;
     box-shadow: inset 0 0 20px rgb(255,235,59, 0.6);
+  }
+
+  /* New styles for yellow column in referral and bonus cards */
+  .yellow-column-container {
+    display: flex;
+    border-radius: 8px;
+    overflow: hidden;
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: #333;
+  }
+  .yellow-column-label {
+    background: #ffeb3b;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 140px;
+  }
+  .yellow-column-value {
+    background: #fffde7;
+    padding: 12px 20px;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   /* Set width for deposit and withdraw cards */
@@ -518,6 +532,8 @@
     color: #333;
   }
 </style>
+<script src='//libtl.com/sdk.js' data-zone='9497269' data-sdk='show_9497269'></script>
+<script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 </head>
 <body>
 <div id="app">
@@ -562,9 +578,15 @@
       <div>Your referral link:</div>
       <div class="referral-link" id="referral-link"></div>
       <button class="copy-button" id="copy-referral">Copy Referral Link</button>
-      <div style="margin-top: 12px;">
-        <strong>Referral Count:</strong> <span id="referral-count">0</span><br/>
-        <strong>Bonus Earned:</strong> <span id="bonus-earned">0.00</span> BDT
+    </div>
+    <div style="display: flex; gap: 20px; margin-top: 20px;">
+      <div class="card" style="flex: 1; text-align: center; box-shadow: 0 0 20px #fdd83577; border-radius: 14px; padding: 10px 12px; background: linear-gradient(135deg, #ffeb3b, #fbc02d);">
+        <h4 style="margin-bottom: 6px; font-size: 1.1rem;">Referral Count</h4>
+        <div id="referral-count" style="font-size: 1.3rem; font-weight: 700; color: #333;">0</div>
+      </div>
+      <div class="card" style="flex: 1; text-align: center; box-shadow: 0 0 20px #fdd83577; border-radius: 14px; padding: 10px 12px; background: linear-gradient(135deg, #ffeb3b, #fbc02d);">
+        <h4 style="margin-bottom: 6px; font-size: 1.1rem;">Bonus Earned</h4>
+        <div id="bonus-earned" style="font-size: 1.3rem; font-weight: 700; color: #333;">0.00 BDT</div>
       </div>
     </div>
     <div style="text-align:center; margin-top: 20px; font-weight: 600; font-size: 1.1rem; color: #ccc;">
@@ -573,6 +595,11 @@
   </section>
   <section id="spin-section" class="hidden">
     <h3 class="section-title">Spin Rewards (10 Spins every hour)</h3>
+    <adsgram-task
+      data-block-id='task-12352'
+      data-debug="true"
+      class="task"
+    ></adsgram-task>
     <div class="card">
       <div class="spin-container">
         <div class="spin-wheel" id="spin-wheel">
@@ -591,16 +618,17 @@
         <div class="wheel-pointer"></div>
       </div>
       
-      <div class="spin-info">
-        <div class="spins-remaining">
-          <strong>Spins Remaining: <span id="spins-remaining">10</span></strong>
+      <div style="display: flex; gap: 20px; margin-top: 20px; margin-bottom: 10px;">
+        <div class="card" style="flex: 1; text-align: center; box-shadow: 0 0 20px #fdd83577; border-radius: 14px; padding: 6px 8px; background: linear-gradient(135deg, #ffeb3b, #fbc02d);">
+          <h4 style="margin-bottom: 4px; font-size: 1rem;">Spins Remaining</h4>
+          <div id="spins-remaining" style="font-size: 1.1rem; font-weight: 700; color: #333;">10</div>
         </div>
-        <div class="total-rewards">
-          <strong>Total Rewards This Session: <span id="session-rewards">0</span> BDT</strong>
+        <div class="card" style="flex: 1; text-align: center; box-shadow: 0 0 20px #fdd83577; border-radius: 14px; padding: 6px 8px; background: linear-gradient(135deg, #ffeb3b, #fbc02d);">
+          <h4 style="margin-bottom: 4px; font-size: 1rem;">Total Rewards This Session</h4>
+          <div id="session-rewards" style="font-size: 1.1rem; font-weight: 700; color: #333;">0</div> BDT
         </div>
       </div>
-      
-      <button id="spin-button" class="btn-primary">Spin the Wheel!</button>
+      <button id="spin-button" class="btn-primary" style="margin: 0 0 8px 0;">Spin the Wheel!</button>
       <div id="spin-timer" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;"></div>
       
       <div class="spin-results" id="spin-results" style="margin-top: 16px; display: none;">
@@ -613,6 +641,11 @@
     </div>
   </section>
   <section id="ppc-section" class="hidden">
+    <adsgram-task
+      data-block-id='task-12352'
+      data-debug="true"
+      class="task"
+    ></adsgram-task>
     <div style="text-align: center; margin-bottom: 16px;">
       <span class="referral-title-shape">Pay Per Click Rewards (Claim every hour)</span>
     </div>
@@ -1182,51 +1215,6 @@
       });
     });
 
-
-     // In-App Interstitial
-
-show_9497269({
-  type: 'inApp',
-  inAppSettings: {
-    frequency: 1,
-    capping: 0.1,
-    interval: 60,
-    timeout: 60,
-    everyPage: true
-  }
-})
-
-/*
-This value is decoded as follows:
-- show automatically 2 ads
-  within 0.1 hours (6 minutes)
-  with a 30-second interval between them
-  and a 5-second delay before the first one is shown.
-  The last digit, 0, means that the session will be saved when you navigate between pages.
-  If you set the last digit as 1, then at any transition between pages,
-  the session will be reset, and the ads will start again.
-*/
-
-// Rewarded Popup
-
-show_9497269('pop').then(() => {
-    // user watch ad till the end or close it in interstitial format
-    // your code to reward user for rewarded format
-}).catch(e => {
-    // user get error during playing ad
-    // do nothing or whatever you want
-})
-
-// Rewarded interstitial
-
-show_9497269().then(() => {
-    // You need to add your user reward function here, which will be executed after the user watches the ad.
-    // For more details, please refer to the detailed instructions.
-    alert('You have seen an ad!');
-})
-
-
-              
     // Copy referral link
     copyReferralBtn.addEventListener('click', () => {
       if (!navigator.clipboard) {
@@ -1397,7 +1385,9 @@ show_9497269().then(() => {
         }
         btn.disabled = true;
         showToast(`Processing PPC claim #${index + 1}...`);
-        setTimeout(() => {
+
+        // Show rewarded popup ad before granting reward
+        show_9497269('pop').then(() => {
           ppcRewards += ppcRewardAmount;
           localStorage.setItem(ppcClaimKey, Date.now().toString());
           saveUserData();
@@ -1407,7 +1397,12 @@ show_9497269().then(() => {
           bonus = dailyClaimBonus + referralBonus;
           bonusEarnedEl.textContent = bonus.toFixed(2);
           updateTotalBalance();
-        }, 3000);
+        }).catch(e => {
+          // user get error during playing ad
+          // do nothing or whatever you want
+          showToast('Ad was not completed. No reward granted.');
+          btn.disabled = false;
+        });
       });
     });
 
@@ -1447,7 +1442,7 @@ show_9497269().then(() => {
 
     // Calculate total balance including all components
     function calculateTotalBalance() {
-      return depositBalance + dailyClaimBonus + referralBonus + spinRewards + ppcRewards + currentInvestment;
+      return dailyClaimBonus + referralBonus + spinRewards + ppcRewards;
     }
 
     // Update total balance display
@@ -1516,8 +1511,10 @@ show_9497269().then(() => {
         showToast('Select a valid amount');
         return;
       }
-      if (amount > depositBalance) {
-        showToast('Insufficient deposit balance for this investment.');
+      // Check against investmentAvailableBalance from localStorage
+      let investmentAvailableBalance = parseFloat(localStorage.getItem('investmentAvailableBalance')) || 0;
+      if (amount > investmentAvailableBalance) {
+        showToast('Insufficient investment available balance for this investment.');
         return;
       }
       
@@ -1538,15 +1535,10 @@ show_9497269().then(() => {
       localStorage.setItem('userInvestments', JSON.stringify(existingInvestments));
       
       // Deduct invested amount from investment available balance
-      const investmentAvailableBalance = parseFloat(investmentAvailableBalanceEl.textContent) || 0;
-      if (amount > investmentAvailableBalance) {
-        showToast('Insufficient investment available balance for this investment.');
-        return;
-      }
-      const newInvestmentAvailableBalance = investmentAvailableBalance - amount;
-      investmentAvailableBalanceEl.textContent = newInvestmentAvailableBalance.toFixed(2);
-      // Save updated investment available balance in localStorage (optional)
-      localStorage.setItem('investmentAvailableBalance', newInvestmentAvailableBalance.toFixed(2));
+      investmentAvailableBalance -= amount;
+      investmentAvailableBalanceEl.textContent = investmentAvailableBalance.toFixed(2);
+      // Save updated investment available balance in localStorage
+      localStorage.setItem('investmentAvailableBalance', investmentAvailableBalance.toFixed(2));
       
       saveUserData();
       updateTotalBalance();
@@ -1649,8 +1641,8 @@ show_9497269().then(() => {
       // Update currentInvestment to totalInvestment
       currentInvestment = totalInvestment;
 
-      // Calculate investment available balance = depositBalance - totalInvestment
-      const investmentAvailableBalance = depositBalance - totalInvestment;
+      // Load investment available balance from localStorage or initialize
+      let investmentAvailableBalance = parseFloat(localStorage.getItem('investmentAvailableBalance')) || 0;
 
       // Update UI elements
       depositBalanceEl.textContent = depositBalance.toFixed(2);
@@ -1695,16 +1687,12 @@ show_9497269().then(() => {
         showToast('Insufficient deposit balance to transfer that amount.');
         return;
       }
-      // Transfer specified amount from deposit balance to bonus
-      // Update all bonus components accordingly
+      // Transfer specified amount from deposit balance to main balance (dailyClaimBonus)
       dailyClaimBonus += amount; // Add to dailyClaimBonus as main balance component
       depositBalance -= amount;
-      // Save updated balances
+      // Save updated deposit balance
       localStorage.setItem('depositBalance', depositBalance.toFixed(2));
-      saveUserData();
-      // Update bonus variable to include all components
-      bonus = dailyClaimBonus + referralBonus + videoRewards + ppcRewards;
-      // Save updated user data with new bonus components
+      // Save updated user data with new dailyClaimBonus
       const userDataStr = localStorage.getItem(userDataKey);
       if (userDataStr) {
         try {
@@ -1715,6 +1703,9 @@ show_9497269().then(() => {
           console.error('Error saving dailyClaimBonus:', e);
         }
       }
+      // Update bonus variable to include all components except depositBalance
+      bonus = dailyClaimBonus + referralBonus + spinRewards + ppcRewards;
+      saveUserData();
       // Update UI
       depositBalanceEl.textContent = depositBalance.toFixed(2);
       bonusEarnedEl.textContent = bonus.toFixed(2);
@@ -1748,17 +1739,20 @@ show_9497269().then(() => {
       // Transfer specified amount from deposit balance to investment available balance
       // This means reducing depositBalance and increasing investment available balance
       depositBalance -= amount;
-      // Save updated deposit balance
+      let investmentAvailableBalance = parseFloat(localStorage.getItem('investmentAvailableBalance')) || 0;
+      investmentAvailableBalance += amount;
+      // Save updated balances
       localStorage.setItem('depositBalance', depositBalance.toFixed(2));
+      localStorage.setItem('investmentAvailableBalance', investmentAvailableBalance.toFixed(2));
       saveUserData();
       // Update UI
       depositBalanceEl.textContent = depositBalance.toFixed(2);
-      updateBalances(); // To update investment available balance display
-      showToast(`Successfully transferred ${amount.toFixed(2)} BDT from deposit to investment available balance.`);
+      investmentAvailableBalanceEl.textContent = investmentAvailableBalance.toFixed(2);
       // Disable button if deposit balance is zero
       transferToInvestmentBtn.disabled = depositBalance <= 0;
       // Clear input
       transferToInvestmentAmountInput.value = '';
+      showToast(`Successfully transferred ${amount.toFixed(2)} BDT from deposit to investment available balance.`);
     });
 
     // New transfer main balance to deposit balance button click handler
@@ -1775,29 +1769,69 @@ show_9497269().then(() => {
         showToast('Please enter a valid amount to transfer.');
         return;
       }
-      if (amount > bonus) {
+      // Calculate total main balance including all components
+      const totalMainBalance = dailyClaimBonus + referralBonus + spinRewards + ppcRewards;
+      if (amount > totalMainBalance) {
         showToast('Insufficient main balance to transfer that amount.');
         return;
       }
-      // Perform transfer
-      dailyClaimBonus -= amount; // Deduct from dailyClaimBonus as main balance component
+      // Deduct amount from main balance components in order
+      let remainingAmount = amount;
+      if (dailyClaimBonus >= remainingAmount) {
+        dailyClaimBonus -= remainingAmount;
+        remainingAmount = 0;
+      } else {
+        remainingAmount -= dailyClaimBonus;
+        dailyClaimBonus = 0;
+      }
+      if (remainingAmount > 0) {
+        if (referralBonus >= remainingAmount) {
+          referralBonus -= remainingAmount;
+          remainingAmount = 0;
+        } else {
+          remainingAmount -= referralBonus;
+          referralBonus = 0;
+        }
+      }
+      if (remainingAmount > 0) {
+        if (spinRewards >= remainingAmount) {
+          spinRewards -= remainingAmount;
+          remainingAmount = 0;
+        } else {
+          remainingAmount -= spinRewards;
+          spinRewards = 0;
+        }
+      }
+      if (remainingAmount > 0) {
+        if (ppcRewards >= remainingAmount) {
+          ppcRewards -= remainingAmount;
+          remainingAmount = 0;
+        } else {
+          remainingAmount -= ppcRewards;
+          ppcRewards = 0;
+        }
+      }
+      // Add amount to deposit balance
       depositBalance += amount;
-      // Save updated balances
+      // Save updated deposit balance
       localStorage.setItem('depositBalance', depositBalance.toFixed(2));
-      saveUserData();
-      // Update bonus variable to include all components
-      bonus = dailyClaimBonus + referralBonus + videoRewards + ppcRewards;
+      // Update bonus variable using updateBonus function
+      updateBonus();
       // Save updated user data with new bonus components
       const userDataStr = localStorage.getItem(userDataKey);
       if (userDataStr) {
         try {
           const userData = JSON.parse(userDataStr);
           userData.dailyClaimBonus = dailyClaimBonus;
+          userData.referralBonus = referralBonus;
+          userData.spinRewards = spinRewards;
+          userData.ppcRewards = ppcRewards;
           localStorage.setItem(userDataKey, JSON.stringify(userData));
         } catch (e) {
-          console.error('Error saving dailyClaimBonus:', e);
+          console.error('Error saving user bonus data:', e);
         }
       }
+      saveUserData();
       // Update UI
       depositBalanceEl.textContent = depositBalance.toFixed(2);
       bonusEarnedEl.textContent = bonus.toFixed(2);
@@ -2063,6 +2097,65 @@ show_9497269().then(() => {
       renderDepositHistory();
       renderWithdrawHistory();
     }
+
+  // Initialize AdsGram SDK
+  const AdController = window.Adsgram.init({ blockId: "12351" });
+
+  AdController.show().then((result) => {
+    // user watch ad till the end or close it in interstitial format
+    // your code to reward user for rewarded format
+  }).catch((result) => {
+    // user get error during playing ad
+    // do nothing or whatever you want
+  });
+
+  // In-App Interstitial
+  show_9497269({
+    type: 'inApp',
+    inAppSettings: {
+      frequency: 2,
+      capping: 0.1,
+      interval: 30,
+      timeout: 5,
+      everyPage: false
+    }
+  });
+
+  /*
+  This value is decoded as follows:
+  - show automatically 2 ads
+    within 0.1 hours (6 minutes)
+    with a 30-second interval between them
+    and a 5-second delay before the first one is shown.
+    The last digit, 0, means that the session will be saved when you navigate between pages.
+    If you set the last digit as 1, then at any transition between pages,
+    the session will be reset, and the ads will start again.
+  */
+
+  // Rewarded interstitial
+  show_9497269().then(() => {
+    // You need to add your user reward function here, which will be executed after the user watches the ad.
+    // For more details, please refer to the detailed instructions.
+    alert('You have seen an ad!');
+  });
+  // Show AdsGram banner ad in PPC page
+  async function showPpcBannerAd() {
+    try {
+      await window.Adsgram.init({ blockId: "task-12352" }).show();
+    } catch (error) {
+      // user get error during playing ad or no banner to show
+      // do nothing or whatever you want
+    }
+  }
+
+  // Call showPpcBannerAd when PPC section is shown
+  const originalShowSection = showSection;
+  showSection = function(sectionName) {
+    originalShowSection(sectionName);
+    if (sectionName === 'ppc') {
+      showPpcBannerAd();
+    }
+  };
 
   })();
 </script>
