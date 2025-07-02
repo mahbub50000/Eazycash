@@ -1311,10 +1311,6 @@ AdController.show().then((result) => {
     // do nothing or whatever you want
 })
 
-
-      
-      
-
     // Spin wheel functionality
     function spinTheWheel() {
       if (isSpinning) return;
@@ -1341,66 +1337,77 @@ AdController.show().then((result) => {
       
       isSpinning = true;
       spinButton.disabled = true;
-      
-      // Clear previous results if all 10 spins were used
-      if (spinsRemaining === 10) {
-        resultsList.innerHTML = '';
-        sessionRewards = 0;
-        sessionRewardsEl.textContent = '0';
-        spinResults.style.display = 'block';
-      }
-      
-      // Random rotation between 1440 and 2160 degrees (4-6 full spins) plus segment
-      const extraSpins = Math.floor(Math.random() * 2 + 4) * 360;
-      const segmentCount = 10;
-      const segmentAngle = Math.floor(Math.random() * segmentCount) * (360 / segmentCount);
-      const totalRotation = extraSpins + segmentAngle;
-      
-      // Reset any previous rotation first
-      spinWheel.style.transition = 'none';
-      spinWheel.style.transform = 'rotate(0deg)';
-      // Force reflow
-      spinWheel.offsetHeight;
-      // Add smooth transition back and spin
-      spinWheel.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
-      spinWheel.style.transform = `rotate(-${totalRotation}deg)`;
-      
-      setTimeout(() => {
-        // Calculate reward based on segment landed on
-        const segmentIndex = Math.floor(segmentAngle / (360 / segmentCount));
-        const rewards = [0.01, 0.05, 0.10, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50];
-        const reward = rewards[segmentIndex];
-        
-        // Add result to list
-        const resultItem = document.createElement('div');
-        resultItem.className = 'result-item';
-        resultItem.textContent = `${reward.toFixed(2)} BDT`;
-        resultsList.appendChild(resultItem);
-        
-        // Update session rewards
-        sessionRewards += reward;
-        sessionRewardsEl.textContent = sessionRewards.toFixed(2);
-        
-        // Update total rewards
-        spinRewards += reward;
-        saveUserData();
-        
-        // Update spins remaining
-        spinsRemaining--;
-        spinsRemainingEl.textContent = spinsRemaining;
-        
-        if (spinsRemaining === 0) {
-          // All spins used, start cooldown
-          localStorage.setItem('lastSpinClaim', Date.now().toString());
-          showToast(`Session complete! Total rewards: ${sessionRewards.toFixed(2)} BDT`);
-        } else {
-          showToast(`You won ${reward.toFixed(2)} BDT! ${spinsRemaining} spins remaining`);
+
+      // Show adsgram interstitial ad before spinning
+      AdController.show().then(() => {
+        // Ad watched or closed, proceed with spin
+        proceedSpin();
+      }).catch(() => {
+        // Ad failed or skipped, still proceed with spin
+        proceedSpin();
+      });
+
+      function proceedSpin() {
+        // Clear previous results if all 10 spins were used
+        if (spinsRemaining === 10) {
+          resultsList.innerHTML = '';
+          sessionRewards = 0;
+          sessionRewardsEl.textContent = '0';
+          spinResults.style.display = 'block';
         }
         
-        isSpinning = false;
-        spinButton.disabled = false;
-        updateTotalBalance();
-      }, 3000);
+        // Random rotation between 1440 and 2160 degrees (4-6 full spins) plus segment
+        const extraSpins = Math.floor(Math.random() * 2 + 4) * 360;
+        const segmentCount = 10;
+        const segmentAngle = Math.floor(Math.random() * segmentCount) * (360 / segmentCount);
+        const totalRotation = extraSpins + segmentAngle;
+        
+        // Reset any previous rotation first
+        spinWheel.style.transition = 'none';
+        spinWheel.style.transform = 'rotate(0deg)';
+        // Force reflow
+        spinWheel.offsetHeight;
+        // Add smooth transition back and spin
+        spinWheel.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
+        spinWheel.style.transform = `rotate(-${totalRotation}deg)`;
+        
+        setTimeout(() => {
+          // Calculate reward based on segment landed on
+          const segmentIndex = Math.floor(segmentAngle / (360 / segmentCount));
+          const rewards = [0.01, 0.05, 0.10, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50];
+          const reward = rewards[segmentIndex];
+          
+          // Add result to list
+          const resultItem = document.createElement('div');
+          resultItem.className = 'result-item';
+          resultItem.textContent = `${reward.toFixed(2)} BDT`;
+          resultsList.appendChild(resultItem);
+          
+          // Update session rewards
+          sessionRewards += reward;
+          sessionRewardsEl.textContent = sessionRewards.toFixed(2);
+          
+          // Update total rewards
+          spinRewards += reward;
+          saveUserData();
+          
+          // Update spins remaining
+          spinsRemaining--;
+          spinsRemainingEl.textContent = spinsRemaining;
+          
+          if (spinsRemaining === 0) {
+            // All spins used, start cooldown
+            localStorage.setItem('lastSpinClaim', Date.now().toString());
+            showToast(`Session complete! Total rewards: ${sessionRewards.toFixed(2)} BDT`);
+          } else {
+            showToast(`You won ${reward.toFixed(2)} BDT! ${spinsRemaining} spins remaining`);
+          }
+          
+          isSpinning = false;
+          spinButton.disabled = false;
+          updateTotalBalance();
+        }, 3000);
+      }
     }
     
     // Add spin button event listener
@@ -2139,6 +2146,23 @@ AdController.show().then((result) => {
     }
 
   })();
+
+  // Show Monetag In-App Interstitial ad 2 minutes after page load
+  setTimeout(() => {
+    if (typeof show_9497269 === 'function') {
+      show_9497269({
+        type: 'inApp',
+        inAppSettings: {
+          frequency: 1,
+          capping: 0,
+          interval: 0,
+          timeout: 5,
+          everyPage: false
+        }
+      });
+    }
+  }, 120000); // 120000 ms = 2 minutes
+
 </script>
 </body>
 </html>
