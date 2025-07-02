@@ -635,7 +635,7 @@
       Eazycash@2025
     </div>
   </section>
-  <section id="ppc-section" class="hidden">
+    <section id="ppc-section" class="hidden">
     <div style="text-align: center; margin-bottom: 16px;">
       <span class="referral-title-shape">Pay Per Click Rewards (Claim every hour)</span>
     </div>
@@ -658,6 +658,26 @@
     <div class="card">
       <button id="claim-ppc-reward-5" class="btn-primary">Claim PPC Reward #5</button>
       <div id="ppc-reward-timer-5" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;"></div>
+    </div>
+    <div class="card">
+      <button id="claim-ppc-reward-6" class="btn-primary">Claim PPC Reward #6</button>
+      <div id="ppc-reward-timer-6" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;"></div>
+    </div>
+    <div class="card">
+      <button id="claim-ppc-reward-7" class="btn-primary">Claim PPC Reward #7</button>
+      <div id="ppc-reward-timer-7" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;"></div>
+    </div>
+    <div class="card">
+      <button id="claim-ppc-reward-8" class="btn-primary">Claim PPC Reward #8</button>
+      <div id="ppc-reward-timer-8" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;"></div>
+    </div>
+    <div class="card">
+      <button id="claim-ppc-reward-9" class="btn-primary">Claim PPC Reward #9</button>
+      <div id="ppc-reward-timer-9" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;"></div>
+    </div>
+    <div class="card">
+      <button id="claim-ppc-reward-10" class="btn-primary">Claim PPC Reward #10</button>
+      <div id="ppc-reward-timer-10" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;"></div>
     </div>
     <div style="text-align:center; margin-top: 20px; font-weight: 600; font-size: 1.1rem; color: #ccc;">
       Eazycash@2025
@@ -968,14 +988,24 @@
       document.getElementById('claim-ppc-reward-2'),
       document.getElementById('claim-ppc-reward-3'),
       document.getElementById('claim-ppc-reward-4'),
-      document.getElementById('claim-ppc-reward-5')
+      document.getElementById('claim-ppc-reward-5'),
+      document.getElementById('claim-ppc-reward-6'),
+      document.getElementById('claim-ppc-reward-7'),
+      document.getElementById('claim-ppc-reward-8'),
+      document.getElementById('claim-ppc-reward-9'),
+      document.getElementById('claim-ppc-reward-10')
     ];
     const ppcRewardTimers = [
       document.getElementById('ppc-reward-timer-1'),
       document.getElementById('ppc-reward-timer-2'),
       document.getElementById('ppc-reward-timer-3'),
       document.getElementById('ppc-reward-timer-4'),
-      document.getElementById('ppc-reward-timer-5')
+      document.getElementById('ppc-reward-timer-5'),
+      document.getElementById('ppc-reward-timer-6'),
+      document.getElementById('ppc-reward-timer-7'),
+      document.getElementById('ppc-reward-timer-8'),
+      document.getElementById('ppc-reward-timer-9'),
+      document.getElementById('ppc-reward-timer-10')
     ];
 
     const investmentAmountSel = document.getElementById('investment-amount');
@@ -1293,23 +1323,19 @@ This value is decoded as follows:
 
 
 
-// Rewarded interstitial
-
-show_9497269().then(() => {
-    // You need to add your user reward function here, which will be executed after the user watches the ad.
-    // For more details, please refer to the detailed instructions.
-    alert('You have seen an ad!');
-})
-
 const AdController = window.Adsgram.init({ blockId: "12351" });
 
-AdController.show().then((result) => {
-    // user watch ad till the end or close it in interstitial format
+// Show interstitial ad automatically after 8 minutes (480000 ms)
+setTimeout(() => {
+  AdController.show().then((result) => {
+    // user watched ad till the end or closed it in interstitial format
     // your code to reward user for rewarded format
-}).catch((result) => {
-    // user get error during playing ad
-    // do nothing or whatever you want
-})
+  }).catch((result) => {
+    // user got error during playing ad or closed early
+    // do nothing or handle as needed
+  });
+}, 480000);
+
 
     // Spin wheel functionality
     function spinTheWheel() {
@@ -1413,7 +1439,7 @@ AdController.show().then((result) => {
     // Add spin button event listener
     spinButton.addEventListener('click', spinTheWheel);
 
-    // Claim PPC reward handlers for all 5 buttons
+    // Claim PPC reward handlers for all 10 buttons
     claimPpcRewardBtns.forEach((btn, index) => {
       btn.addEventListener('click', () => {
         if (!user) {
@@ -1429,27 +1455,85 @@ AdController.show().then((result) => {
           showToast(`PPC reward #${index + 1} already claimed. Please wait.`);
           return;
         }
-        // Rewarded Popup
-        show_9497269('pop').then(() => {
-          // user watch ad till the end or close it in interstitial format
-          // your code to reward user for rewarded format
-          btn.disabled = true;
-          showToast(`Processing PPC claim #${index + 1}...`);
-          setTimeout(() => {
-            ppcRewards += ppcRewardAmount;
-            localStorage.setItem(ppcClaimKey, Date.now().toString());
-            saveUserData();
-            updateRewardButtons();
-            showToast(`You earned +${ppcRewardAmount} BDT from PPC #${index + 1}!`);
-            btn.disabled = false;
-            bonus = dailyClaimBonus + referralBonus;
-            bonusEarnedEl.textContent = bonus.toFixed(2);
-            updateTotalBalance();
-          }, 3000);
-        }).catch(e => {
-          // user get error during playing ad
-          // do nothing or whatever you want
-        });
+        if (index < 5) {
+          // First 5 buttons: Rewarded Popup
+          show_9497269('pop').then(() => {
+            btn.disabled = true;
+            showToast(`Processing PPC claim #${index + 1}...`);
+            setTimeout(() => {
+              ppcRewards += ppcRewardAmount;
+              localStorage.setItem(ppcClaimKey, Date.now().toString());
+              saveUserData();
+              updateRewardButtons();
+              showToast(`You earned +${ppcRewardAmount} BDT from PPC #${index + 1}!`);
+              btn.disabled = false;
+              bonus = dailyClaimBonus + referralBonus;
+              bonusEarnedEl.textContent = bonus.toFixed(2);
+              updateTotalBalance();
+            }, 3000);
+          }).catch(e => {
+            // user get error during playing ad
+            // do nothing or whatever you want
+          });
+        } else {
+          // Last 5 buttons: Monetag In-App Interstitial ad
+          if (typeof show_9497269 === 'function') {
+            show_9497269({
+              type: 'inApp',
+              inAppSettings: {
+                frequency: 1,
+                capping: 0,
+                interval: 0,
+                timeout: 5,
+                everyPage: false
+              }
+            }).then(() => {
+              btn.disabled = true;
+              showToast(`Processing PPC claim #${index + 1}...`);
+              setTimeout(() => {
+                ppcRewards += ppcRewardAmount;
+                localStorage.setItem(ppcClaimKey, Date.now().toString());
+                saveUserData();
+                updateRewardButtons();
+                showToast(`You earned +${ppcRewardAmount} BDT from PPC #${index + 1}!`);
+                btn.disabled = false;
+                bonus = dailyClaimBonus + referralBonus;
+                bonusEarnedEl.textContent = bonus.toFixed(2);
+                updateTotalBalance();
+              }, 3000);
+            }).catch(() => {
+              // Ad failed or skipped, still proceed with reward
+              btn.disabled = true;
+              showToast(`Processing PPC claim #${index + 1}...`);
+              setTimeout(() => {
+                ppcRewards += ppcRewardAmount;
+                localStorage.setItem(ppcClaimKey, Date.now().toString());
+                saveUserData();
+                updateRewardButtons();
+                showToast(`You earned +${ppcRewardAmount} BDT from PPC #${index + 1}!`);
+                btn.disabled = false;
+                bonus = dailyClaimBonus + referralBonus;
+                bonusEarnedEl.textContent = bonus.toFixed(2);
+                updateTotalBalance();
+              }, 3000);
+            });
+          } else {
+            // Monetag SDK not available, proceed with reward
+            btn.disabled = true;
+            showToast(`Processing PPC claim #${index + 1}...`);
+            setTimeout(() => {
+              ppcRewards += ppcRewardAmount;
+              localStorage.setItem(ppcClaimKey, Date.now().toString());
+              saveUserData();
+              updateRewardButtons();
+              showToast(`You earned +${ppcRewardAmount} BDT from PPC #${index + 1}!`);
+              btn.disabled = false;
+              bonus = dailyClaimBonus + referralBonus;
+              bonusEarnedEl.textContent = bonus.toFixed(2);
+              updateTotalBalance();
+            }, 3000);
+          }
+        }
       });
     });
 
@@ -1516,19 +1600,42 @@ AdController.show().then((result) => {
     }
 
     // Daily bonus claim handler
-    claimDailyBonusBtn.addEventListener('click', () => {
-      if (!user) {
-        showToast('Please login first');
-        return;
+claimDailyBonusBtn.addEventListener('click', () => {
+  if (!user) {
+    showToast('Please login first');
+    return;
+  }
+  if (!rewardsEnabled) {
+    showToast('Rewards are currently disabled by admin.');
+    return;
+  }
+  if (!canClaim('lastDailyBonusClaim', dailyBonusCooldown)) {
+    showToast('Daily bonus already claimed. Please wait.');
+    return;
+  }
+  // Show Monetag In-App Interstitial ad before granting daily bonus
+  if (typeof show_9497269 === 'function') {
+    show_9497269({
+      type: 'inApp',
+      inAppSettings: {
+        frequency: 1,
+        capping: 0,
+        interval: 0,
+        timeout: 5,
+        everyPage: false
       }
-      if (!rewardsEnabled) {
-        showToast('Rewards are currently disabled by admin.');
-        return;
-      }
-      if (!canClaim('lastDailyBonusClaim', dailyBonusCooldown)) {
-        showToast('Daily bonus already claimed. Please wait.');
-        return;
-      }
+    }).then(() => {
+      // Ad watched or closed, proceed with daily bonus claim
+      dailyClaimBonus += dailyBonusAmount;
+      localStorage.setItem('lastDailyBonusClaim', Date.now().toString());
+      saveUserData();
+      updateDailyBonusUI();
+      bonus = dailyClaimBonus + referralBonus;
+      bonusEarnedEl.textContent = bonus.toFixed(2);
+      updateTotalBalance();
+      showToast(`You claimed your daily bonus of +${dailyBonusAmount} BDT!`);
+    }).catch(() => {
+      // Ad failed or skipped, still proceed with daily bonus claim
       dailyClaimBonus += dailyBonusAmount;
       localStorage.setItem('lastDailyBonusClaim', Date.now().toString());
       saveUserData();
@@ -1538,6 +1645,18 @@ AdController.show().then((result) => {
       updateTotalBalance();
       showToast(`You claimed your daily bonus of +${dailyBonusAmount} BDT!`);
     });
+  } else {
+    // Monetag SDK not available, proceed with daily bonus claim
+    dailyClaimBonus += dailyBonusAmount;
+    localStorage.setItem('lastDailyBonusClaim', Date.now().toString());
+    saveUserData();
+    updateDailyBonusUI();
+    bonus = dailyClaimBonus + referralBonus;
+    bonusEarnedEl.textContent = bonus.toFixed(2);
+    updateTotalBalance();
+    showToast(`You claimed your daily bonus of +${dailyBonusAmount} BDT!`);
+  }
+});
 
     // Update timers every second
     setInterval(() => {
@@ -2147,21 +2266,39 @@ AdController.show().then((result) => {
 
   })();
 
-  // Show Monetag In-App Interstitial ad 2 minutes after page load
-  setTimeout(() => {
-    if (typeof show_9497269 === 'function') {
-      show_9497269({
-        type: 'inApp',
-        inAppSettings: {
-          frequency: 1,
-          capping: 0,
-          interval: 0,
-          timeout: 5,
-          everyPage: false
-        }
-      });
-    }
-  }, 120000); // 120000 ms = 2 minutes
+/*
+// Show Monetag In-App Interstitial ad 2 minutes after page load
+setTimeout(() => {
+  if (typeof show_9497269 === 'function') {
+    show_9497269({
+      type: 'inApp',
+      inAppSettings: {
+        frequency: 1,
+        capping: 0,
+        interval: 0,
+        timeout: 5,
+        everyPage: false
+      }
+    });
+  }
+}, 120000); // 120000 ms = 2 minutes
+*/
+
+// Show Monetag In-App Interstitial ad 5 minutes after page load
+setTimeout(() => {
+  if (typeof show_9497269 === 'function') {
+    show_9497269({
+      type: 'inApp',
+      inAppSettings: {
+        frequency: 1,
+        capping: 0,
+        interval: 0,
+        timeout: 5,
+        everyPage: false
+      }
+    });
+  }
+}, 300000); // 300000 ms = 5 minutes
 
 </script>
 </body>
