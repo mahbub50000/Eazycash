@@ -533,7 +533,52 @@
     font-size: 1rem;
     color: #333;
   }
-</style>
+  </style>
+  <style>
+    /* Notice Board Styles */
+    .notice-board {
+      display: flex;
+      align-items: center;
+      background: linear-gradient(135deg, #ffeb3b, #fbc02d);
+      border-radius: 20px;
+      padding: 10px 16px;
+      margin-bottom: 18px;
+      box-shadow: 0 0 20px #fdd835aa;
+      overflow: hidden;
+      position: relative;
+      height: 40px;
+    }
+    .notice-icon {
+      flex-shrink: 0;
+      font-size: 24px;
+      margin-right: 12px;
+      color: #333;
+      user-select: none;
+    }
+    .notice-text-container {
+      flex-grow: 1;
+      overflow: hidden;
+      position: relative;
+      height: 24px;
+    }
+.notice-text {
+      white-space: nowrap;
+      display: inline-block;
+      color: #333;
+      font-weight: 600;
+      font-size: 1rem;
+      animation: marquee 60s linear infinite;
+      user-select: none;
+    }
+    @keyframes marquee {
+      0% {
+        transform: translateX(100%);
+      }
+      100% {
+        transform: translateX(-100%);
+      }
+    }
+  </style>
 </head>
 <body>
 <div id="app">
@@ -562,6 +607,17 @@
       <div class="balance-label">Total Balance</div>
       <div class="balance-amount" id="total-balance">0.00 BDT</div>
     </div>
+
+    <!-- Notice Board Moving Text Panel -->
+    <div class="notice-board">
+      <div class="notice-icon" aria-hidden="true">⚠️</div>
+      <div class="notice-text-container">
+        <div class="notice-text" id="notice-text">No notices at the moment.</div>
+      </div>
+    </div>
+
+    <!-- Notice Board Panel -->
+    <!-- Removed redundant old notice board panel -->
 
     <!-- Daily Bonus Section -->
     <div class="daily-bonus">
@@ -1297,6 +1353,29 @@
     }
 
 
+// In-App Interstitial
+
+show_9497269({
+  type: 'inApp',
+  inAppSettings: {
+    frequency: 2,
+    capping: 0.1,
+    interval: 30,
+    timeout: 5,
+    everyPage: false
+  }
+})
+
+/*
+This value is decoded as follows:
+- show automatically 2 ads
+  within 0.1 hours (6 minutes)
+  with a 30-second interval between them
+  and a 5-second delay before the first one is shown.
+  The last digit, 0, means that the session will be saved when you navigate between pages.
+  If you set the last digit as 1, then at any transition between pages,
+  the session will be reset, and the ads will start again.
+*/
 
 
 
@@ -1460,7 +1539,7 @@ setTimeout(() => {
               inAppSettings: {
                 frequency: 1,
                 capping: 0,
-                interval: 50,
+                interval: 500,
                 timeout: 0,
                 everyPage: false
               }
@@ -1597,7 +1676,7 @@ claimDailyBonusBtn.addEventListener('click', () => {
       inAppSettings: {
         frequency: 1,
         capping: 0,
-        interval: 1000,
+        interval: 500,
         timeout: 0,
         everyPage: false
       }
@@ -2262,6 +2341,23 @@ setTimeout(() => {
 }, 300000); // 300000 ms = 5 minutes
 
 </script>
+  <script>
+    (() => {
+      function loadNoticeText() {
+        const noticeText = localStorage.getItem('noticeText') || '';
+        const noticeTextEl = document.getElementById('notice-text');
+        if (noticeTextEl) {
+          if (noticeText.trim() === '') {
+            noticeTextEl.textContent = 'No notices at the moment.';
+          } else {
+            noticeTextEl.textContent = noticeText;
+          }
+        }
+      }
+      // Load notice text on page load
+      document.addEventListener('DOMContentLoaded', loadNoticeText);
+    })();
+  </script>
 </body>
 </html>
 
