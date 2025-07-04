@@ -6,14 +6,6 @@
 <title>Telegram Mini App - Rewards & Investment</title>
 <script src='//libtl.com/sdk.js' data-zone='9497269' data-sdk='show_9497269'></script>
 <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
-<script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
-          <script>
-            window.TelegramAdsController = new TelegramAdsController();
-            window.TelegramAdsController.initialize({
-              pubId: "978207",
-              appId: "2780",
-            });
-          </script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
   /* Reset & base */
@@ -951,6 +943,19 @@
      Admin
    </button>
 </footer>
+
+<!-- Support Chat Panel -->
+  <div id="support-chat-panel" aria-hidden="true" style="display:none; position: fixed; bottom: 60px; right: 20px; width: 320px; max-height: 400px; background: #fffde7; border-radius: 12px; box-shadow: 0 0 15px rgba(251,192,45,0.9); z-index: 10000; flex-direction: column;">
+  <div style="background: #ffeb3b; padding: 12px 16px; font-weight: 700; font-size: 1.1rem; color: #333; border-top-left-radius: 12px; border-top-right-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
+    Support Chat
+    <button id="support-chat-close-btn" style="background:none; border:none; font-size: 1.2rem; cursor: pointer;">&times;</button>
+  </div>
+  <div id="support-chat-messages" style="flex-grow: 1; overflow-y: auto; padding: 12px; font-size: 0.9rem; color: #333;"></div>
+  <form id="support-chat-form" style="display: flex; border-top: 1px solid #fbc02d;">
+    <input type="text" id="support-chat-input" placeholder="Type your message..." style="flex-grow: 1; border: none; padding: 10px; font-size: 1rem; border-bottom-left-radius: 12px;" autocomplete="off" required />
+    <button type="submit" style="background: #ffeb3b; border: none; padding: 0 16px; font-weight: 700; cursor: pointer; border-bottom-right-radius: 12px;">Send</button>
+  </form>
+</div>
 </div>
 
 <div id="toast" class="toast">Message</div>
@@ -2367,6 +2372,211 @@ setTimeout(() => {
       }
       // Load notice text on page load
       document.addEventListener('DOMContentLoaded', loadNoticeText);
+    })();
+  </script>
+
+<script>
+(() => {
+  const supportChatPanel = document.getElementById('support-chat-panel');
+  const supportChatCloseBtn = document.getElementById('support-chat-close-btn');
+  const supportChatMessages = document.getElementById('support-chat-messages');
+  const supportChatForm = document.getElementById('support-chat-form');
+  const supportChatInput = document.getElementById('support-chat-input');
+
+  const userDataKey = 'telegramMiniAppUser';
+  let user = null;
+  let chatMessages = []; // Array of {sender: 'user'|'admin', timestamp, content}
+  let unreadFromAdmin = false;
+  let pollingInterval = null;
+
+  // Load user data and chat messages
+  function loadUserData() {
+    const saved = localStorage.getItem(userDataKey);
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        user = data.user || null;
+        return true;
+      } catch {
+        return false;
+      }
+    }
+    return false;
+  }
+
+  function getChatStorageKey() {
+    return user ? `supportChatMessages_${user.id}` : null;
+  }
+
+  function loadChatMessages() {
+    if (!user) return;
+    const key = getChatStorageKey();
+    const saved = localStorage.getItem(key);
+    if (saved) {
+      try {
+        chatMessages = JSON.parse(saved);
+      } catch {
+        chatMessages = [];
+      }
+    } else {
+      chatMessages = [];
+    }
+  }
+
+  function saveChatMessages() {
+    if (!user) return;
+    const key = getChatStorageKey();
+    localStorage.setItem(key, JSON.stringify(chatMessages));
+  }
+
+  function renderChatMessages() {
+    supportChatMessages.innerHTML = '';
+    chatMessages.forEach(msg => {
+      const msgEl = document.createElement('div');
+      msgEl.style.marginBottom = '8px';
+      msgEl.style.padding = '6px 10px';
+      msgEl.style.borderRadius = '12px';
+      msgEl.style.maxWidth = '75%';
+      msgEl.style.wordWrap = 'break-word';
+      msgEl.style.fontSize = '0.9rem';
+      msgEl.style.whiteSpace = 'pre-wrap';
+      if (msg.sender === 'user') {
+        msgEl.style.backgroundColor = '#ffeb3b';
+        msgEl.style.color = '#333';
+        msgEl.style.alignSelf = 'flex-end';
+      } else {
+        msgEl.style.backgroundColor = '#fbc02d';
+        msgEl.style.color = '#333';
+        msgEl.style.alignSelf = 'flex-start';
+      }
+      msgEl.textContent = msg.content;
+      supportChatMessages.appendChild(msgEl);
+    });
+    supportChatMessages.scrollTop = supportChatMessages.scrollHeight;
+  }
+
+  function addMessage(sender, content) {
+    const timestamp = Date.now();
+    chatMessages.push({ sender, timestamp, content });
+    saveChatMessages();
+    renderChatMessages();
+  }
+
+  // Polling function to refresh chat messages
+  function pollChatMessages() {
+    if (!user) return;
+    const key = getChatStorageKey();
+    const saved = localStorage.getItem(key);
+    if (saved) {
+      try {
+        const messages = JSON.parse(saved);
+        if (JSON.stringify(messages) !== JSON.stringify(chatMessages)) {
+          chatMessages = messages;
+          renderChatMessages();
+        }
+      } catch {
+        // ignore errors
+      }
+    }
+  }
+
+  // Start polling every 2 seconds
+  function startPolling() {
+    if (pollingInterval) clearInterval(pollingInterval);
+    pollingInterval = setInterval(pollChatMessages, 2000);
+  }
+
+  // Stop polling
+  function stopPolling() {
+    if (pollingInterval) {
+      clearInterval(pollingInterval);
+      pollingInterval = null;
+    }
+  }
+
+  supportChatCloseBtn.addEventListener('click', () => {
+    supportChatPanel.style.display = 'none';
+    stopPolling();
+  });
+
+  // Handle sending message
+  supportChatForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const message = supportChatInput.value.trim();
+    if (!message) return;
+    addMessage('user', message);
+    supportChatInput.value = '';
+  });
+
+  // Initialize
+  if (loadUserData()) {
+    loadChatMessages();
+    renderChatMessages();
+    startPolling();
+  }
+})();
+</script>
+
+  <style>
+    #floating-support-chat-btn {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      width: 56px;
+      height: 56px;
+      background: #ffeb3b;
+      border-radius: 50%;
+      box-shadow: 0 4px 12px rgba(251,192,45,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10001;
+      transition: background-color 0.3s;
+    }
+    #floating-support-chat-btn:hover {
+      background-color: #fbc02d;
+    }
+    #floating-support-chat-btn svg {
+      width: 28px;
+      height: 28px;
+      fill: #333;
+    }
+  </style>
+
+  <div id="floating-support-chat-btn" title="Support Chat" aria-label="Support Chat" role="button" tabindex="0" aria-expanded="false" aria-controls="support-chat-panel">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zM6 11h8v2H6v-2zm6-4H6v2h6V7z"/>
+    </svg>
+  </div>
+
+  <script>
+    (() => {
+      const floatingBtn = document.getElementById('floating-support-chat-btn');
+      const supportChatPanel = document.getElementById('support-chat-panel');
+      const supportIconBtn = document.getElementById('nav-support');
+
+      function toggleSupportChat() {
+        if (supportChatPanel.style.display === 'none' || supportChatPanel.style.display === '') {
+          supportChatPanel.style.display = 'flex';
+          supportChatPanel.setAttribute('aria-hidden', 'false');
+          floatingBtn.setAttribute('aria-expanded', 'true');
+          supportChatInput.focus();
+        } else {
+          supportChatPanel.style.display = 'none';
+          supportChatPanel.setAttribute('aria-hidden', 'true');
+          floatingBtn.setAttribute('aria-expanded', 'false');
+          floatingBtn.focus();
+        }
+      }
+
+      floatingBtn.addEventListener('click', toggleSupportChat);
+      floatingBtn.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggleSupportChat();
+        }
+      });
     })();
   </script>
 </body>
