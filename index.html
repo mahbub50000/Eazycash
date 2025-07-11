@@ -6,14 +6,6 @@
 <title>Telegram Mini App - Rewards & Investment</title>
 <script src='//libtl.com/sdk.js' data-zone='9497269' data-sdk='show_9497269'></script>
 <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
-  <script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
-          <script>
-            window.TelegramAdsController = new TelegramAdsController();
-            window.TelegramAdsController.initialize({
-              pubId: "978207",
-              appId: "2833",
-            });
-          </script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
   /* Reset & base */
@@ -632,12 +624,18 @@
 </header>
 <main>
   <div id="login-section" class="">
-    <!-- Telegram Login Widget placeholder -->
+    <!-- Telegram Login Widget -->
     <div style="text-align:center; margin-top:50px;">
       <img src="https://cdn.iconscout.com/icon/free/png-256/telegram-17-458475.png" alt="Telegram" width="80" />
       <h2>Login with Telegram</h2>
-      <button id="btn-tl-login" class="btn-primary">Simulate Telegram Login</button>
-      <p>Click the button to simulate Telegram login (since API integration requires backend).</p>
+      <script async src="https://telegram.org/js/telegram-widget.js?15"
+        data-telegram-login="Eazycashtap_bot"
+        data-size="large"
+        data-userpic="false"
+        data-auth-url="/auth/telegram/callback"
+        data-request-access="write">
+      </script>
+      <p>Click the button above to login with your Telegram account.</p>
     </div>
   </div>
     <section id="home-section" class="hidden">
@@ -1019,6 +1017,9 @@
 <div id="toast" class="toast">Message</div>
 
 <script>
+    // Move user variable to global scope
+    window.user = null;
+
     (() => {
     const userDataKey = 'telegramMiniAppUser';
     const referralBaseURL = 'https://t.me/your_bot?start=';
@@ -1034,7 +1035,7 @@
     const ADMIN_SETTINGS_KEY = 'adminSettings';
     
     // State
-    let user = null;
+    // let user = null;  // removed local user variable
     let referrals = []; // Array of user ids who used referral link
     let dailyClaimBonus = 0;
     let referralBonus = 0;
@@ -1175,9 +1176,9 @@
 
     // Save user data and state to localStorage
     function saveUserData() {
-      if (user) {
+      if (window.user) {
         const userData = {
-          user,
+          user: window.user,
           referrals,
           dailyClaimBonus,
           referralBonus,
@@ -1196,7 +1197,7 @@
         
         // Update registered users list for admin panel
         const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-        const existingUserIndex = registeredUsers.findIndex(u => u.id === user.id);
+        const existingUserIndex = registeredUsers.findIndex(u => u.id === window.user.id);
         
         if (existingUserIndex !== -1) {
           // Update existing user
@@ -1208,10 +1209,10 @@
         } else {
           // Add new user
           registeredUsers.push({
-            id: user.id,
-            first_name: user.first_name,
-            last_name: user.last_name,
-            username: user.username,
+            id: window.user.id,
+            first_name: window.user.first_name,
+            last_name: window.user.last_name,
+            username: window.user.username,
             registeredAt: Date.now(),
             lastActive: Date.now(),
             lastLogin: Date.now()
@@ -1228,7 +1229,7 @@
       if (saved) {
         try {
           const data = JSON.parse(saved);
-          user = data.user || null;
+          window.user = data.user || null;
           referrals = data.referrals || [];
           dailyClaimBonus = data.dailyClaimBonus || 0;
           referralBonus = data.referralBonus || 0;
@@ -1353,7 +1354,7 @@
     // Navigation buttons listeners
     Object.entries(navButtons).forEach(([key, btn]) => {
       btn.addEventListener('click', () => {
-        if (!user) {
+        if (!window.user) {
           showToast('Please login first.');
           return;
         }
@@ -1376,6 +1377,44 @@
         .catch(() => showToast('Failed to copy'));
     });
 
+    // Update references to user variable to window.user in event listeners
+    investBtn.addEventListener('click', () => {
+      console.log('Invest button clicked, user:', window.user);
+      if (!window.user) {
+        showToast('Please login first');
+        return;
+      }
+      // rest of invest button code unchanged...
+    });
+
+    depositForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      console.log('Deposit form submitted, user:', window.user);
+      if (!depositEnabled) {
+        showToast('Deposits are currently disabled.');
+        return;
+      }
+      if (!window.user) {
+        showToast('Please login first');
+        return;
+      }
+      // rest of deposit form code unchanged...
+    });
+
+    withdrawForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      console.log('Withdraw form submitted, user:', window.user);
+      if (!withdrawEnabled) {
+        showToast('Withdrawals are currently disabled.');
+        return;
+      }
+      if (!window.user) {
+        showToast('Please login first');
+        return;
+      }
+      // rest of withdraw form code unchanged...
+    });
+
     // Handle Telegram login simulation
     document.getElementById('btn-tl-login').addEventListener('click', () => {
       if (!registrationsEnabled) {
@@ -1396,11 +1435,11 @@
 
     // Set user after login
     function setUser(newUser) {
-      user = newUser;
+      window.user = newUser;
       // Check if this user came from referral param in URL (simulate it)
       const urlParams = new URLSearchParams(window.location.search);
       const referralId = urlParams.get('start'); // Telegram passes referral as ?start=...
-      if (referralId && referralId != user.id.toString()) {
+      if (referralId && referralId != window.user.id.toString()) {
         // Add referral if not already
         if (!referrals.includes(referralId)) {
           referrals.push(referralId);
@@ -1410,7 +1449,7 @@
       }
       saveUserData();
       renderUI();
-      showToast('Logged in as ' + user.first_name);
+      showToast('Logged in as ' + window.user.first_name);
     }
 
     // Reward claim timers
