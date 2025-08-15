@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EazyCash - Demo Login</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .demo-login-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .demo-user-card {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .demo-user-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+        
+        .demo-user-card.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .demo-user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .demo-login-btn {
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .demo-login-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .demo-login-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .telegram-login-btn {
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            background: #0088cc;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .or-divider {
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .or-divider::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e0e0e0;
+            z-index: 1;
+        }
+        
+        .or-divider span {
+            background: white;
+            padding: 0 15px;
+            position: relative;
+            z-index: 2;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>EazyCash Demo</h1>
+            <p>Choose a demo user or login via Telegram</p>
+        </header>
+
+        <div class="demo-login-container">
+            <h3>Select Demo User</h3>
+            
+            <div class="demo-user-card" data-user="demo1">
+                <div class="demo-user-avatar" style="background: linear-gradient(135deg, #ff6b6b, #ffa500);">A</div>
+                <div>
+                    <strong>Alice Johnson</strong>
+                    <p style="margin: 0; font-size: 0.9rem; opacity: 0.7;">@alice_dev</p>
+                </div>
+            </div>
+            
+            <div class="demo-user-card" data-user="demo2">
+                <div class="demo-user-avatar" style="background: linear-gradient(135deg, #4ecdc4, #44a08d);">B</div>
+                <div>
+                    <strong>Bob Smith</strong>
+                    <p style="margin: 0; font-size: 0.9rem; opacity: 0.7;">@bob_crypto</p>
+                </div>
+            </div>
+            
+            <div class="demo-user-card" data-user="demo3">
+                <div class="demo-user-avatar" style="background: linear-gradient(135deg, #a8edea, #fed6e3);">C</div>
+                <div>
+                    <strong>Carol Williams</strong>
+                    <p style="margin: 0; font-size: 0.9rem; opacity: 0.7;">@carol_trader</p>
+                </div>
+            </div>
+            
+            <button class="demo-login-btn" id="demoLoginBtn" disabled>
+                <i class="fas fa-user"></i> Login as Selected User
+            </button>
+            
+            <div class="or-divider">
+                <span>OR</span>
+            </div>
+            
+            <button class="telegram-login-btn" onclick="loginViaTelegram()">
+                <i class="fab fa-telegram-plane"></i> Login via Telegram
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Demo users data
+        const demoUsers = {
+            demo1: {
+                id: 1001,
+                first_name: 'Alice',
+                last_name: 'Johnson',
+                username: 'alice_dev',
+                photo_url: 'https://i.pravatar.cc/150?img=1',
+                language_code: 'en'
+            },
+            demo2: {
+                id: 1002,
+                first_name: 'Bob',
+                last_name: 'Smith',
+                username: 'bob_crypto',
+                photo_url: 'https://i.pravatar.cc/150?img=2',
+                language_code: 'en'
+            },
+            demo3: {
+                id: 1003,
+                first_name: 'Carol',
+                last_name: 'Williams',
+                username: 'carol_trader',
+                photo_url: 'https://i.pravatar.cc/150?img=3',
+                language_code: 'en'
+            }
+        };
+
+        let selectedUser = null;
+
+        // Handle demo user selection
+        document.querySelectorAll('.demo-user-card').forEach(card => {
+            card.addEventListener('click', () => {
+                // Remove previous selection
+                document.querySelectorAll('.demo-user-card').forEach(c => c.classList.remove('selected'));
+                
+                // Add selection to clicked card
+                card.classList.add('selected');
+                selectedUser = card.dataset.user;
+                
+                // Enable login button
+                document.getElementById('demoLoginBtn').disabled = false;
+            });
+        });
+
+        // Demo login functionality
+        document.getElementById('demoLoginBtn').addEventListener('click', () => {
+            if (selectedUser && demoUsers[selectedUser]) {
+                const user = demoUsers[selectedUser];
+                
+                // Store demo user in localStorage
+                localStorage.setItem('telegram_user', JSON.stringify(user));
+                localStorage.setItem('demo_mode', 'true');
+                
+                // Send to backend
+                fetch('/api/demo-auth', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ user })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Demo user authenticated:', data);
+                    window.location.href = 'index.html';
+                })
+                .catch(error => {
+                    console.error('Demo auth error:', error);
+                    alert('Failed to authenticate demo user. Please try again.');
+                    // Optionally, you can keep the user on the login page
+                });
+            }
+        });
+
+        // Telegram login
+        function loginViaTelegram() {
+            // Check if running in Telegram
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.location.href = 'index.html';
+            } else {
+                alert('Please open this app in Telegram WebApp to use Telegram login');
+            }
+        }
+
+        // Auto-redirect if already logged in
+        window.addEventListener('DOMContentLoaded', () => {
+            const telegramUser = localStorage.getItem('telegram_user');
+            if (telegramUser) {
+                window.location.href = 'index.html';
+            }
+        });
+    </script>
+</body>
+</html>

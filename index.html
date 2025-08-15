@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EazyCash - Earn Money</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>EazyCash</h1>
+            <p>Tap to Earn Real Money</p>
+        </header>
+
+        <div class="user-section">
+            <div id="user-info" class="user-profile-section">
+                <!-- User profile will be auto-populated here -->
+            </div>
+        </div>
+
+        <div class="start-section">
+            <button class="btn btn-primary" onclick="startEarning()" style="font-size: 1.2rem; padding: 15px 30px;">
+                <i class="fas fa-play-circle"></i> Start Earning Now
+            </button>
+        </div>
+
+        <div class="login-section" style="display: none;">
+            <button class="btn btn-primary" onclick="showLogin()">Login</button>
+            <button class="btn btn-secondary" onclick="showRegister()">Register</button>
+        </div>
+    </div>
+
+    <script src="telegram-auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!window.telegramAuth.isAuthenticated()) {
+                window.location.href = 'demo-login.html'; // Redirect to login if not authenticated
+            }
+        });
+
+        function startEarning() {
+            const user = window.getTelegramUser();
+            if (user) {
+                window.location.href = 'code.html';
+            } else {
+                alert('Please open this app in Telegram to use it');
+            }
+        }
+    </script>
+</body>
+</html>
